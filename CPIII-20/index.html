@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming Platforms Dashboard</title>
+    <!-- D3.js Libraries -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
+    <!-- Plain, Custom CSS for a No-Scroll, Fit-to-Screen Layout -->
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --muted-text: #64748b;
+            --accent-color: #dc2626;
+            --border-color: #e2e8f0;
+            --header-height: 65px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw; overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .dashboard-wrapper { display: flex; flex-direction: column; height: 100%; }
+
+        header {
+            height: var(--header-height);
+            background-color: var(--card-bg);
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        header div h1 { font-size: 1.25rem; font-weight: 700; }
+        header div h2 { font-size: 1rem; font-weight: 400; color: var(--accent-color); }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            height: calc(100vh - var(--header-height));
+        }
+
+        .filters-panel {
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            overflow-y: auto;
+        }
+
+        .filter-group { margin-bottom: 1rem; }
+        .filter-group:last-child { margin-bottom: 0; }
+        .filter-group label, .filter-group .filter-label {
+            font-weight: 700; color: #334155; display: block; margin-bottom: 0.5rem;
+        }
+        input[type="text"], select {
+            width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1;
+            border-radius: 0.375rem; outline: none;
+        }
+        .genre-list { max-height: 100px; overflow-y: auto; }
+        .audience-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .audience-buttons button {
+            padding: 0.25rem 0.75rem; background-color: #e2e8f0; color: #475569;
+            border: none; border-radius: 9999px; font-size: 0.875rem; cursor: pointer;
+        }
+        .remove-filters-btn {
+            width: 100%; margin-top: 1.5rem; padding: 0.75rem;
+            background-color: var(--accent-color); color: white;
+            border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;
+        }
+        
+        .viz-panel {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: 0.25fr 1fr 1fr;
+            grid-template-areas:
+                "timeline timeline"
+                "treemap  side-charts"
+                "sankey   sankey";
+        }
+
+        .viz-card {
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        #timeline-filter { grid-area: timeline; }
+        #treemap-chart { grid-area: treemap; }
+        #sankey-chart { grid-area: sankey; }
+        
+        .side-charts-container {
+            grid-area: side-charts;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow: hidden;
+        }
+        .side-charts-container .viz-card { flex: 1 1 0; }
+
+        #loading {
+            position: fixed; inset: 0; background-color: rgba(255, 255, 255, 0.8);
+            display: flex; align-items: center; justify-content: center; z-index: 50;
+        }
+        .spinner {
+            width: 3rem; height: 3rem; border-radius: 50%;
+            border: 4px solid #e2e8f0; border-top-color: var(--accent-color);
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .viz-card svg { display: block; width: 100%; height: 100%; }
+        .axis path, .axis line { stroke: var(--border-color); }
+        .axis text { fill: var(--muted-text); font-size: 0.75rem; }
+        .line { fill: none; stroke-width: 2px; }
+        .sankey-link { fill: none; stroke-opacity: 0.4; }
+        .sankey-node rect { stroke: #333; stroke-width: 1px; }
+        .sankey-node text { font-size: 11px; font-weight: 500; text-shadow: 0 0 2px white; }
+        .brush .selection { fill: rgba(100, 116, 139, 0.2); stroke: #475569; }
+
+        @media (max-width: 992px) {
+            .dashboard-container { grid-template-columns: 1fr; height: auto;}
+            body, html { overflow: auto; height: auto;}
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <header>
+            <div>
+                <h1>Dashboard Overview</h1>
+                <h2>Streaming Platforms</h2>
+            </div>
+        </header>
+
+        <div id="loading"><div class="spinner"></div></div>
+
+        <main class="dashboard-container" style="visibility: hidden;">
+            <aside class="filters-panel">
+                 <div class="filter-group"><input type="text" placeholder="TV Show / Movie Name"></div>
+                 <div class="filter-group">
+                    <label>Content Type</label>
+                    <select><option>TV Shows & Movies</option><option>TV Shows</option><option>Movies</option></select>
+                </div>
+                <div class="filter-group">
+                    <label>Genres</label>
+                    <div class="genre-list" id="genre-filter-list"></div>
+                </div>
+                 <div class="filter-group">
+                    <label>Target Audience</label>
+                    <div class="audience-buttons">
+                        <button>Toddler</button>
+                        <button>Children</button>
+                        <button>Teen</button>
+                        <button>Adult</button>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label for="imdb-slider">IMDb Score</label>
+                    <input type="range" min="1" max="10" step="0.1" value="10" style="width: 100%;" id="imdb-slider">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted-text);">
+                        <span>1.0</span><span id="imdb-slider-value">10.0</span>
+                    </div>
+                </div>
+                <button class="remove-filters-btn">Remove All Filters</button>
+            </aside>
+
+            <section class="viz-panel">
+              <div id="timeline-filter" class="viz-card"></div>
+              <div id="treemap-chart" class="viz-card"></div>
+              <div class="side-charts-container">
+                  <div id="price-chart" class="viz-card"></div>
+                  <div id="quantity-chart" class="viz-card"></div>
+              </div>
+              <div id="sankey-chart" class="viz-card"></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const isValidString = (str) => str && typeof str === 'string' && str.trim() !== '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingEl = document.getElementById('loading');
+            const mainEl = document.querySelector('main');
+
+            Promise.all([
+                d3.csv("streaming_platforms.csv"),
+                d3.csv("streaming_prices.csv")
+            ]).then(([rawPlatformData, rawPriceData]) => {
+                
+                const platformData = rawPlatformData.map(d => ({
+                    ...d,
+                    release_year: +d.release_year,
+                    imdb_score: +d.imdb_score,
+                    main_genre: isValidString(d.genres) ? d.genres.split(',')[0].trim() : 'Unknown',
+                    main_country: isValidString(d.production_countries) ? d.production_countries.split(',')[0].trim() : 'Unknown'
+                }));
+
+                const priceData = rawPriceData.map(d => ({ ...d, year: +d.year, price: +d.price }));
+                
+                loadingEl.style.display = 'none';
+                mainEl.style.visibility = 'visible';
+                
+                populateGenreFilter(platformData);
+                setupImdbSlider();
+
+                function renderAllVisualizations() {
+                    renderTimelineFilter(platformData);
+                    renderSankeyChart(platformData);
+                }
+
+                renderAllVisualizations();
+                window.addEventListener('resize', () => { clearTimeout(window.resizeTimer); window.resizeTimer = setTimeout(renderAllVisualizations, 250); });
+
+            }).catch(error => {
+                console.error("Data loading failed:", error);
+                loadingEl.innerHTML = `<div style="text-align: center; color: #b91c1c; font-weight: 600;"><p>Error loading data!</p><p style="margin-top: 0.5rem; font-size: 0.875rem; color: #475569;">Did you start a local web server? Check the console for errors.</p></div>`;
+            });
+        });
+        
+        function populateGenreFilter(data) {
+            const genres = new Set(data.flatMap(d => isValidString(d.genres) ? d.genres.split(',').map(g => g.trim()) : []));
+            d3.select("#genre-filter-list").selectAll("div").data(Array.from(genres).sort()).enter().append("div").html(d => `<label style="display: flex; align-items: center; cursor: pointer;"><input type="checkbox" style="margin-right: 0.5rem;">${d}</label>`);
+        }
+        
+        function setupImdbSlider() {
+            const slider = document.getElementById('imdb-slider');
+            const sliderValue = document.getElementById('imdb-slider-value');
+            slider.addEventListener('input', () => { sliderValue.textContent = parseFloat(slider.value).toFixed(1); });
+            sliderValue.textContent = parseFloat(slider.value).toFixed(1);
+        }
+        
+        function renderTimelineFilter(data) {
+            const container = d3.select("#timeline-filter");
+            container.selectAll("*").remove(); 
+            const bounds = container.node().getBoundingClientRect();
+            if (bounds.width < 10 || bounds.height < 10) return;
+            const margin = { top: 30, right: 30, bottom: 40, left: 30 };
+            const width = bounds.width - margin.left - margin.right;
+            const height = bounds.height - margin.top - margin.bottom;
+            const svg = container.append("svg").append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            const yearData = data.filter(d => d.release_year && d.release_year > 1900);
+            const yearExtent = d3.extent(yearData, d => d.release_year);
+            if (!yearExtent[0] || !yearExtent[1]) return; 
+            const xScale = d3.scaleLinear().domain(yearExtent).range([0, width]);
+            svg.append("g").attr("class", "axis").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(xScale).tickFormat(d3.format("d")));
+            const brush = d3.brushX().extent([[0, 0], [width, height]]).on("end", ({ selection }) => { if (!selection) return; const [x0, x1] = selection.map(xScale.invert); console.log("Selected years:", Math.round(x0), "-", Math.round(x1)); });
+            svg.append("g").attr("class", "brush").call(brush);
+            svg.append("text").attr("x", width / 2).attr("y", -5).attr("text-anchor", "middle").style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155").text("Filter by Release Year");
+        }
+
+function renderSankeyChart(data) {
+    const container = d3.select("#sankey-chart");
+    container.selectAll("*").remove();
+    const bounds = container.node().getBoundingClientRect();
+    if (bounds.width < 10 || bounds.height < 10) return;
+
+    const margin = { top: 40, right: 10, bottom: 10, left: 10 };
+    const width = bounds.width - margin.left - margin.right;
+    const height = bounds.height - margin.top - margin.bottom;
+
+    const svg = container.append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const validData = data.filter(d => 
+        isValidString(d.streaming_platform) &&
+        isValidString(d.main_genre) && d.main_genre !== 'Unknown' &&
+        isValidString(d.age_category)
+    );
+
+    if (validData.length === 0) {
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", height / 2)
+            .attr("text-anchor", "middle")
+            .text("No valid data to display for the Sankey chart.")
+            .style("fill", "var(--muted-text)");
+        return;
+    }
+
+    const nodes = new Set();
+    const links = [];
+    const platformGenreLinks = {};
+    const genreAgeLinks = {};
+
+    validData.forEach(d => {
+        nodes.add(d.streaming_platform);
+        nodes.add(d.main_genre);
+        nodes.add(d.age_category);
+
+        const pgKey = `${d.streaming_platform}|${d.main_genre}`;
+        platformGenreLinks[pgKey] = (platformGenreLinks[pgKey] || 0) + 1;
+
+        const gaKey = `${d.main_genre}|${d.age_category}`;
+        genreAgeLinks[gaKey] = (genreAgeLinks[gaKey] || 0) + 1;
+    });
+
+    for (const key in platformGenreLinks) {
+        const [source, target] = key.split("|");
+        links.push({ source, target, value: platformGenreLinks[key] });
+    }
+    for (const key in genreAgeLinks) {
+        const [source, target] = key.split("|");
+        links.push({ source, target, value: genreAgeLinks[key] });
+    }
+
+    const sankey = d3.sankey()
+        .nodeId(d => d.name)
+        .nodeWidth(15)
+        .nodePadding(10)
+        .extent([[1, 1], [width - 1, height - 6]]);
+
+    const { nodes: graphNodes, links: graphLinks } = sankey({
+        nodes: Array.from(nodes).map(name => ({ name })),
+        links: links.map(d => ({ ...d }))
+    });
+
+    // Define platform colors
+    const platformColors = {
+        "Netflix": "#FF0000",    // red
+        "Paramount": "#00008B",  // dark blue
+        "Amazon": "#FFD700",     // yellow
+        "Apple": "#000000",      // black
+        "Disney": "#ADD8E6",     // light blue
+        "HBO": "#800080"         // purple
+    };
+
+    // Assign colors for genres using a categorical scale
+    const genreNames = Array.from(nodes).filter(n => !platformColors[n] && !["G", "PG", "PG-13", "R", "NC-17"].includes(n)); // adjust age categories if needed
+    const genreColorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(genreNames);
+
+    // Color function: platform → custom, genre → color scale, age → default gray
+    const color = d => {
+        if (platformColors[d]) return platformColors[d];
+        if (genreNames.includes(d)) return genreColorScale(d);
+        return "#888888"; // age categories gray
+    };
+
+    // Draw nodes
+    svg.append("g")
+        .selectAll("rect")
+        .data(graphNodes)
+        .join("rect")
+        .attr("class", "sankey-node")
+        .attr("x", d => d.x0)
+        .attr("y", d => d.y0)
+        .attr("height", d => d.y1 - d.y0)
+        .attr("width", d => d.x1 - d.x0)
+        .attr("fill", d => color(d.name));
+
+    // Draw links
+    svg.append("g")
+        .attr("fill", "none")
+        .selectAll("g")
+        .data(graphLinks)
+        .join("path")
+        .attr("class", "sankey-link")
+        .attr("d", d3.sankeyLinkHorizontal())
+        .attr("stroke", d => color(d.source.name))
+        .attr("stroke-width", d => Math.max(1, d.width));
+
+    // Draw node labels
+    svg.append("g")
+        .selectAll("text")
+        .data(graphNodes)
+        .join("text")
+        .attr("class", "sankey-node")
+        .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+        .attr("y", d => (d.y1 + d.y0) / 2)
+        .attr("dy", "0.35em")
+        .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
+        .text(d => d.name);
+
+    // Chart title
+    svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", -15)
+        .attr("text-anchor", "middle")
+        .style("font-size", "1rem")
+        .style("font-weight", "600")
+        .style("fill", "#334155")
+        .text("Content Flow: Platform → Genre → Target Audience");
+}
+    </script>
+</body>
+</html>
+
