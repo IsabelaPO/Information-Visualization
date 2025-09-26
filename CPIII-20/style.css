@@ -1,1 +1,130 @@
-/* --- Basic Setup --- */ :root{ --bg: #f0f2f5; --card: #ffffff; --muted: #555; --accent: #e50914; --shadow: 0 2px 6px rgba(0,0,0,0.08); } *{box-sizing:border-box} html,body{height:100%} body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg); color: #333; /* Allow page to scroll on very small screens, otherwise dashboard fits */ overflow: auto; } /* Header */ header { padding: 14px 32px; border-bottom: 1px solid #ddd; background: linear-gradient(180deg, #fff, #fafafa); } header h1 { margin: 0; font-size: 1.25rem; } header h2 { margin: 0; font-weight: 400; color: var(--accent); } /* --- Main Dashboard Layout --- */ .dashboard-container { display: grid; grid-template-columns: 240px 1fr; /* fixed sidebar, flexible main */ gap: 20px; padding: 20px; /* Fill remaining viewport height (header above) */ min-height: calc(100vh - 72px); align-items: stretch; } /* --- Left Filter Panel --- */ .filters-panel { background: var(--card); padding: 18px; border-radius: 10px; box-shadow: var(--shadow); overflow-y: auto; /* scroll inside sidebar if needed */ max-height: calc(100vh - 120px); } .filter-group { margin-bottom: 20px; } .filter-group label { font-weight: 700; display:block; margin-bottom:8px; } /* --- Right Visualization Panel Grid --- */ .viz-panel { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); /* evenly divided rows */ gap: 20px; height: 100%; overflow: hidden; padding: 0 24px; /* inner padding for visual breathing room */ } /* Card styling — fixed selector (was missing dot) */ .viz-card { background: var(--card); padding: 12px; border-radius: 10px; box-shadow: var(--shadow); position: relative; display: flex; flex-direction: column; height: 100%; /* Fill the grid cell */ min-height: 200px; /* Prevent collapsing on tiny screens */ overflow: visible; } /* Make SVGs inside cards fill their parent */ .viz-card svg { display: block; width: 100%; height: 100%; max-height: 100%; } /* Full-width items */ #timeline-chart, #sankey-chart { grid-column: 1 / -1; overflow-y: auto; } /* --- D3 Chart Specific Styles --- */ .line { fill: none; stroke-width: 2.5px; } .axis path, .axis line { stroke: #888; shape-rendering: crispEdges; } .axis text { fill: var(--muted); font-size: 12px; } /* --- Treemap Styles --- */ .node { overflow: hidden; } .node-label { font-size: 12px; fill: white; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.45); } /* --- Responsive behavior --- */ /* Collapse to a single column on small screens */ @media (max-width: 1024px) { .dashboard-container { grid-template-columns: 220px 1fr; padding: 16px; gap:16px; } .viz-panel { grid-template-columns: 1fr; grid-template-rows: repeat(5, minmax(120px, 1fr)); padding: 0 8px; } /* timeline and sankey still span full width in single column */ #timeline-chart, #sankey-chart { grid-column: 1 / -1; } } /* For very narrow screens, make the sidebar collapsible-like (stacked) */ @media (max-width: 720px) { .dashboard-container { grid-template-columns: 1fr; padding: 12px; gap:12px; min-height: auto; } .filters-panel { order: 0; max-height: none; } .viz-panel { order: 1; grid-template-columns: 1fr; grid-template-rows: repeat(5, minmax(100px, auto)); gap:12px; padding:0; } header { padding: 10px 12px; } header h1 { font-size: 1rem; } } /* Small visual polish */ .viz-card > h3 { margin: 0 0 8px 0; font-size: 1rem; color:#111; } /* Timeline filter row */ .timeline-card { grid-column: 1 / -1; background: #ffffff; padding: 10px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+:root {
+        --bg-color: #f1f5f9;
+        --card-bg: #ffffff;
+        --text-color: #1e293b;
+        --muted-text: #64748b;
+        --accent-color: #dc2626;
+        --border-color: #e2e8f0;
+        --header-height: 65px;
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+        height: 100vh; width: 100vw; overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+    }
+
+    .dashboard-wrapper { display: flex; flex-direction: column; height: 100%; }
+
+    header {
+        height: var(--header-height);
+        background-color: var(--card-bg);
+        padding: 0.5rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+    header div h1 { font-size: 1.25rem; font-weight: 700; }
+    header div h2 { font-size: 1rem; font-weight: 400; color: var(--accent-color); }
+
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 1rem;
+        padding: 1rem;
+        height: calc(100vh - var(--header-height));
+    }
+
+    .filters-panel {
+        background-color: var(--card-bg);
+        padding: 1rem;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow);
+        overflow-y: auto;
+    }
+
+    .filter-group { margin-bottom: 1rem; }
+    .filter-group:last-child { margin-bottom: 0; }
+    .filter-group label, .filter-group .filter-label {
+        font-weight: 700; color: #334155; display: block; margin-bottom: 0.5rem;
+    }
+    input[type="text"], select {
+        width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1;
+        border-radius: 0.375rem; outline: none;
+    }
+    .genre-list { max-height: 100px; overflow-y: auto; }
+    .audience-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .audience-buttons button {
+        padding: 0.25rem 0.75rem; background-color: #e2e8f0; color: #475569;
+        border: none; border-radius: 9999px; font-size: 0.875rem; cursor: pointer;
+    }
+    .remove-filters-btn {
+        width: 100%; margin-top: 1.5rem; padding: 0.75rem;
+        background-color: var(--accent-color); color: white;
+        border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;
+    }
+    
+    .viz-panel {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: 0.25fr 1fr 1fr;
+        grid-template-areas:
+            "timeline timeline"
+            "treemap  side-charts"
+            "sankey   sankey";
+    }
+
+    .viz-card {
+        background-color: var(--card-bg);
+        padding: 0.2rem;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    #timeline-filter { grid-area: timeline; }
+    #treemap-chart { grid-area: treemap; }
+    #sankey-chart { grid-area: sankey; }
+    
+    .side-charts-container {
+        grid-area: side-charts;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        overflow: hidden;
+    }
+    .side-charts-container .viz-card { flex: 1 1 0; }
+
+    #loading {
+        position: fixed; inset: 0; background-color: rgba(255, 255, 255, 0.8);
+        display: flex; align-items: center; justify-content: center; z-index: 50;
+    }
+    .spinner {
+        width: 3rem; height: 3rem; border-radius: 50%;
+        border: 4px solid #e2e8f0; border-top-color: var(--accent-color);
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .viz-card svg { display: block; width: 100%; height: 100%; }
+    .axis path, .axis line { stroke: var(--border-color); }
+    .axis text { fill: var(--muted-text); font-size: 0.75rem; }
+    .line { fill: none; stroke-width: 2px; }
+    .sankey-link { fill: none; stroke-opacity: 0.4; }
+    .sankey-node rect { stroke: #333; stroke-width: 1px; }
+    .sankey-node text { font-size: 11px; font-weight: 500; text-shadow: 0 0 2px white; }
+    .brush .selection { fill: rgba(100, 116, 139, 0.2); stroke: #475569; }
+
+    @media (max-width: 992px) {
+        .dashboard-container { grid-template-columns: 1fr; height: auto;}
+        body, html { overflow: auto; height: auto;}
+    }
