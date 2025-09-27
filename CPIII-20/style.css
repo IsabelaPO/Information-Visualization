@@ -187,6 +187,52 @@ input[type="text"], select {
     color: white;
 }
 
+.platform-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, auto); 
+    justify-content: center; 
+    gap: 0.75rem; 
+}
+
+.platform-buttons button {
+    /* From circle to pill shape */
+    border-radius: 9999px; /* This creates the pill shape */
+    padding: 0.5rem 1rem; /* Give the text space */
+    width: auto; /* Allow width to be flexible */
+    height: auto; /* Allow height to be flexible */
+
+    /* Rest of the styles are similar */
+    border: none;
+    color: white;
+    font-weight: 600; /* A slightly less bold font looks better with full words */
+    font-size: 0.875rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease-in-out;
+}
+
+/* 1. Dynamic grow effect on hover */
+.platform-buttons button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 2. "Halo" effect for active selection, plus a slight press effect */
+.platform-buttons button.active {
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+    transform: scale(1.05);
+}
+
+/* 3. Fade out non-selected buttons when a filter is active */
+.platform-buttons button.inactive {
+    opacity: 0.4;
+    transform: scale(0.95);
+    box-shadow: none;
+}
+
 div.tooltip-donut {
      position: absolute;
      text-align: center;
