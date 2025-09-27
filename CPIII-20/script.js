@@ -388,8 +388,8 @@ function renderSankeyChart(data) {
               .style("opacity", 1);
 
           div.html(d.value)
-              .style("left", (event.pageX + 5) + "px")
-              .style("top", (event.pageY - 20) + "px");
+            .style("left", (event.pageX - 20) + "px")
+            .style("top", (event.pageY - 50) + "px");
       })
      .on('mouseout', function (event, d) {
           d3.select(this).transition()
@@ -422,8 +422,8 @@ function renderSankeyChart(data) {
               .style("opacity", 1);
 
           div.html(d.value)
-              .style("left", (event.pageX + 5) + "px")
-              .style("top", (event.pageY - 20) + "px");
+              .style("left", (event.pageX - 20) + "px")
+              .style("top", (event.pageY - 50) + "px");
       })
      .on('mouseout', function (event, d) {
           d3.select(this).transition()
