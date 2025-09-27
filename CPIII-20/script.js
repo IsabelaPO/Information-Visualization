@@ -2,9 +2,14 @@
 const isValidString = (str) => str && typeof str === 'string' && str.trim() !== '';
 let allPlatformData = [];
 const platformColors = {
-    "Netflix": "#E50914", "Amazon": "#FF9900", "Disney": "#113CCF",
-    "HBO": "#9068F4", "Paramount": "#0090FF", "Apple": "#A2AAAD"
+    "Netflix": "#E50914", 
+    "Amazon": "#FF9900", 
+    "Disney": "#113CCF",
+    "HBO": "#9068F4", 
+    "Paramount": "#0090FF", 
+    "Apple": "#A2AAAD"
 };
+
 // A constant to hold the default filter state for easy resetting ---
 const defaultFilters = {
     type: 'TV Shows & Movies',
@@ -61,105 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderAllVisualizations(data) {
   renderSankeyChart(data);
-  //renderQuantityChart(data);
 }
-
-// function renderQuantityChart(data) {
-//     const container = d3.select("#quantity-chart");
-//     container.selectAll("*").remove();
-//     const bounds = container.node().getBoundingClientRect();
-//     if (bounds.width < 50 || bounds.height < 50) return;
-
-//     const margin = { top: 20, right: 20, bottom: 30, left: 80 };
-//     const width = bounds.width - margin.left - margin.right;
-//     const height = bounds.height - margin.top - margin.bottom;
-
-//     const svg = container.append("svg")
-//         .attr("width", width + margin.left + margin.right)
-//         .attr("height", height + margin.top + margin.bottom)
-//       .append("g")
-//         .attr("transform", `translate(${margin.left},${margin.top})`);
-
-//     // 1. Process the data: Group by platform and count shows/movies
-//     const counts = d3.rollup(data, v => v.length, d => d.streaming_platform, d => d.type);
-    
-//     let processedData = Array.from(counts, ([platform, types]) => ({
-//         platform: platform,
-//         shows: types.get('SHOW') || 0,
-//         movies: types.get('MOVIE') || 0
-//     }));
-
-//     // Filter for platforms that have some content in the current view
-//     processedData = processedData.filter(d => d.shows > 0 || d.movies > 0);
-    
-//     if (processedData.length === 0) {
-//         svg.append("text").attr("x", width/2).attr("y", height/2).attr("text-anchor", "middle").text("No data.").style("fill", "var(--muted-text)");
-//         return;
-//     }
-
-//     // 2. Set up scales
-//     const xScale = d3.scaleLinear()
-//         .domain([0, d3.max(processedData, d => Math.max(d.shows, d.movies))])
-//         .range([0, width]).nice();
-    
-//     const yScale = d3.scaleBand()
-//         .domain(processedData.map(d => d.platform))
-//         .range([0, height])
-//         .padding(0.8);
-
-//     // 3. Draw axes
-//     svg.append("g")
-//         .attr("class", "axis")
-//         .attr("transform", `translate(0, ${height})`)
-//         .call(d3.axisBottom(xScale).ticks(5).tickSizeOuter(0));
-
-//     svg.append("g")
-//         .attr("class", "axis")
-//         .call(d3.axisLeft(yScale).tickSize(0))
-//         .select(".domain").remove(); // Remove the y-axis line
-
-//     // 4. Draw the dumbbell elements
-//     const groups = svg.selectAll(".dumbbell-group")
-//         .data(processedData)
-//         .join("g")
-//         .attr("class", "dumbbell-group")
-//         .attr("transform", d => `translate(0, ${yScale(d.platform)})`);
-
-//     // Dashed line for reference
-//     groups.append("line")
-//         .attr("x1", 0)
-//         .attr("x2", width)
-//         .attr("y1", yScale.bandwidth() / 2)
-//         .attr("y2", yScale.bandwidth() / 2)
-//         .attr("stroke", "var(--border-color)")
-//         .attr("stroke-dasharray", "2,2");
-
-//     // Solid line connecting the dots
-//     groups.append("line")
-//         .attr("x1", d => xScale(d.shows))
-//         .attr("x2", d => xScale(d.movies))
-//         .attr("y1", yScale.bandwidth() / 2)
-//         .attr("y2", yScale.bandwidth() / 2)
-//         .attr("stroke", "black")
-//         .attr("stroke-width", 2);
-
-//     // Circle for TV Shows
-//     groups.append("circle")
-//         .attr("cx", d => xScale(d.shows))
-//         .attr("cy", yScale.bandwidth() / 2)
-//         .attr("r", 5)
-//         .attr("fill", "#3b82f6"); // Blue
-
-//     // Circle for Movies
-//     groups.append("circle")
-//         .attr("cx", d => xScale(d.movies))
-//         .attr("cy", yScale.bandwidth() / 2)
-//         .attr("r", 5)
-//         .attr("fill", "#ec4899"); // Pink
-        
-//     // Add title
-//     svg.append("text").attr("x", width/2).attr("y", -5).attr("text-anchor", "middle").text("Content Quantity by Type").style("font-weight", "600");
-// }
 
 function applyFilters() {
   let filteredData = allPlatformData;
@@ -301,26 +208,6 @@ function createD3RangeSlider(config) {
   };
 }
 
-// function setupYearSlider(data) {
-//   const yearData = data.filter(d => d.release_year && d.release_year > 1900);
-//   const yearExtent = d3.extent(yearData, d => d.release_year);
-
-//   return createD3RangeSlider({
-//     containerId: '#year-slider-container', 
-//     minLabelId: '#year-min-value',
-//     maxLabelId: '#year-max-value', 
-//     domain: yearExtent,
-//     tickFormat: d3.format("d"),
-//     onBrushEnd: (range) => {
-//       const roundedRange = [Math.round(range[0]), Math.round(range[1])];
-//       if (JSON.stringify(currentFilters.yearRange) !== JSON.stringify(roundedRange)) {
-//         currentFilters.yearRange = roundedRange[0] === yearExtent[0] && roundedRange[1] === yearExtent[1] ? null : roundedRange;
-//         applyFilters();
-//       }
-//     }
-//   });
-// }
-
 function setupYearSlider(data) {
     const yearData = data.filter(d => d.release_year && d.release_year > 1900);
     const yearExtent = d3.extent(yearData, d => d.release_year);
@@ -377,11 +264,6 @@ function populateGenreFilter(data) {
     .data(Array.from(genres).sort()).enter().append("div")
     .html(d => `<label style="display: flex; align-items: center; cursor: pointer; font-weight: 400;"><input type="checkbox" style="margin-right: 0.5rem;">${d}</label>`);
 }
-
-// function renderAllVisualizations(data) {
-//   renderTimelineFilter(data);
-//   renderSankeyChart(data);
-// }
 
 function populateGenreFilter(data) {
   const genres = new Set(
