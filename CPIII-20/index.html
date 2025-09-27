@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Streaming Platforms Dashboard</title>
-    <!-- D3.js Libraries -->
+    
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
 </head>
 <body>
     <div class="dashboard-wrapper">
@@ -24,18 +24,33 @@
         <main class="dashboard-container" style="visibility: hidden;">
             <aside class="filters-panel">
                  <div class="filter-group"><input type="text" placeholder="TV Show / Movie Name"></div>
+                 
+                <div class="filter-group">
+                  <label>Platforms</label>
+                  <div class="platform-buttons">
+                      <button data-platform="Netflix">Netflix</button>
+                      <button data-platform="Amazon">Amazon</button>
+                      <button data-platform="Disney">Disney</button>
+                      <button data-platform="HBO">HBO</button>
+                      <button data-platform="Paramount">Paramount</button>
+                      <button data-platform="Apple">Apple</button>
+                  </div>
+                </div>
+
                  <div class="filter-group">
                     <label>Content Type</label>
-                    <select>
+                    <select id="content-type-filter">
                         <option>TV Shows & Movies</option>
                         <option>TV Shows</option>
                         <option>Movies</option>
                     </select>
                 </div>
+
                 <div class="filter-group">
                     <label>Genres</label>
                     <div class="genre-list" id="genre-filter-list"></div>
                 </div>
+
                  <div class="filter-group">
                     <label>Target Audience</label>
                     <div class="audience-buttons">
@@ -45,6 +60,7 @@
                         <button>Adult</button>
                     </div>
                 </div>
+
                 <div class="filter-group">
                     <label>IMDb Score</label>
                     <div id="imdb-slider-container" class="d3-slider-container"></div> 
@@ -53,20 +69,22 @@
                         <span id="imdb-max-value">10.0</span>
                     </div>
                 </div>
+
                 <button class="remove-filters-btn">Remove All Filters</button>
             </aside>
 
             <section class="viz-panel">
               <div id="timeline-filter" class="viz-card">
-                <div class="viz-card-header">
+                  <div class="viz-card-header">
                       Filter by Release Year
                   </div>
                   <div id="year-slider-container" class="d3-slider-container"></div>
                   <div class="slider-labels">
                       <span id="year-min-value">...</span>
                       <span id="year-max-value">...</span>
-                </div>
+                  </div>
               </div>
+
               <div id="treemap-chart" class="viz-card"></div>
               <div class="side-charts-container">
                   <div id="price-chart" class="viz-card"></div>
@@ -76,6 +94,7 @@
             </section>
         </main>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
-
