@@ -209,7 +209,7 @@ function createD3RangeSlider(config) {
 }
 
 function setupYearSlider(data) {
-    const yearData = data.filter(d => d.release_year && d.release_year > 1900);
+    const yearData = data.filter(d => d.release_year);
     const yearExtent = d3.extent(yearData, d => d.release_year);
     return createD3RangeSlider({
         containerId: '#year-slider-container', minLabelId: '#year-min-value',
@@ -287,7 +287,7 @@ function renderTimelineFilter(data) {
   const width = bounds.width - margin.left - margin.right;
   const height = bounds.height - margin.top - margin.bottom;
   const svg = container.append("svg").append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-  const yearData = data.filter(d => d.release_year && d.release_year > 1900);
+  const yearData = data.filter(d => d.release_year);
   const yearExtent = d3.extent(yearData, d => d.release_year);
   if (!yearExtent[0] || !yearExtent[1]) return; 
   const xScale = d3.scaleLinear().domain(yearExtent).range([0, width]);
