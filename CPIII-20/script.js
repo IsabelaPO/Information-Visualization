@@ -18,40 +18,40 @@ let currentFilters = { ...defaultFilters };
 let imdbSlider, yearSlider;
 
 document.addEventListener('DOMContentLoaded', () => {
-    Promise.all([
-        d3.csv("streaming_platforms.csv"),
-        d3.csv("streaming_prices.csv")
-    ]).then(([rawPlatformData, rawPriceData]) => {
-      
-        const processedPlatformData = rawPlatformData.map(d => ({
-            ...d,
-            release_year: +d.release_year,
-            imdb_score: +d.imdb_score,
-            type: d.type,
-            genres: d.genres || '',
-            age_category: d.age_category || 'Unknown',
-            main_genre: isValidString(d.genres) ? d.genres.split(',')[0].trim() : 'Unknown',
-            main_country: isValidString(d.production_countries) ? d.production_countries.split(',')[0].trim() : 'Unknown'
-        }));
-        
-        allPlatformData = processedPlatformData;
+  Promise.all([
+      d3.csv("streaming_platforms.csv"),
+      d3.csv("streaming_prices.csv")
+  ]).then(([rawPlatformData, rawPriceData]) => {
 
-        document.getElementById('loading').style.display = 'none';
-        document.querySelector('main').style.visibility = 'visible';
-    
-        setupContentTypeFilter();
-        populateGenreFilter(allPlatformData);
-        setupGenreFilter();
-        imdbSlider = setupImdbSlider(); // Store the returned slider object
-        yearSlider = setupYearSlider(allPlatformData); // Store the returned slider object
-        setupAudienceFilter();
-        setupRemoveFiltersButton();
-        
-        renderSankeyChart(allPlatformData);
+  const processedPlatformData = rawPlatformData.map(d => ({
+    ...d,
+    release_year: +d.release_year,
+    imdb_score: +d.imdb_score,
+    type: d.type,
+    genres: d.genres || '',
+    age_category: d.age_category || 'Unknown',
+    main_genre: isValidString(d.genres) ? d.genres.split(',')[0].trim() : 'Unknown',
+    main_country: isValidString(d.production_countries) ? d.production_countries.split(',')[0].trim() : 'Unknown'
+  }));
+  
+  allPlatformData = processedPlatformData;
 
-        window.addEventListener('resize', () => { clearTimeout(window.resizeTimer); window.resizeTimer = setTimeout(() => renderSankeyChart(allPlatformData), 250); });
+  document.getElementById('loading').style.display = 'none';
+  document.querySelector('main').style.visibility = 'visible';
 
-    }).catch(error => console.error("Data loading failed:", error));
+  setupContentTypeFilter();
+  populateGenreFilter(allPlatformData);
+  setupGenreFilter();
+  imdbSlider = setupImdbSlider(); // Store the returned slider object
+  yearSlider = setupYearSlider(allPlatformData); // Store the returned slider object
+  setupAudienceFilter();
+  setupRemoveFiltersButton();
+  
+  renderSankeyChart(allPlatformData);
+
+  window.addEventListener('resize', () => { clearTimeout(window.resizeTimer); window.resizeTimer = setTimeout(() => renderSankeyChart(allPlatformData), 250); });
+
+  }).catch(error => console.error("Data loading failed:", error));
 });
 
 
@@ -100,7 +100,6 @@ function setupRemoveFiltersButton() {
 
 
 function setupAudienceFilter() {
-  // ... (this function remains the same)
   const audienceMap = {
     'Toddler': 'toddlers', 'Children': 'child',
     'Teen': 'teenager', 'Adult': 'adult'
@@ -167,8 +166,10 @@ function setupYearSlider(data) {
   const yearExtent = d3.extent(yearData, d => d.release_year);
 
   return createD3RangeSlider({
-    containerId: '#year-slider-container', minLabelId: '#year-min-value',
-    maxLabelId: '#year-max-value', domain: yearExtent,
+    containerId: '#year-slider-container', 
+    minLabelId: '#year-min-value',
+    maxLabelId: '#year-max-value', 
+    domain: yearExtent,
     tickFormat: d3.format("d"),
     onBrushEnd: (range) => {
       const roundedRange = [Math.round(range[0]), Math.round(range[1])];
@@ -182,8 +183,10 @@ function setupYearSlider(data) {
 
 function setupImdbSlider() {
   return createD3RangeSlider({
-    containerId: '#imdb-slider-container', minLabelId: '#imdb-min-value',
-    maxLabelId: '#imdb-max-value', domain: [1.0, 10.0],
+    containerId: '#imdb-slider-container',
+    minLabelId: '#imdb-min-value',
+    maxLabelId: '#imdb-max-value', 
+    domain: [1.0, 10.0],
     tickFormat: d3.format(".1f"),
     onBrushEnd: (range) => {
       const formattedRange = [parseFloat(range[0].toFixed(1)), parseFloat(range[1].toFixed(1))];
@@ -358,6 +361,11 @@ function renderSankeyChart(data) {
       return "#888888"; // age categories gray
   };
 
+  var div = d3.select("body").append("div")
+     .attr("class", "tooltip-donut")
+     .style("position", "absolute")
+     .style("opacity", 0);
+  
   // Draw nodes
   svg.append("g")
       .selectAll("rect")
@@ -368,7 +376,30 @@ function renderSankeyChart(data) {
       .attr("y", d => d.y0)
       .attr("height", d => d.y1 - d.y0)
       .attr("width", d => d.x1 - d.x0)
-      .attr("fill", d => color(d.name));
+      .attr("fill", d => color(d.name))
+      .attr('opacity', 0.65)
+      .on('mouseover', function (event, d) {
+          d3.select(this).transition()
+              .duration(50)
+              .attr('opacity', 1);
+
+          div.transition()
+              .duration(50)
+              .style("opacity", 1);
+
+          div.html(d.value)
+              .style("left", (event.pageX + 5) + "px")
+              .style("top", (event.pageY - 20) + "px");
+      })
+     .on('mouseout', function (event, d) {
+          d3.select(this).transition()
+               .duration('50')
+               .attr('opacity', 0.65);
+
+          div.transition()
+            .duration('50')
+            .style("opacity", 0);
+      });
 
   // Draw links
   svg.append("g")
@@ -379,7 +410,30 @@ function renderSankeyChart(data) {
       .attr("class", "sankey-link")
       .attr("d", d3.sankeyLinkHorizontal())
       .attr("stroke", d => color(d.source.name))
-      .attr("stroke-width", d => Math.max(1, d.width));
+      .attr("stroke-width", d => Math.max(1, d.width))
+      .attr('opacity', 0.65)
+      .on('mouseover', function (event, d) {
+          d3.select(this).transition()
+              .duration(50)
+              .attr('opacity', 1);
+
+          div.transition()
+              .duration(50)
+              .style("opacity", 1);
+
+          div.html(d.value)
+              .style("left", (event.pageX + 5) + "px")
+              .style("top", (event.pageY - 20) + "px");
+      })
+     .on('mouseout', function (event, d) {
+          d3.select(this).transition()
+               .duration('50')
+               .attr('opacity', 0.65);
+
+          div.transition()
+            .duration('50')
+            .style("opacity", 0);
+      });
 
   // Draw node labels
   svg.append("g")
@@ -391,7 +445,7 @@ function renderSankeyChart(data) {
       .attr("y", d => (d.y1 + d.y0) / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
-      .text(d => d.name);
+      .text(d => d.name)
 
   // Chart title
   svg.append("text")

@@ -130,9 +130,6 @@ input[type="text"], select {
     body, html { overflow: auto; height: auto;}
 }
 
-
-/* new */
-
 /* Add this at the end of your style.css file */
 .imdb-slider {
     margin-top: 1rem;
@@ -188,4 +185,16 @@ input[type="text"], select {
 .audience-buttons button.active {
     background-color: var(--accent-color);
     color: white;
+}
+
+div.tooltip-donut {
+     position: absolute;
+     text-align: center;
+     padding: .3rem;
+     background: #FFFFFF;
+     color: #313639;
+     border: 1px solid #313639;
+     border-radius: 8px;
+     pointer-events: none;
+     font-size: 1rem;
 }
