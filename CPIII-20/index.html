@@ -26,7 +26,11 @@
                  <div class="filter-group"><input type="text" placeholder="TV Show / Movie Name"></div>
                  <div class="filter-group">
                     <label>Content Type</label>
-                    <select><option>TV Shows & Movies</option><option>TV Shows</option><option>Movies</option></select>
+                    <select>
+                        <option>TV Shows & Movies</option>
+                        <option>TV Shows</option>
+                        <option>Movies</option>
+                    </select>
                 </div>
                 <div class="filter-group">
                     <label>Genres</label>
@@ -42,17 +46,27 @@
                     </div>
                 </div>
                 <div class="filter-group">
-                    <label for="imdb-slider">IMDb Score</label>
-                    <input type="range" min="1" max="10" step="0.1" value="10" style="width: 100%;" id="imdb-slider">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted-text);">
-                        <span>1.0</span><span id="imdb-slider-value">10.0</span>
+                    <label>IMDb Score</label>
+                    <div id="imdb-slider-container" class="d3-slider-container"></div> 
+                    <div class="slider-labels">
+                        <span id="imdb-min-value">1.0</span>
+                        <span id="imdb-max-value">10.0</span>
                     </div>
                 </div>
                 <button class="remove-filters-btn">Remove All Filters</button>
             </aside>
 
             <section class="viz-panel">
-              <div id="timeline-filter" class="viz-card"></div>
+              <div id="timeline-filter" class="viz-card">
+                <div class="viz-card-header">
+                      Filter by Release Year
+                  </div>
+                  <div id="year-slider-container" class="d3-slider-container"></div>
+                  <div class="slider-labels">
+                      <span id="year-min-value">...</span>
+                      <span id="year-max-value">...</span>
+                </div>
+              </div>
               <div id="treemap-chart" class="viz-card"></div>
               <div class="side-charts-container">
                   <div id="price-chart" class="viz-card"></div>

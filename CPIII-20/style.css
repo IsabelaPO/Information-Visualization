@@ -129,3 +129,63 @@ input[type="text"], select {
     .dashboard-container { grid-template-columns: 1fr; height: auto;}
     body, html { overflow: auto; height: auto;}
 }
+
+
+/* new */
+
+/* Add this at the end of your style.css file */
+.imdb-slider {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Styling for our new slider cards */
+#timeline-filter {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 1rem;
+}
+.viz-card-header {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #334155;
+    text-align: center;
+    margin-bottom: -0.5rem;
+}
+
+/* Generic container for the D3 sliders */
+.d3-slider-container {
+    width: 100%;
+    height: 50px;
+}
+
+/* Generic label styling */
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--muted-text);
+    margin-top: -0.5rem; /* Pull labels closer to the axis */
+}
+
+/* Generic styles for any D3 brush slider */
+.d3-slider-container .selection {
+    fill: var(--accent-color);
+}
+.d3-slider-container .handle {
+    fill: #f1f5f9;
+    stroke: #64748b;
+}
+.d3-slider-container .axis text {
+    fill: var(--muted-text);
+    font-size: 0.75rem;
+}
+.d3-slider-container .axis path,
+.d3-slider-container .axis line {
+    stroke: var(--border-color);
+}
+
+.audience-buttons button.active {
+    background-color: var(--accent-color);
+    color: white;
+}
