@@ -1,8 +1,10 @@
 
 const isValidString = (str) => str && typeof str === 'string' && str.trim() !== '';
-
-
 let allPlatformData = [];
+const platformColors = {
+    "Netflix": "#E50914", "Amazon": "#FF9900", "Disney": "#113CCF",
+    "HBO": "#9068F4", "Paramount": "#0090FF", "Apple": "#A2AAAD"
+};
 // A constant to hold the default filter state for easy resetting ---
 const defaultFilters = {
     type: 'TV Shows & Movies',
@@ -39,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loading').style.display = 'none';
   document.querySelector('main').style.visibility = 'visible';
 
+  setupPlatformFilter();
   setupContentTypeFilter();
   populateGenreFilter(allPlatformData);
   setupGenreFilter();
@@ -47,17 +50,23 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAudienceFilter();
   setupRemoveFiltersButton();
   
-  renderSankeyChart(allPlatformData);
+  renderAllVisualizations(allPlatformData);
 
   window.addEventListener('resize', () => { clearTimeout(window.resizeTimer); window.resizeTimer = setTimeout(() => renderSankeyChart(allPlatformData), 250); });
 
   }).catch(error => console.error("Data loading failed:", error));
 });
 
+function renderAllVisualizations(data) {
+    renderSankeyChart(data);
+    renderQuantityChart(data);
+}
 
 function applyFilters() {
   let filteredData = allPlatformData;
-
+  if (currentFilters.selectedPlatforms.length > 0) {
+      filteredData = filteredData.filter(d => currentFilters.selectedPlatforms.includes(d.streaming_platform));
+  }
   if (currentFilters.type === 'TV Shows') filteredData = filteredData.filter(d => d.type === 'SHOW');
   if (currentFilters.type === 'Movies') filteredData = filteredData.filter(d => d.type === 'MOVIE');
 
@@ -75,7 +84,7 @@ function applyFilters() {
       filteredData = filteredData.filter(d => currentFilters.selectedAudiences.includes(d.age_category));
   }
 
-  renderSankeyChart(filteredData);
+  renderAllVisualizations(filteredData);
 }
 
 // --- NEW: Function to set up the 'Remove All Filters' button ---
@@ -86,6 +95,7 @@ function setupRemoveFiltersButton() {
 
     // 2. Reset the UI controls
     d3.select('#content-type-filter').property('value', defaultFilters.type);
+    d3.selectAll('.platform-buttons button').classed('active', false);
     d3.selectAll('#genre-filter-list input[type="checkbox"]').property('checked', false);
     d3.selectAll('.audience-buttons button').classed('active', false);
     
@@ -98,6 +108,37 @@ function setupRemoveFiltersButton() {
   });
 }
 
+function setupPlatformFilter() {
+    d3.selectAll('.platform-buttons button').each(function() {
+        const platform = d3.select(this).attr('data-platform');
+        if (platformColors[platform]) {
+            d3.select(this).style('background-color', platformColors[platform]);
+        }
+    });
+    d3.selectAll('.platform-buttons button').on('click', function() {
+        const button = d3.select(this);
+        button.classed('active', !button.classed('active'));
+        const selected = [];
+        d3.selectAll('.platform-buttons button.active').each(function() {
+            selected.push(d3.select(this).attr('data-platform'));
+        });
+        currentFilters.selectedPlatforms = selected;
+        const anyFilterActive = selected.length > 0;
+        d3.selectAll('.platform-buttons button').each(function() {
+            const btn = d3.select(this);
+            const platform = btn.attr('data-platform');
+            if (anyFilterActive) {
+                const isActive = selected.includes(platform);
+                btn.classed('active', isActive);
+                btn.classed('inactive', !isActive);
+            } else {
+                btn.classed('active', false);
+                btn.classed('inactive', false);
+            }
+        });
+        applyFilters();
+    });
+}
 
 function setupAudienceFilter() {
   const audienceMap = {
