@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Streaming Platforms Dashboard</title>
-    
+    <!--D3.js core library-->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!--D3 Sankey plugin-->
     <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+    <!--logic-->
     <script src="script.js"></script>
 
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="dashboard-wrapper">
+        <!--Dahsboard header-->
         <header>
             <div>
                 <h1>Dashboard Overview</h1>
@@ -20,12 +23,15 @@
             </div>
         </header>
 
+        <!--Loading spinner, shown until data is loaded-->
         <div id="loading"><div class="spinner"></div></div>
 
+        <!--Main dashboard content (hidden until data loads)-->
         <main class="dashboard-container" style="visibility: hidden;">
+            <!-- Sidebar: Filters panel -->
             <aside class="filters-panel">
                  <div class="filter-group"><input type="text" placeholder="TV Show / Movie Name"></div>
-                 
+                <!-- Platform filter (buttons with brand colors) -->
                 <div class="filter-group">
                   <label>Platforms</label>
                   <div class="platform-buttons">
@@ -37,7 +43,7 @@
                       <button data-platform="Apple">Apple</button>
                   </div>
                 </div>
-
+                <!-- Dropdown: content type filter -->
                  <div class="filter-group">
                     <label>Content Type</label>
                     <select id="content-type-filter">
@@ -46,12 +52,12 @@
                         <option>Movies</option>
                     </select>
                 </div>
-
+                <!-- Genres: dynamically populated checkboxes (JS populates this) -->
                 <div class="filter-group">
                     <label>Genres</label>
                     <div class="genre-list" id="genre-filter-list"></div>
                 </div>
-
+                <!-- Audience filter (buttons, JS maps to age categories) -->
                  <div class="filter-group">
                     <label>Target Audience</label>
                     <div class="audience-buttons">
@@ -61,7 +67,7 @@
                         <button>Adult</button>
                     </div>
                 </div>
-
+                <!-- IMDb slider: interactive filter for rating range -->
                 <div class="filter-group">
                     <label>IMDb Score</label>
                     <div id="imdb-slider-container" class="d3-slider-container"></div> 
@@ -70,11 +76,13 @@
                         <span id="imdb-max-value">10.0</span>
                     </div>
                 </div>
-
+                <!-- Reset filters button -->
                 <button class="remove-filters-btn">Remove All Filters</button>
             </aside>
 
+            <!-- Visualization panel -->
             <section class="viz-panel">
+            <!-- Timeline filter (release year slider) -->
               <div id="timeline-filter" class="viz-card">
                   <div class="viz-card-header">
                       Filter by Release Year
@@ -85,12 +93,13 @@
                       <span id="year-max-value">...</span>
                   </div>
               </div>
-
+              <!-- Other visualization cards -->
               <div id="treemap-chart" class="viz-card"></div>
               <div class="side-charts-container">
                   <div id="price-chart" class="viz-card"></div>
                   <div id="quantity-chart" class="viz-card"></div>
               </div>
+              <!-- Sankey chart visualization -->
               <div id="sankey-chart" class="viz-card"></div>
             </section>
         </main>

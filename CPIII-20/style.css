@@ -1,25 +1,28 @@
 :root {
-        --bg-color: #f1f5f9;
-        --card-bg: #ffffff;
-        --text-color: #1e293b;
-        --muted-text: #64748b;
-        --accent-color: #dc2626;
-        --border-color: #e2e8f0;
-        --header-height: 65px;
-        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    /* Theme variables (easy to update globally) */
+        --bg-color: #f1f5f9; /* background of the app */
+        --card-bg: #ffffff; /* background for cards/panels */
+        --text-color: #1e293b; /* main text color */
+        --muted-text: #64748b; /* lighter gray for secondary text */
+        --accent-color: #dc2626;  /* accent (red) for highlights */
+        --border-color: #e2e8f0; /* light border color */
+        --header-height: 65px; /* fixed header height */
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+                 0 2px 4px -2px rgb(0 0 0 / 0.1); /* card shadow */
 }
-
+/* Reset margins/padding, ensure consistent box model */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Fullscreen layout + base font */
 html, body {
     height: 100vh; width: 100vw; overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
 }
-
+/* Overall dashboard layout */
 .dashboard-wrapper { display: flex; flex-direction: column; height: 100%; }
-
+/* Header bar */
 header {
     height: var(--header-height);
     background-color: var(--card-bg);
@@ -32,7 +35,7 @@ header {
 }
 header div h1 { font-size: 1.25rem; font-weight: 700; }
 header div h2 { font-size: 1rem; font-weight: 400; color: var(--accent-color); }
-
+/* Main grid: sidebar + visualizations */
 .dashboard-container {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -40,7 +43,7 @@ header div h2 { font-size: 1rem; font-weight: 400; color: var(--accent-color); }
     padding: 1rem;
     height: calc(100vh - var(--header-height));
 }
-
+/* Sidebar filters panel */
 .filters-panel {
     background-color: var(--card-bg);
     padding: 1rem;
@@ -48,29 +51,34 @@ header div h2 { font-size: 1rem; font-weight: 400; color: var(--accent-color); }
     box-shadow: var(--shadow);
     overflow-y: auto;
 }
-
+/* Filter block spacing */
 .filter-group { margin-bottom: 1rem; }
 
 .filter-group:last-child { margin-bottom: 0; }
+/* Labels styling */
 .filter-group label, .filter-group .filter-label {
     font-weight: 700; color: #334155; display: block; margin-bottom: 0.5rem;
 }
+/* Inputs and dropdowns */
 input[type="text"], select {
     width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1;
     border-radius: 0.375rem; outline: none;
 }
+/* Genres list scrollable */
 .genre-list { max-height: 100px; overflow-y: auto; }
+/* Audience buttons group */
 .audience-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .audience-buttons button {
     padding: 0.25rem 0.75rem; background-color: #e2e8f0; color: #475569;
     border: none; border-radius: 9999px; font-size: 0.875rem; cursor: pointer;
 }
+/* Reset all filters button */
 .remove-filters-btn {
     width: 100%; margin-top: 1.5rem; padding: 0.75rem;
     background-color: var(--accent-color); color: white;
     border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;
 }
-
+/* Visualization panel grid */
 .viz-panel {
     display: grid;
     gap: 1rem;
@@ -81,7 +89,7 @@ input[type="text"], select {
         "treemap  side-charts"
         "sankey   sankey";
 }
-
+/* Generic chart card */
 .viz-card {
     background-color: var(--card-bg);
     padding: 0.2rem;
@@ -91,11 +99,12 @@ input[type="text"], select {
     flex-direction: column;
     overflow: hidden;
 }
-
+/* Assign specific grid areas */
 #timeline-filter { grid-area: timeline; }
 #treemap-chart { grid-area: treemap; }
 #sankey-chart { grid-area: sankey; }
 
+/* Side charts stacked vertically */
 .side-charts-container {
     grid-area: side-charts;
     display: flex;
@@ -104,11 +113,12 @@ input[type="text"], select {
     overflow: hidden;
 }
 .side-charts-container .viz-card { flex: 1 1 0; }
-
+/* Loading overlay */
 #loading {
     position: fixed; inset: 0; background-color: rgba(255, 255, 255, 0.8);
     display: flex; align-items: center; justify-content: center; z-index: 50;
 }
+/* Spinner animation */
 .spinner {
     width: 3rem; height: 3rem; border-radius: 50%;
     border: 4px solid #e2e8f0; border-top-color: var(--accent-color);
@@ -116,6 +126,7 @@ input[type="text"], select {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Chart defaults */
 .viz-card svg { display: block; width: 100%; height: 100%; }
 .axis path, .axis line { stroke: var(--border-color); }
 .axis text { fill: var(--muted-text); font-size: 0.75rem; }
@@ -125,18 +136,19 @@ input[type="text"], select {
 .sankey-node text { font-size: 11px; font-weight: 500; text-shadow: 0 0 2px white; }
 .brush .selection { fill: rgba(100, 116, 139, 0.2); stroke: #475569; }
 
+/* Responsive: single column for smaller screens */
 @media (max-width: 992px) {
     .dashboard-container { grid-template-columns: 1fr; height: auto;}
     body, html { overflow: auto; height: auto;}
 }
 
-/* Add this at the end of your style.css file */
+/* IMDb slider spacing */
 .imdb-slider {
     margin-top: 1rem;
     margin-bottom: 0.5rem;
 }
 
-/* Styling for our new slider cards */
+/* Special styling for year slider card */
 #timeline-filter {
     display: flex;
     flex-direction: column;
@@ -214,25 +226,25 @@ input[type="text"], select {
     transition: all 0.2s ease-in-out;
 }
 
-/* 1. Dynamic grow effect on hover */
+/* Dynamic grow effect on hover */
 .platform-buttons button:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* 2. "Halo" effect for active selection, plus a slight press effect */
+/* "Halo" effect for active selection, plus a slight press effect */
 .platform-buttons button.active {
     box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
     transform: scale(1.05);
 }
 
-/* 3. Fade out non-selected buttons when a filter is active */
+/* Fade out non-selected buttons when a filter is active */
 .platform-buttons button.inactive {
     opacity: 0.4;
     transform: scale(0.95);
     box-shadow: none;
 }
-
+/* Styling for charts */
 div.tooltip-donut {
      position: absolute;
      text-align: center;
