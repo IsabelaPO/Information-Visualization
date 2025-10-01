@@ -15,10 +15,18 @@ const platformColors = {
     "Apple": "#A2AAAD"
 };
 
+const audienceColor = {
+  "toddlers": "#FF6F00",
+  "child": "#D500F9",
+  "teenager": "#ff1493",
+  "adult": "#FFD600" 
+}
+
+
 // A constant to hold the default filter state for easy resetting ---
 //how filters look in the dashboard initially 
 const defaultFilters = {
-    type: 'TV Shows & Movies',
+    type: [],
     imdbRange: [1.0, 10.0],
     selectedGenres: [],
     yearRange: null,
@@ -86,8 +94,11 @@ function applyFilters() {
       filteredData = filteredData.filter(d => currentFilters.selectedPlatforms.includes(d.streaming_platform));
   }
   //filter content type
-  if (currentFilters.type === 'TV Shows') filteredData = filteredData.filter(d => d.type === 'SHOW');
-  if (currentFilters.type === 'Movies') filteredData = filteredData.filter(d => d.type === 'MOVIE');
+  /*if (currentFilters.type === 'TV Shows') filteredData = filteredData.filter(d => d.type === 'SHOW');
+  if (currentFilters.type === 'Movies') filteredData = filteredData.filter(d => d.type === 'MOVIE');*/
+  if (currentFilters.type.length > 0) {
+      filteredData = filteredData.filter(d => currentFilters.type.includes(d.type));
+  }
   
   //filter imdb range
   filteredData = filteredData.filter(d => d.imdb_score >= currentFilters.imdbRange[0] && d.imdb_score <= currentFilters.imdbRange[1]);
@@ -118,7 +129,7 @@ function setupRemoveFiltersButton() {
     currentFilters = { ...defaultFilters };
 
     // 2. Reset the UI controls
-    d3.select('#content-type-filter').property('value', defaultFilters.type);
+    d3.select('content-type-filter button').classed('active', false);
     d3.selectAll('.platform-buttons button').classed('active', false);
     d3.selectAll('#genre-filter-list input[type="checkbox"]').property('checked', false);
     d3.selectAll('.audience-buttons button').classed('active', false);
@@ -175,25 +186,75 @@ function setupPlatformFilter() {
 }
 
 function setupAudienceFilter() {
-  const audienceMap = {
-    'Toddler': 'toddlers', 'Children': 'child',
-    'Teen': 'teenager', 'Adult': 'adult'
-  };
-  d3.selectAll('.audience-buttons button').on('click', function() {
-    const button = d3.select(this);
-    //visually marks the button as selected/unselected
-    button.classed('active', !button.classed('active'));
-    // Collect all currently active audience buttons
-    const selected = [];
-    d3.selectAll('.audience-buttons button.active').each(function() {
-        const buttonText = d3.select(this).text();
-        const dataValue = audienceMap[buttonText];
-        if (dataValue) selected.push(dataValue);
+      d3.selectAll('.audience-buttons button').each(function() {
+        const audience = d3.select(this).attr('audience-buttons');
+        if (audienceColor[audience]) {
+            d3.select(this).style('background-color', audienceColor[audience]);
+        }
     });
-    // Update the global filter state with selected audiences
-    currentFilters.selectedAudiences = selected;
-    applyFilters();
-  });
+    //when a button is clicked, it toggles to active class (for css)
+    d3.selectAll('.audience-buttons button').on('click', function() {
+        const button = d3.select(this);
+        //visually marks the button as selected/unselected
+        button.classed('active', !button.classed('active'));
+        //iterates through active buttons, collects values into selected array
+        //saves the array into currentFilters
+        const selected = [];
+        d3.selectAll('.audience-buttons button.active').each(function() {
+            selected.push(d3.select(this).attr('audience-buttons'));
+        });
+        currentFilters.selectedAudiences = selected;
+        const anyFilterActive = selected.length > 0;
+        d3.selectAll('.audience-buttons button').each(function() {
+            const btn = d3.select(this);
+            const audience = btn.attr('audience-buttons');
+            //if one platform is active keep those selected as "active" and
+            //mark all non-selected buttons as "inactive"
+            if (anyFilterActive) {
+                const isActive = selected.includes(audience);
+                btn.classed('active', isActive);
+                btn.classed('inactive', !isActive);
+            } else {
+              //If no platform is selected clear both "active" and "inactive" classes
+                btn.classed('active', false);
+                btn.classed('inactive', false);
+            }
+        });
+        applyFilters();
+    });
+}
+
+function setupContentTypeFilter() {
+    d3.selectAll('.content-type-filter button').each(function() {
+        
+    d3.select(this).style('background-color', "#77dd77");
+        
+    });
+    //when a button is clicked, it toggles to active class (for css)
+    d3.selectAll('.content-type-filter button').on('click', function() {
+        const button = d3.select(this);
+        //visually marks the button as selected/unselected
+        button.classed('active', !button.classed('active'));
+        const selected = [];
+        d3.selectAll('.content-type-filter button.active').each(function() {
+            selected.push(d3.select(this).attr('content-type-filter'));
+        });
+        currentFilters.type = selected;
+        const anyFilterActive = selected.length > 0;
+        d3.selectAll('.content-type-filter button').each(function() {
+            const btn = d3.select(this);
+            const typeaux = btn.attr('content-type-filter');
+            if (anyFilterActive) {
+                const isActive = selected.includes(typeaux);
+                btn.classed('active', isActive);
+                btn.classed('inactive', !isActive);
+            } else {
+                btn.classed('active', false);
+                btn.classed('inactive', false);
+            }
+        });
+        applyFilters();
+    });
 }
 
 // --- MODIFIED: The slider creator now returns a reset function ---
@@ -255,10 +316,11 @@ function createD3RangeSlider(config) {
 function setupYearSlider(data) {
     const yearData = data.filter(d => d.release_year);
     const yearExtent = d3.extent(yearData, d => d.release_year);
-    //cleans container before using 
-    return createD3RangeSlider({
-        containerId: '#year-slider-container', minLabelId: '#year-min-value',
-        maxLabelId: '#year-max-value', domain: yearExtent,
+    const slider = createD3RangeSlider({
+        containerId: '#year-slider-container',
+        minLabelId: '#year-min-value',
+        maxLabelId: '#year-max-value',
+        domain: yearExtent,
         tickFormat: d3.format("d"),
         onBrushEnd: (range) => {
             const roundedRange = [Math.round(range[0]), Math.round(range[1])];
@@ -268,29 +330,36 @@ function setupYearSlider(data) {
             }
         }
     });
+
+    // Set the min and max labels
+    d3.select('#year-min-value').text(yearExtent[0]);
+    d3.select('#year-max-value').text(yearExtent[1]);
+
+    return slider;
 }
 
 function setupImdbSlider() {
-  return createD3RangeSlider({
+  const slider = createD3RangeSlider({
     containerId: '#imdb-slider-container',
-    minLabelId: '#imdb-min-value',
-    maxLabelId: '#imdb-max-value', 
     domain: [1.0, 10.0],
     tickFormat: d3.format(".1f"),
+    showTickLabels: true, // show labels along ticks
     onBrushEnd: (range) => {
       const formattedRange = [parseFloat(range[0].toFixed(1)), parseFloat(range[1].toFixed(1))];
       currentFilters.imdbRange = formattedRange;
       applyFilters();
     }
   });
+
+  // Remove the max tick label
+  d3.select('#imdb-slider-container')
+    .selectAll('.tick text')
+    .filter(d => d === 10) // filter the max value
+    .text('');             // remove its text
+
+  return slider;
 }
 
-function setupContentTypeFilter() {
-  d3.select('#content-type-filter').on('change', (event) => {
-    currentFilters.type = event.target.value;
-    applyFilters();
-  });
-}
 
 function setupGenreFilter() {
   d3.selectAll('#genre-filter-list input[type="checkbox"]').on('change', () => {
@@ -435,15 +504,6 @@ function renderSankeyChart(data) {
       links: links.map(d => ({ ...d }))
   });
 
-  // Define platform colors
-  const platformColors = {
-      "Netflix": "#FF0000",    // red
-      "Paramount": "#00008B",  // dark blue
-      "Amazon": "#FFD700",     // yellow
-      "Apple": "#888888",      // gray
-      "Disney": "#ADD8E6",     // light blue
-      "HBO": "#800080"         // purple
-  };
 
   // Assign colors for genres using a categorical scale
   const genreNames = Array.from(new Set(validData.map(d => d.main_genre)));
@@ -453,14 +513,14 @@ function renderSankeyChart(data) {
   const color = d => {
       if (platformColors[d]) return platformColors[d];
       if (genreNames.includes(d)) return genreColorScale(d);
-      return "#888888"; // age categories gray
+      if (audienceColor[d]) return audienceColor[d];
+      //return "#888888"; // age categories gray
   };
 
   var div = d3.select("body").append("div")
      .attr("class", "tooltip-donut")
      .style("position", "absolute")
      .style("opacity", 0);
-  
   // Draw nodes
   svg.append("g")
       .selectAll("rect")
@@ -529,7 +589,12 @@ function renderSankeyChart(data) {
             .duration('50')
             .style("opacity", 0);
       });
-
+const audienceLabels = {
+    adult: "Adult",
+    child: "Children",
+    teenager: "Teenager",
+    toddlers: "Toddler"
+};
   // Draw node labels
   svg.append("g")
       .selectAll("text")
@@ -540,7 +605,10 @@ function renderSankeyChart(data) {
       .attr("y", d => (d.y1 + d.y0) / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
-      .text(d => d.name)
+      .text(d => {
+        // Replace audience nodes with mapped labels
+        return audienceLabels[d.name] || d.name;
+    });
 
   // Chart title
   svg.append("text")

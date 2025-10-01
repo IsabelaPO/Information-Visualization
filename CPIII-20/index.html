@@ -46,11 +46,10 @@
                 <!-- Dropdown: content type filter -->
                  <div class="filter-group">
                     <label>Content Type</label>
-                    <select id="content-type-filter">
-                        <option>TV Shows & Movies</option>
-                        <option>TV Shows</option>
-                        <option>Movies</option>
-                    </select>
+                    <div class="content-type-filter">
+                        <button content-type-filter="SHOW">TV Shows</button>
+                        <button content-type-filter="MOVIE">Movies</button>
+                    </div>
                 </div>
                 <!-- Genres: dynamically populated checkboxes (JS populates this) -->
                 <div class="filter-group">
@@ -61,15 +60,15 @@
                  <div class="filter-group">
                     <label>Target Audience</label>
                     <div class="audience-buttons">
-                        <button>Toddler</button>
-                        <button>Children</button>
-                        <button>Teen</button>
-                        <button>Adult</button>
+                        <button audience-buttons="toddlers">Toddler</button>
+                        <button audience-buttons="child">Children</button>
+                        <button audience-buttons="teenager">Teenager</button>
+                        <button audience-buttons="adult">Adult</button>
                     </div>
                 </div>
                 <!-- IMDb slider: interactive filter for rating range -->
                 <div class="filter-group">
-                    <label>IMDb Score</label>
+                    <label>IMDB Score</label>
                     <div id="imdb-slider-container" class="d3-slider-container"></div> 
                     <div class="slider-labels">
                         <span id="imdb-min-value">1.0</span>
@@ -94,10 +93,16 @@
                   </div>
               </div>
               <!-- Other visualization cards -->
-              <div id="treemap-chart" class="viz-card"></div>
+              <div id="treemap-chart" class="viz-card">
+                <img src="treemap.png" alt="Treemap placeholder" class="card-image">
+              </div>
               <div class="side-charts-container">
-                  <div id="price-chart" class="viz-card"></div>
-                  <div id="quantity-chart" class="viz-card"></div>
+                  <div id="price-chart" class="viz-card">
+                    <img src="linechart.png" alt="Treemap placeholder" class="card-image">
+                  </div>
+                  <div id="quantity-chart" class="viz-card">
+                    <img src="dotplot.png" alt="Treemap placeholder" class="card-image">
+                  </div>
               </div>
               <!-- Sankey chart visualization -->
               <div id="sankey-chart" class="viz-card"></div>

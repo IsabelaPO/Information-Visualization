@@ -5,6 +5,7 @@
         --text-color: #1e293b; /* main text color */
         --muted-text: #64748b; /* lighter gray for secondary text */
         --accent-color: #dc2626;  /* accent (red) for highlights */
+        --slider-color: #77dd77;
         --border-color: #e2e8f0; /* light border color */
         --header-height: 65px; /* fixed header height */
         --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
@@ -42,6 +43,7 @@ header div h2 { font-size: 1rem; font-weight: 400; color: var(--accent-color); }
     gap: 1rem;
     padding: 1rem;
     height: calc(100vh - var(--header-height));
+    overflow: hidden;
 }
 /* Sidebar filters panel */
 .filters-panel {
@@ -67,11 +69,93 @@ input[type="text"], select {
 /* Genres list scrollable */
 .genre-list { max-height: 100px; overflow-y: auto; }
 /* Audience buttons group */
-.audience-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.audience-buttons button {
-    padding: 0.25rem 0.75rem; background-color: #e2e8f0; color: #475569;
-    border: none; border-radius: 9999px; font-size: 0.875rem; cursor: pointer;
+
+.audience-buttons { 
+    display: grid;
+    grid-template-columns: repeat(3, auto); 
+    justify-content: center; 
+    gap: 0.75rem;  
 }
+.audience-buttons button {
+   /* From circle to pill shape */
+    border-radius: 9999px; /* This creates the pill shape */
+    padding: 0.5rem 1rem; /* Give the text space */
+    width: auto; /* Allow width to be flexible */
+    height: auto; /* Allow height to be flexible */
+
+    /* Rest of the styles are similar */
+    border: none;
+    color: white;
+    font-weight: 600; /* A slightly less bold font looks better with full words */
+    font-size: 0.875rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease-in-out;
+}
+
+.audience-buttons button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.audience-buttons button.active {
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+    transform: scale(1.05);
+}
+
+.audience-buttons button.inactive {
+    opacity: 0.4;
+    transform: scale(0.95);
+    box-shadow: none;
+}
+
+.content-type-filter { 
+    display: grid;
+    grid-template-columns: repeat(3, auto); 
+    justify-content: center; 
+    gap: 0.75rem; 
+}
+.content-type-filter button {
+     /* From circle to pill shape */
+    border-radius: 9999px; /* This creates the pill shape */
+    padding: 0.5rem 1rem; /* Give the text space */
+    width: auto; /* Allow width to be flexible */
+    height: auto; /* Allow height to be flexible */
+
+    /* Rest of the styles are similar */
+    border: none;
+    color: white;
+    font-weight: 600; /* A slightly less bold font looks better with full words */
+    font-size: 0.875rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease-in-out;
+}
+
+/* Dynamic grow effect on hover */
+.pcontent-type-filter button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.content-type-filter button.active {
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+    transform: scale(1.05);
+}
+
+/* Fade out non-selected buttons when a filter is active */
+.content-type-filter button.inactive {
+    opacity: 0.4;
+    transform: scale(0.95);
+    box-shadow: none;
+}
+
 /* Reset all filters button */
 .remove-filters-btn {
     width: 100%; margin-top: 1.5rem; padding: 0.75rem;
@@ -88,6 +172,8 @@ input[type="text"], select {
         "timeline timeline"
         "treemap  side-charts"
         "sankey   sankey";
+    overflow-y: auto;     /* enable vertical scroll */
+    padding-right: 0.5rem; /* small padding so scrollbar doesn’t overlap */
 }
 /* Generic chart card */
 .viz-card {
@@ -97,7 +183,7 @@ input[type="text"], select {
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
 }
 /* Assign specific grid areas */
 #timeline-filter { grid-area: timeline; }
@@ -110,7 +196,7 @@ input[type="text"], select {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    overflow: hidden;
+    overflow: auto;
 }
 .side-charts-container .viz-card { flex: 1 1 0; }
 /* Loading overlay */
@@ -174,12 +260,12 @@ input[type="text"], select {
     justify-content: space-between;
     font-size: 0.75rem;
     color: var(--muted-text);
-    margin-top: -0.5rem; /* Pull labels closer to the axis */
+    margin-top: -0.89rem; /* Pull labels closer to the axis */
 }
 
 /* Generic styles for any D3 brush slider */
 .d3-slider-container .selection {
-    fill: var(--accent-color);
+    fill: var(--slider-color);
 }
 .d3-slider-container .handle {
     fill: #f1f5f9;
@@ -194,10 +280,6 @@ input[type="text"], select {
     stroke: var(--border-color);
 }
 
-.audience-buttons button.active {
-    background-color: var(--accent-color);
-    color: white;
-}
 
 .platform-buttons {
     display: grid;
@@ -244,6 +326,7 @@ input[type="text"], select {
     transform: scale(0.95);
     box-shadow: none;
 }
+
 /* Styling for charts */
 div.tooltip-donut {
      position: absolute;
@@ -256,3 +339,10 @@ div.tooltip-donut {
      pointer-events: none;
      font-size: 1rem;
 }
+
+.viz-card img.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
