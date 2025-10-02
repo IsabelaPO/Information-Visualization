@@ -15,12 +15,12 @@ const platformColors = {
     "Apple": "#A2AAAD"
 };
 
-const audienceColor = {
-  "toddlers": "#FF6F00",
-  "child": "#D500F9",
-  "teenager": "#ff1493",
-  "adult": "#FFD600" 
-}
+// const audienceColor = {
+//   "toddlers": "#FF6F00",
+//   "child": "#D500F9",
+//   "teenager": "#ff1493",
+//   "adult": "#FFD600" 
+// }
 
 
 // A constant to hold the default filter state for easy resetting ---
@@ -129,10 +129,10 @@ function setupRemoveFiltersButton() {
     currentFilters = { ...defaultFilters };
 
     // 2. Reset the UI controls
-    d3.select('content-type-filter button').classed('active', false);
-    d3.selectAll('.platform-buttons button').classed('active', false);
+    d3.selectAll('.content-type-filter button').classed('active', false).classed('inactive', false);
+    d3.selectAll('.platform-buttons button').classed('active', false).classed('inactive', false);
     d3.selectAll('#genre-filter-list input[type="checkbox"]').property('checked', false);
-    d3.selectAll('.audience-buttons button').classed('active', false);
+    d3.selectAll('.audience-buttons button').classed('active', false).classed('inactive', false);
     
     // Reset the sliders using their returned methods
     if (imdbSlider) imdbSlider.reset();
@@ -186,12 +186,12 @@ function setupPlatformFilter() {
 }
 
 function setupAudienceFilter() {
-      d3.selectAll('.audience-buttons button').each(function() {
-        const audience = d3.select(this).attr('audience-buttons');
-        if (audienceColor[audience]) {
-            d3.select(this).style('background-color', audienceColor[audience]);
-        }
-    });
+    //   d3.selectAll('.audience-buttons button').each(function() {
+    //     const audience = d3.select(this).attr('audience-buttons');
+    //     if (audienceColor[audience]) {
+    //         d3.select(this).style('background-color', audienceColor[audience]);
+    //     }
+    // });
     //when a button is clicked, it toggles to active class (for css)
     d3.selectAll('.audience-buttons button').on('click', function() {
         const button = d3.select(this);
@@ -225,11 +225,11 @@ function setupAudienceFilter() {
 }
 
 function setupContentTypeFilter() {
-    d3.selectAll('.content-type-filter button').each(function() {
+    // d3.selectAll('.content-type-filter button').each(function() {
         
-    d3.select(this).style('background-color', "#77dd77");
+    // //d3.select(this).style('background-color', "#77dd77");
         
-    });
+    // });
     //when a button is clicked, it toggles to active class (for css)
     d3.selectAll('.content-type-filter button').on('click', function() {
         const button = d3.select(this);
@@ -372,14 +372,6 @@ function setupGenreFilter() {
   });
 }
 
-//Collects unique genres.
-function populateGenreFilter(data) {
-  const genres = new Set(data.flatMap(d => isValidString(d.genres) ? d.genres.split(',').map(g => g.trim()) : []));
-  d3.select("#genre-filter-list").selectAll("div")
-    .data(Array.from(genres).sort()).enter().append("div")
-    .html(d => `<label style="display: flex; align-items: center; cursor: pointer; font-weight: 400;"><input type="checkbox" style="margin-right: 0.5rem;">${d}</label>`);
-}
-
 function populateGenreFilter(data) {
   const genres = new Set(
     data.flatMap(d => 
@@ -387,10 +379,10 @@ function populateGenreFilter(data) {
         g.trim()) : []));
 
   d3.select("#genre-filter-list")
-  .selectAll("div")
-  .data(Array.from(genres).sort())
-  .enter().append("div").html(d => 
-      `<label style="display: flex; align-items: center; cursor: pointer;"><input type="checkbox" style="margin-right: 0.5rem;">${d}</label>`);
+    .selectAll("div")
+    .data(Array.from(genres).sort())
+    .enter().append("div").html(d => 
+        `<label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;"><input type="checkbox" style="margin-right: 0.5rem;">${d}</label>`);
 }
 
 function renderTimelineFilter(data) {
@@ -513,8 +505,8 @@ function renderSankeyChart(data) {
   const color = d => {
       if (platformColors[d]) return platformColors[d];
       if (genreNames.includes(d)) return genreColorScale(d);
-      if (audienceColor[d]) return audienceColor[d];
-      //return "#888888"; // age categories gray
+      //if (audienceColor[d]) return audienceColor[d];
+      return "#888888"; // age categories gray
   };
 
   var div = d3.select("body").append("div")
@@ -542,9 +534,14 @@ function renderSankeyChart(data) {
               .duration(50)
               .style("opacity", 1);
 
-          div.html(d.value)
-            .style("left", (event.pageX - 20) + "px")
-            .style("top", (event.pageY - 50) + "px");
+          div.html(`
+              <div>Total quantity: ${d.value}</div>
+            `)
+
+          const bbox = div.node().getBoundingClientRect();
+
+          div.style("left", (event.pageX - bbox.width / 2) + "px")
+            .style("top", (event.pageY - bbox.height - 10) + "px");
       })
      .on('mouseout', function (event, d) {
           d3.select(this).transition()
@@ -569,16 +566,24 @@ function renderSankeyChart(data) {
       .attr('opacity', 0.65)
       .on('mouseover', function (event, d) {
           d3.select(this).transition()
-              .duration(50)
-              .attr('opacity', 1);
+            .duration(50)
+            .attr('opacity', 1);
 
           div.transition()
-              .duration(50)
-              .style("opacity", 1);
+            .duration(50)
+            .style("opacity", 1);
 
-          div.html(d.value)
-              .style("left", (event.pageX - 20) + "px")
-              .style("top", (event.pageY - 50) + "px");
+          div.html(`
+              <div>Source: ${d.source.name}</div>
+              <div>Target: ${d.target.name}</div>
+              <div>Quantity: ${d.value}</div>
+            `)
+            .style("text-align", "left")
+
+          const bbox = div.node().getBoundingClientRect();
+
+          div.style("left", (event.pageX - bbox.width / 2) + "px")
+            .style("top", (event.pageY - bbox.height - 10) + "px");
       })
      .on('mouseout', function (event, d) {
           d3.select(this).transition()
@@ -620,3 +625,4 @@ const audienceLabels = {
       .style("fill", "#334155")
       .text("Content Flow: Platform → Genre → Target Audience");
 }
+

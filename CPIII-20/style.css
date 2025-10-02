@@ -7,9 +7,11 @@
         --accent-color: #dc2626;  /* accent (red) for highlights */
         --slider-color: #77dd77;
         --border-color: #e2e8f0; /* light border color */
+        --highlight-color: #77dd77;
         --header-height: 65px; /* fixed header height */
         --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
                  0 2px 4px -2px rgb(0 0 0 / 0.1); /* card shadow */
+        --base-button-color: #959ea8;
 }
 /* Reset margins/padding, ensure consistent box model */
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -72,8 +74,8 @@ input[type="text"], select {
 
 .audience-buttons { 
     display: grid;
-    grid-template-columns: repeat(3, auto); 
-    justify-content: center; 
+    grid-template-columns: repeat(2, auto); 
+    justify-content: left; 
     gap: 0.75rem;  
 }
 .audience-buttons button {
@@ -86,7 +88,7 @@ input[type="text"], select {
     /* Rest of the styles are similar */
     border: none;
     color: white;
-    font-weight: 600; /* A slightly less bold font looks better with full words */
+    /*font-weight: 600; /* A slightly less bold font looks better with full words */
     font-size: 0.875rem;
     cursor: pointer;
     display: flex;
@@ -94,6 +96,7 @@ input[type="text"], select {
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     transition: all 0.2s ease-in-out;
+    background-color: var(--base-button-color);
 }
 
 .audience-buttons button:hover {
@@ -102,7 +105,7 @@ input[type="text"], select {
 }
 
 .audience-buttons button.active {
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
     transform: scale(1.05);
 }
 
@@ -115,11 +118,10 @@ input[type="text"], select {
 .content-type-filter { 
     display: grid;
     grid-template-columns: repeat(3, auto); 
-    justify-content: center; 
+    justify-content: left; 
     gap: 0.75rem; 
 }
 .content-type-filter button {
-     /* From circle to pill shape */
     border-radius: 9999px; /* This creates the pill shape */
     padding: 0.5rem 1rem; /* Give the text space */
     width: auto; /* Allow width to be flexible */
@@ -136,6 +138,7 @@ input[type="text"], select {
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     transition: all 0.2s ease-in-out;
+    background-color: var(--base-button-color);
 }
 
 /* Dynamic grow effect on hover */
@@ -145,7 +148,7 @@ input[type="text"], select {
 }
 
 .content-type-filter button.active {
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
     transform: scale(1.05);
 }
 
@@ -298,7 +301,7 @@ input[type="text"], select {
     /* Rest of the styles are similar */
     border: none;
     color: white;
-    font-weight: 600; /* A slightly less bold font looks better with full words */
+    /*font-weight: 600; /* A slightly less bold font looks better with full words */
     font-size: 0.875rem;
     cursor: pointer;
     display: flex;
@@ -316,7 +319,7 @@ input[type="text"], select {
 
 /* "Halo" effect for active selection, plus a slight press effect */
 .platform-buttons button.active {
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
     transform: scale(1.05);
 }
 
