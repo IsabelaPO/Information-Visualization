@@ -11,7 +11,7 @@
         --header-height: 65px; /* fixed header height */
         --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
                  0 2px 4px -2px rgb(0 0 0 / 0.1); /* card shadow */
-        --base-button-color: #959ea8;
+        --base-button-color: #77dd77;
 }
 /* Reset margins/padding, ensure consistent box model */
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,7 +28,7 @@ html, body {
 /* Header bar */
 header {
     height: var(--header-height);
-    background-color: var(--card-bg);
+    background-color: var(--base-button-color);
     padding: 0.5rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
     box-shadow: var(--shadow);

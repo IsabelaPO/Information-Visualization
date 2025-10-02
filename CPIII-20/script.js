@@ -15,12 +15,12 @@ const platformColors = {
     "Apple": "#A2AAAD"
 };
 
-// const audienceColor = {
-//   "toddlers": "#FF6F00",
-//   "child": "#D500F9",
-//   "teenager": "#ff1493",
-//   "adult": "#FFD600" 
-// }
+/*const audienceColor = {
+ "toddlers": "#FF6F00",
+  "child": "#D500F9",
+  "teenager": "#ff1493",
+   "adult": "#FFD600" 
+ }*/
 
 
 // A constant to hold the default filter state for easy resetting ---
@@ -162,6 +162,7 @@ function setupPlatformFilter() {
         d3.selectAll('.platform-buttons button.active').each(function() {
             selected.push(d3.select(this).attr('data-platform'));
         });
+
         //example: Netflix and Disney 
         //currentFilters.selectedPlatforms = ["Netflix", "Disney"]
         currentFilters.selectedPlatforms = selected;
@@ -186,12 +187,12 @@ function setupPlatformFilter() {
 }
 
 function setupAudienceFilter() {
-    //   d3.selectAll('.audience-buttons button').each(function() {
-    //     const audience = d3.select(this).attr('audience-buttons');
-    //     if (audienceColor[audience]) {
-    //         d3.select(this).style('background-color', audienceColor[audience]);
-    //     }
-    // });
+/*d3.selectAll('.audience-buttons button').each(function() {
+   const audience = d3.select(this).attr('audience-buttons');
+   if (audienceColor[audience]) {
+        d3.select(this).style('background-color', audienceColor[audience]);
+    }
+});*/
     //when a button is clicked, it toggles to active class (for css)
     d3.selectAll('.audience-buttons button').on('click', function() {
         const button = d3.select(this);
@@ -225,11 +226,11 @@ function setupAudienceFilter() {
 }
 
 function setupContentTypeFilter() {
-    // d3.selectAll('.content-type-filter button').each(function() {
+     /*d3.selectAll('.content-type-filter button').each(function() {
         
-    // //d3.select(this).style('background-color', "#77dd77");
+     d3.select(this).style('background-color', "#77dd77");
         
-    // });
+     });*/
     //when a button is clicked, it toggles to active class (for css)
     d3.selectAll('.content-type-filter button').on('click', function() {
         const button = d3.select(this);
@@ -506,7 +507,7 @@ function renderSankeyChart(data) {
       if (platformColors[d]) return platformColors[d];
       if (genreNames.includes(d)) return genreColorScale(d);
       //if (audienceColor[d]) return audienceColor[d];
-      return "#888888"; // age categories gray
+      return "#77dd77"; // age categories gray
   };
 
   var div = d3.select("body").append("div")
