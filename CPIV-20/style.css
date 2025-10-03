@@ -87,6 +87,7 @@ input[type="text"], select {
     justify-content: left; 
     gap: 0.75rem;  
 }
+
 .audience-buttons button {
    /* From circle to pill shape */
     border-radius: 9999px; /* This creates the pill shape */
@@ -130,6 +131,7 @@ input[type="text"], select {
     justify-content: left; 
     gap: 0.75rem; 
 }
+
 .content-type-filter button {
     border-radius: 9999px; /* This creates the pill shape */
     padding: 0.5rem 1rem; /* Give the text space */
@@ -147,7 +149,7 @@ input[type="text"], select {
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     transition: all 0.2s ease-in-out;
-    background-color: var(--base-button-color);
+    /* background-color: var(--base-button-color); */
 }
 
 /* Dynamic grow effect on hover */

@@ -16,6 +16,11 @@ const platformColors = {
     "Apple": "#A2AAAD"
 };
 
+const typeFilterColors = {
+  "SHOW": "#228B22",
+  "MOVIE": "#8bbb8bc5"
+};
+
 
 // A constant to hold the default filter state for easy resetting ---
 //how filters look in the dashboard initially 
@@ -191,78 +196,73 @@ function setupPlatformFilter() {
 }
 
 function setupAudienceFilter() {
-/*d3.selectAll('.audience-buttons button').each(function() {
-   const audience = d3.select(this).attr('audience-buttons');
-   if (audienceColor[audience]) {
-        d3.select(this).style('background-color', audienceColor[audience]);
-    }
-});*/
-    //when a button is clicked, it toggles to active class (for css)
-    d3.selectAll('.audience-buttons button').on('click', function() {
-        const button = d3.select(this);
-        //visually marks the button as selected/unselected
-        button.classed('active', !button.classed('active'));
-        //iterates through active buttons, collects values into selected array
-        //saves the array into currentFilters
-        const selected = [];
-        d3.selectAll('.audience-buttons button.active').each(function() {
-            selected.push(d3.select(this).attr('audience-buttons'));
-        });
-        currentFilters.selectedAudiences = selected;
-        const anyFilterActive = selected.length > 0;
-        d3.selectAll('.audience-buttons button').each(function() {
-            const btn = d3.select(this);
-            const audience = btn.attr('audience-buttons');
-            //if one platform is active keep those selected as "active" and
-            //mark all non-selected buttons as "inactive"
-            if (anyFilterActive) {
-                const isActive = selected.includes(audience);
-                btn.classed('active', isActive);
-                btn.classed('inactive', !isActive);
-            } else {
-              //If no platform is selected clear both "active" and "inactive" classes
-                btn.classed('active', false);
-                btn.classed('inactive', false);
-            }
-        });
-        applyFilters();
-    });
+  //when a button is clicked, it toggles to active class (for css)
+  d3.selectAll('.audience-buttons button').on('click', function() {
+      const button = d3.select(this);
+
+      //visually marks the button as selected/unselected
+      button.classed('active', !button.classed('active'));
+      //iterates through active buttons, collects values into selected array
+      //saves the array into currentFilters
+      const selected = [];
+      d3.selectAll('.audience-buttons button.active').each(function() {
+          selected.push(d3.select(this).attr('audience-buttons'));
+      });
+      currentFilters.selectedAudiences = selected;
+      const anyFilterActive = selected.length > 0;
+      d3.selectAll('.audience-buttons button').each(function() {
+          const btn = d3.select(this);
+          const audience = btn.attr('audience-buttons');
+          //if one platform is active keep those selected as "active" and
+          //mark all non-selected buttons as "inactive"
+          if (anyFilterActive) {
+              const isActive = selected.includes(audience);
+              btn.classed('active', isActive);
+              btn.classed('inactive', !isActive);
+          } else {
+            //If no platform is selected clear both "active" and "inactive" classes
+              btn.classed('active', false);
+              btn.classed('inactive', false);
+          }
+      });
+      applyFilters();
+  });
 }
 
 function setupContentTypeFilter() {
-     /*d3.selectAll('.content-type-filter button').each(function() {
-        
-     d3.select(this).style('background-color', "#77dd77");
-        
-     });*/
-    //when a button is clicked, it toggles to active class (for css)
-    d3.selectAll('.content-type-filter button').on('click', function() {
-        const button = d3.select(this);
-        //visually marks the button as selected/unselected
-        button.classed('active', !button.classed('active'));
-        const selected = [];
-        d3.selectAll('.content-type-filter button.active').each(function() {
-            selected.push(d3.select(this).attr('content-type-filter'));
-        });
-        currentFilters.type = selected;
-        const anyFilterActive = selected.length > 0;
-        d3.selectAll('.content-type-filter button').each(function() {
-            const btn = d3.select(this);
-            const typeaux = btn.attr('content-type-filter');
-            if (anyFilterActive) {
-                const isActive = selected.includes(typeaux);
-                btn.classed('active', isActive);
-                btn.classed('inactive', !isActive);
-            } else {
-                btn.classed('active', false);
-                btn.classed('inactive', false);
-            }
-        });
-        applyFilters();
-    });
+  d3.selectAll('.content-type-filter button').each(function() {
+    const type = d3.select(this).attr('content-type-filter');
+    if (typeFilterColors[type]) {
+        d3.select(this).style('background-color', typeFilterColors[type]);
+    }
+  });
+
+  d3.selectAll('.content-type-filter button').on('click', function() {
+      const button = d3.select(this);
+      //visually marks the button as selected/unselected
+      button.classed('active', !button.classed('active'));
+      const selected = [];
+      d3.selectAll('.content-type-filter button.active').each(function() {
+          selected.push(d3.select(this).attr('content-type-filter'));
+      });
+      currentFilters.type = selected;
+      const anyFilterActive = selected.length > 0;
+      d3.selectAll('.content-type-filter button').each(function() {
+          const btn = d3.select(this);
+          const typeaux = btn.attr('content-type-filter');
+          if (anyFilterActive) {
+              const isActive = selected.includes(typeaux);
+              btn.classed('active', isActive);
+              btn.classed('inactive', !isActive);
+          } else {
+              btn.classed('active', false);
+              btn.classed('inactive', false);
+          }
+      });
+      applyFilters();
+  });
 }
 
-// --- MODIFIED: The slider creator now returns a reset function ---
 function createD3RangeSlider(config) {
   //select container and clear previous content 
   const container = d3.select(config.containerId);
@@ -319,28 +319,28 @@ function createD3RangeSlider(config) {
 }
 
 function setupYearSlider(data) {
-    const yearData = data.filter(d => d.release_year);
-    const yearExtent = d3.extent(yearData, d => d.release_year);
-    const slider = createD3RangeSlider({
-        containerId: '#year-slider-container',
-        minLabelId: '#year-min-value',
-        maxLabelId: '#year-max-value',
-        domain: yearExtent,
-        tickFormat: d3.format("d"),
-        onBrushEnd: (range) => {
-            const roundedRange = [Math.round(range[0]), Math.round(range[1])];
-            if (JSON.stringify(currentFilters.yearRange) !== JSON.stringify(roundedRange)) {
-                currentFilters.yearRange = roundedRange[0] === yearExtent[0] && roundedRange[1] === yearExtent[1] ? null : roundedRange;
-                applyFilters();
-            }
-        }
-    });
+  const yearData = data.filter(d => d.release_year);
+  const yearExtent = d3.extent(yearData, d => d.release_year);
+  const slider = createD3RangeSlider({
+      containerId: '#year-slider-container',
+      minLabelId: '#year-min-value',
+      maxLabelId: '#year-max-value',
+      domain: yearExtent,
+      tickFormat: d3.format("d"),
+      onBrushEnd: (range) => {
+          const roundedRange = [Math.round(range[0]), Math.round(range[1])];
+          if (JSON.stringify(currentFilters.yearRange) !== JSON.stringify(roundedRange)) {
+              currentFilters.yearRange = roundedRange[0] === yearExtent[0] && roundedRange[1] === yearExtent[1] ? null : roundedRange;
+              applyFilters();
+          }
+      }
+  });
 
-    // Set the min and max labels
-    d3.select('#year-min-value').text(yearExtent[0]);
-    d3.select('#year-max-value').text(yearExtent[1]);
+  // Set the min and max labels
+  d3.select('#year-min-value').text(yearExtent[0]);
+  d3.select('#year-max-value').text(yearExtent[1]);
 
-    return slider;
+  return slider;
 }
 
 function setupImdbSlider() {
@@ -517,7 +517,10 @@ function renderQuantityChart(data) {
         .on('mouseover', function (event, d) {
           d3.select(this).transition().duration(50).attr('opacity', 1);
           div.transition().duration(50).style("opacity", 1);
-          div.html(`<div>Platform: ${d.platform}</div>`).style("text-align", "left")
+          div.html(`
+            <div>Platform: ${d.platform}</div>
+            <div>Total content: ${d.tvShows + d.movies}</div>
+            `).style("text-align", "left")
           const bbox = div.node().getBoundingClientRect();
           div.style("left", (event.pageX - bbox.width / 2) + "px").style("top", (event.pageY - bbox.height - 10) + "px");
       })
@@ -532,7 +535,7 @@ function renderQuantityChart(data) {
         .join("circle")
         .attr("class", "tv-show-circle")
         .attr("r", 6)
-        .attr("fill", "#228B22")
+        .attr("fill", typeFilterColors.SHOW)
         // Apply transition to attributes
         .transition(t)
         .attr("cx", d => xScale(d.tvShows))
@@ -561,7 +564,7 @@ function renderQuantityChart(data) {
         .join("circle")
         .attr("class", "movie-circle")
         .attr("r", 6)
-        .attr("fill", "#8bbb8bc5")
+        .attr("fill", typeFilterColors.MOVIE)
         // Apply transition to attributes
         .transition(t)
         .attr("cx", d => xScale(d.movies))
@@ -820,7 +823,7 @@ function renderSankeyChart(data) {
       update => update
         .on('mouseover', handleNodeMouseOver).on('mouseout', handleMouseOut)
         .call(update => update.transition(t)
-          .attr("fill", d => color(d)) // ✅ TRANSITION ADDED HERE
+          .attr("fill", d => color(d)) // transition
           .attr("x", d => d.x0).attr("y", d => d.y0)
           .attr("height", d => d.y1 - d.y0)),
       exit => exit.call(exit => exit.transition(t).attr("height", 0).remove())
