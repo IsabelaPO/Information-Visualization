@@ -507,7 +507,7 @@ function renderSankeyChart(data) {
       if (platformColors[d]) return platformColors[d];
       if (genreNames.includes(d)) return genreColorScale(d);
       //if (audienceColor[d]) return audienceColor[d];
-      return "#77dd77"; // age categories gray
+      return "#8bbb8bc5"; // age categories gray
   };
 
   var div = d3.select("body").append("div")

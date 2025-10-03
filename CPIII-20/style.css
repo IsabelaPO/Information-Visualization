@@ -7,11 +7,11 @@
         --accent-color: #dc2626;  /* accent (red) for highlights */
         --slider-color: #77dd77;
         --border-color: #e2e8f0; /* light border color */
-        --highlight-color: #77dd77;
+        --highlight-color: #8bbb8bc5;
         --header-height: 65px; /* fixed header height */
         --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
                  0 2px 4px -2px rgb(0 0 0 / 0.1); /* card shadow */
-        --base-button-color: #77dd77;
+        --base-button-color: #8bbb8bc5;
 }
 /* Reset margins/padding, ensure consistent box model */
 * { box-sizing: border-box; margin: 0; padding: 0; }
