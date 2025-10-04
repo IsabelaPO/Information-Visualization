@@ -59,10 +59,10 @@ header div h2 { font-size: 1rem; font-weight: 400; color: var(--accent-color); }
     padding: 1rem;
     border-radius: 0.75rem;
     box-shadow: var(--shadow);
-    position: sticky;
+    /* position: sticky; */
     top: 1rem;
-    overflow-y: visible;
-    max-height: calc(100vh - var(--header-height) - 2rem);
+    /* overflow-y: visible; */
+    height: calc(100vh - var(--header-height) - 2rem);
 }
 /* Filter block spacing */
 .filter-group { margin-bottom: 1rem; }
@@ -189,7 +189,8 @@ input[type="text"], select {
         "quantity quantity"
         "price price";
     /* overflow-y: auto;     */
-    height: 100vh;
+    /* height: 100vh;  */
+    height: calc(100vh - var(--header-height));
     padding-right: 0.5rem; /* small padding so scrollbar doesn’t overlap */
 }
 /* Generic chart card */
