@@ -22,7 +22,6 @@ const typeFilterColors = {
   "MOVIE": "#8bbb8bc5"
 };
 
-
 // A constant to hold the default filter state for easy resetting ---
 //how filters look in the dashboard initially 
 const defaultFilters = {
@@ -90,19 +89,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('resize', () => { clearTimeout(window.resizeTimer); window.resizeTimer = setTimeout(() => renderAllVisualizations(allPlatformData, allPriceData), 250); });
   //Re-renders chart on window resize (with debounce)
-
   }).catch(error => console.error("Data loading failed:", error));
 });
 
 function renderAllVisualizations(data, price) {
   renderSankeyChart(data);
-  renderQuantityChart(data);
-  renderPriceChart(price);
+   renderQuantityChart(data);
+   renderPriceChart(price);
 }
 
 function applyFilters() {
   let filteredPlatformData = allPlatformData;
   let filteredPriceData = allPriceData;
+  
   //filter platform
   if (currentFilters.selectedPlatforms.length > 0) {
       filteredPlatformData = filteredPlatformData.filter(d => currentFilters.selectedPlatforms.includes(d.streaming_platform));
@@ -132,7 +131,6 @@ function applyFilters() {
       filteredPlatformData = filteredPlatformData.filter(d => currentFilters.selectedAudiences.includes(d.age_category));
   }
 
-
   //filtrar primeiro apenas o gereal, ver quais as plataformas que restam e filtrar tb no price
   const platformsSelected = filteredPlatformData.map(d => d.streaming_platform);
 
@@ -144,7 +142,6 @@ function applyFilters() {
   renderAllVisualizations(filteredPlatformData, result);
 }
 
-// --- NEW: Function to set up the 'Remove All Filters' button ---
 function setupRemoveFiltersButton() {
   d3.select('.remove-filters-btn').on('click', () => {
     // 1. Reset the state object
@@ -901,4 +898,3 @@ function renderSankeyChart(data) {
     .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155")
     .text("Content Flow: Platform → Genre → Target Audience");
 }
-
