@@ -5,6 +5,7 @@ const isValidString = (str) => str && typeof str === 'string' && str.trim() !== 
 //stores all platform data
 let allPlatformData = [];
 let allPriceData = [];
+firstRender = true;
 
 //sets platform colors
 const platformColors = {
@@ -58,11 +59,15 @@ document.addEventListener('DOMContentLoaded', () => {
     main_country: isValidString(d.production_countries) ? d.production_countries.split(',')[0].trim() : 'Unknown'
   }));
 
-  const processedPriceData = rawPriceData.map(d => ({ 
-    ...d, 
-    year: +d.year, 
-    price: +d.price 
-  }));
+  //TODO: mudar diretamento o cvs
+  const processedPriceData = rawPriceData
+    .filter(d => +d.year <= 2023)
+    .map(d => ({
+      ...d,
+      year: +d.year,
+      price: +d.price
+    }));
+
   //stores the processed data
   allPlatformData = processedPlatformData;
   allPriceData = processedPriceData;
@@ -101,7 +106,7 @@ function applyFilters() {
   //filter platform
   if (currentFilters.selectedPlatforms.length > 0) {
       filteredPlatformData = filteredPlatformData.filter(d => currentFilters.selectedPlatforms.includes(d.streaming_platform));
-      filteredPriceData = filteredPriceData.filter(d => currentFilters.selectedPlatforms.includes(d.streaming_platform));
+      //filteredPriceData = filteredPriceData.filter(d => currentFilters.selectedPlatforms.includes(d.streaming_platform));
   }
 
   if (currentFilters.type.length > 0) {
@@ -127,8 +132,16 @@ function applyFilters() {
       filteredPlatformData = filteredPlatformData.filter(d => currentFilters.selectedAudiences.includes(d.age_category));
   }
 
+
+  //filtrar primeiro apenas o gereal, ver quais as plataformas que restam e filtrar tb no price
+  const platformsSelected = filteredPlatformData.map(d => d.streaming_platform);
+
+  const result = filteredPriceData.filter(d => 
+    platformsSelected.includes(d.streaming_platform)
+  );
+
   //re-render charts
-  renderAllVisualizations(filteredPlatformData, filteredPriceData);
+  renderAllVisualizations(filteredPlatformData, result);
 }
 
 // --- NEW: Function to set up the 'Remove All Filters' button ---
@@ -604,7 +617,7 @@ function renderQuantityChart(data) {
 function renderPriceChart(data) {
   const container = d3.select("#price-chart");
   container.selectAll("*").remove();
-  //if (data.length === 0) return;
+  if (data.length === 0) return;
   const bounds = container.node().getBoundingClientRect();
   if (bounds.width < 10 || bounds.height < 10) return;
   const margin = { top: 40, right: 30, bottom: 50, left: 50 };
@@ -636,14 +649,16 @@ function renderPriceChart(data) {
   );
   
   const dataByPlatform = d3.group(data.filter(d => isValidString(d.streaming_platform)), d => d.streaming_platform);
+
   var div = d3.select("body").append("div")
      .attr("class", "tooltip-donut")
      .style("position", "absolute")
      .style("opacity", 0);
+  
   const lineGenerator = d3.line().x(d => xScale(d.year)).y(d => yScale(d.price));
   
   // Line drawing logic with animation
-  const lines = svg.selectAll(".line")
+  svg.selectAll(".line")
     .data(dataByPlatform)
     .join(
         enter => enter.append("path")
@@ -661,7 +676,6 @@ function renderPriceChart(data) {
                 d3.select(this).transition().duration('50').attr('opacity', 0.65);
                 div.transition().duration('50').style("opacity", 0);
             })
-          
             .each(function(d) {
                 const totalLength = this.getTotalLength();
                 d3.select(this)
@@ -690,6 +704,40 @@ function renderPriceChart(data) {
         exit => exit.call(exit => exit.transition(t).attr("opacity", 0).remove())
     );
 
+  // After drawing lines...
+  const circles = svg.selectAll(".point-group")
+    .data(dataByPlatform)
+    .join("g")
+    .attr("class", "point-group")
+    .style("fill", d => platformColors[d[0]]);
+
+  // Bind points for each platform
+  circles.selectAll("circle")
+    .data(d => d[1]) // each platform’s data array
+    .join("circle")
+    .attr("class", "point")
+    .attr("cx", d => xScale(d.year))
+    .attr("cy", d => yScale(d.price))
+    .attr("r", 4)
+    .style("opacity", 0.9)
+    .on("mouseover", function (event, d) {
+        d3.select(this).transition().duration(100).attr("r", 6);
+        div.transition().duration(50).style("opacity", 1);
+        div.html(`
+          <div>Platform: ${d.streaming_platform}</div>
+          <div>Year: ${d.year}</div>
+          <div>Price: $${d.price}</div>
+        `).style("text-align", "left");
+        const bbox = div.node().getBoundingClientRect();
+        div.style("left", (event.pageX - bbox.width / 2) + "px")
+          .style("top", (event.pageY - bbox.height - 10) + "px");
+    })
+    .on("mouseout", function () {
+        d3.select(this).transition().duration(100).attr("r", 4);
+        div.transition().duration(50).style("opacity", 0);
+    });
+
+
   svg.append("text")
     .attr("x", width / 2)
     .attr("y", -15)
@@ -699,7 +747,6 @@ function renderPriceChart(data) {
     .style("fill", "#334155")
     .text("Subscription Price Over Time");
 }
-
 
 function renderSankeyChart(data) {
   const container = d3.select("#sankey-chart");
@@ -830,6 +877,7 @@ function renderSankeyChart(data) {
     );
 
   const audienceLabels = { adult: "Adult", child: "Children", teenager: "Teenager", toddlers: "Toddler" };
+
   svg.select(".labels-group")
     .attr("transform", `translate(${margin.left},${margin.top})`)
     .selectAll(".sankey-node-label")
