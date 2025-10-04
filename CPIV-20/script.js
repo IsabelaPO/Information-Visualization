@@ -58,9 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     main_country: isValidString(d.production_countries) ? d.production_countries.split(',')[0].trim() : 'Unknown'
   }));
 
-  //TODO: mudar diretamento o cvs
   const processedPriceData = rawPriceData
-    .filter(d => +d.year <= 2023)
     .map(d => ({
       ...d,
       year: +d.year,

@@ -7,24 +7,20 @@ Amazon,2020,8.99
 Amazon,2021,8.99
 Amazon,2022,8.99
 Amazon,2023,8.99
-Amazon,2024,11.99
 Apple,2019,4.99
 Apple,2020,4.99
 Apple,2021,4.99
 Apple,2022,6.99
 Apple,2023,6.99
-Apple,2024,9.99
 Disney,2019,6.99
 Disney,2020,6.99
 Disney,2021,7.99
 Disney,2022,10.99
 Disney,2023,13.99
-Disney,2024,13.99
 HBO,2020,14.99
 HBO,2021,14.99
 HBO,2022,14.99
 HBO,2023,15.99
-HBO,2024,15.99
 Netflix,2011,7.99
 Netflix,2012,7.99
 Netflix,2013,7.99
@@ -38,7 +34,6 @@ Netflix,2020,8.99
 Netflix,2021,8.99
 Netflix,2022,9.99
 Netflix,2023,15.49
-Netflix,2024,15.49
 Paramount,2014,9.99
 Paramount,2015,9.99
 Paramount,2016,9.99
@@ -49,4 +44,3 @@ Paramount,2020,9.99
 Paramount,2021,9.99
 Paramount,2022,9.99
 Paramount,2023,11.99
-Paramount,2024,11.99
