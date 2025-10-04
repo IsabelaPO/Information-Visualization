@@ -153,7 +153,7 @@ input[type="text"], select {
 }
 
 /* Dynamic grow effect on hover */
-.pcontent-type-filter button:hover {
+.content-type-filter button:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
@@ -189,7 +189,6 @@ input[type="text"], select {
         "quantity quantity"
         "price price";
     /* overflow-y: auto;     */
-    /* height: 100vh;  */
     /* height: calc(100vh - var(--header-height)); */
     padding-right: 0.5rem; /* small padding so scrollbar doesn’t overlap */
 }
@@ -206,7 +205,7 @@ input[type="text"], select {
 /* Assign specific grid areas */
 #timeline-filter { grid-area: timeline; }
 #treemap-chart { grid-area: treemap; }
-#sankey-chart { grid-area: sankey; }
+#sankey-chart { grid-area: sankey; height: 450px; }
 #quantity-chart { grid-area: quantity; }
 #price-chart { grid-area: price; }
 /* Side charts stacked vertically */

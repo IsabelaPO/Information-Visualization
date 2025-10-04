@@ -19,7 +19,7 @@ const platformColors = {
 
 const typeFilterColors = {
   "SHOW": "#228B22",
-  "MOVIE": "#8bbb8bc5"
+  "MOVIE": "#015034ff"
 };
 
 // A constant to hold the default filter state for easy resetting ---
@@ -436,7 +436,7 @@ function renderQuantityChart(data) {
     const container = d3.select("#quantity-chart");
     container.selectAll("*").remove();
 
-    if (data.length === 0) return;
+    
 
     const bounds = container.node().getBoundingClientRect();
     if (bounds.width < 10 || bounds.height < 10) return;
@@ -466,6 +466,27 @@ function renderQuantityChart(data) {
             movies: values.filter(d => d.type === "MOVIE").length
         })
     );
+        // --- Chart title ---
+    svg.selectAll(".chart-title")
+        .data(["Movies vs. TV Shows"])
+        .join("text")
+        .attr("class", "chart-title")
+        .attr("x", width / 2)
+        .attr("y", -15)
+        .attr("text-anchor", "middle")
+        .style("font-size", "1rem")
+        .style("font-weight", "600")
+        .style("fill", "#334155")
+        .text(d => d);
+
+  const noDataMessage = svg.selectAll(".no-data-message").data(data.length === 0 ? [1] : []);
+    noDataMessage.enter().append("text").attr("class", "no-data-message")
+        .attr("x", width / 2)
+        .attr("y", height / 2)
+        .attr("text-anchor", "middle")
+        .text("No data available for the current filter selection.")
+        .style("fill", "var(--muted-text)");
+    noDataMessage.exit().remove();
 
     if (aggData.length === 0) return;
 
@@ -597,24 +618,12 @@ function renderQuantityChart(data) {
           div.transition().duration('50').style("opacity", 0);
       });
 
-    // --- Chart title ---
-    svg.selectAll(".chart-title")
-        .data(["Movies vs. TV Shows"])
-        .join("text")
-        .attr("class", "chart-title")
-        .attr("x", width / 2)
-        .attr("y", -15)
-        .attr("text-anchor", "middle")
-        .style("font-size", "1rem")
-        .style("font-weight", "600")
-        .style("fill", "#334155")
-        .text(d => d);
 }
 
 function renderPriceChart(data) {
   const container = d3.select("#price-chart");
   container.selectAll("*").remove();
-  if (data.length === 0) return;
+  //if (data.length === 0) return;
   const bounds = container.node().getBoundingClientRect();
   if (bounds.width < 10 || bounds.height < 10) return;
   const margin = { top: 40, right: 30, bottom: 50, left: 50 };
@@ -628,6 +637,25 @@ function renderPriceChart(data) {
   
   const t = svg.transition().duration(1000); 
 
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", -15)
+    .attr("text-anchor", "middle")
+    .style("font-size", "1rem")
+    .style("font-weight", "600")
+    .style("fill", "#334155")
+    .text("Subscription Price Over Time");
+
+  const noDataMessage = svg.selectAll(".no-data-message").data(data.length === 0 ? [1] : []);
+    noDataMessage.enter().append("text").attr("class", "no-data-message")
+        .attr("x", width / 2)
+        .attr("y", height / 2)
+        .attr("text-anchor", "middle")
+        .text("No data available for the current filter selection.")
+        .style("fill", "var(--muted-text)");
+    noDataMessage.exit().remove();
+    
+  if (data.length === 0) return;
   const xScale = d3.scaleLinear().domain(d3.extent(data, d => d.year)).range([0, width]);
   const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.price) * 1.1]).range([height, 0]);
   
@@ -733,16 +761,6 @@ function renderPriceChart(data) {
         d3.select(this).transition().duration(100).attr("r", 4);
         div.transition().duration(50).style("opacity", 0);
     });
-
-
-  svg.append("text")
-    .attr("x", width / 2)
-    .attr("y", -15)
-    .attr("text-anchor", "middle")
-    .style("font-size", "1rem")
-    .style("font-weight", "600")
-    .style("fill", "#334155")
-    .text("Subscription Price Over Time");
 }
 
 function renderSankeyChart(data) {
