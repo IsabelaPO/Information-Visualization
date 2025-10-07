@@ -324,6 +324,9 @@ select {
   font-weight: 500;
   text-shadow: 0 0 2px white;
 }
+.sankey-node-label {
+    font-size: 14px; 
+}
 .brush .selection {
   fill: rgba(100, 116, 139, 0.2);
   stroke: #475569;
