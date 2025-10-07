@@ -1,361 +1,456 @@
 :root {
-    /* Theme variables (easy to update globally) */
-        --bg-color: #f1f5f9; /* background of the app */
-        --card-bg: #ffffff; /* background for cards/panels */
-        --text-color: #1e293b; /* main text color */
-        --muted-text: #64748b; /* lighter gray for secondary text */
-        --accent-color: #dc2626;  /* accent (red) for highlights */
-        --slider-color: #77dd77;
-        --border-color: #e2e8f0; /* light border color */
-        --highlight-color: #8bbb8bc5;
-        --header-height: 65px; /* fixed header height */
-        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
-                 0 2px 4px -2px rgb(0 0 0 / 0.1); /* card shadow */
-        --base-button-color: #8bbb8bc5;
+  /* Theme variables (easy to update globally) */
+  --bg-color: #f1f5f9; /* background of the app */
+  --card-bg: #ffffff; /* background for cards/panels */
+  --text-color: #1e293b; /* main text color */
+  --muted-text: #64748b; /* lighter gray for secondary text */
+  --accent-color: #dc2626; /* accent (red) for highlights */
+  --slider-color: #77dd77;
+  --border-color: #e2e8f0; /* light border color */
+  --highlight-color: #8bbb8bc5;
+  --header-height: 65px; /* fixed header height */
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* card shadow */
+  --base-button-color: #8bbb8bc5;
 }
 /* Reset margins/padding, ensure consistent box model */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 /* Fullscreen layout + base font */
-html, body {
-    /*height: 100vh; width: 100vw; overflow: hidden;*/
-    height: auto; width: 100vw;
-    overflow-x: hidden;
-    overflow-y: auto;
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+html,
+body {
+  /*height: 100vh; width: 100vw; overflow: hidden;*/
+  height: auto;
+  width: 100vw;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 /* Overall dashboard layout */
-.dashboard-wrapper { display: flex; flex-direction: column; height: 100%; }
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 /* Header bar */
 header {
-    height: var(--header-height);
-    background-color: var(--base-button-color);
-    padding: 0.5rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
+  height: var(--header-height);
+  background-color: var(--base-button-color);
+  padding: 0.5rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
-header div h1 { font-size: 1.25rem; font-weight: 700; }
-header div h2 { font-size: 1rem; font-weight: 400; color: var(--accent-color); }
+header div h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+header div h2 {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--accent-color);
+}
 /* Main grid: sidebar + visualizations */
 .dashboard-container {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    /*height: calc(100vh - var(--header-height));*/
-    height: auto;
-    overflow: hidden;
-    /* overflow: visible; */
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  /*height: calc(100vh - var(--header-height));*/
+  height: auto;
+  overflow: hidden;
+  /* overflow: visible; */
 }
 /* Sidebar filters panel */
 .filters-panel {
-    background-color: var(--card-bg);
-    padding: 1rem;
-    border-radius: 0.75rem;
-    box-shadow: var(--shadow);
-    /* position: sticky; */
-    top: 1rem;
-    overflow-y: visible;
-    /* height: calc(100vh - var(--header-height) - 2rem); */
+  background-color: var(--card-bg);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+  /* position: sticky; */
+  top: 1rem;
+  overflow-y: visible;
+  /* height: calc(100vh - var(--header-height) - 2rem); */
 }
 /* Filter block spacing */
-.filter-group { margin-bottom: 1rem; }
+.filter-group {
+  margin-bottom: 1rem;
+}
 
-.filter-group:last-child { margin-bottom: 0; }
+.filter-group:last-child {
+  margin-bottom: 0;
+}
 /* Labels styling */
-.filter-group label, .filter-group .filter-label {
-    font-weight: 700; color: #334155; display: block; margin-bottom: 0.5rem;
+.filter-group label,
+.filter-group .filter-label {
+  font-weight: 700;
+  color: #334155;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 /* Inputs and dropdowns */
-input[type="text"], select {
-    width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1;
-    border-radius: 0.375rem; outline: none;
+input[type="text"],
+select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.375rem;
+  outline: none;
 }
 /* Genres list scrollable */
-.genre-list { max-height: 100px; overflow-y: auto; }
+.genre-list {
+  max-height: 100px;
+  overflow-y: auto;
+}
 /* Audience buttons group */
 
-.audience-buttons { 
-    display: grid;
-    grid-template-columns: repeat(2, auto); 
-    justify-content: left; 
-    gap: 0.75rem;  
+.audience-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-content: left;
+  gap: 0.75rem;
 }
 
 .audience-buttons button {
-   /* From circle to pill shape */
-    border-radius: 9999px; /* This creates the pill shape */
-    padding: 0.5rem 1rem; /* Give the text space */
-    width: auto; /* Allow width to be flexible */
-    height: auto; /* Allow height to be flexible */
+  /* From circle to pill shape */
+  border-radius: 9999px; /* This creates the pill shape */
+  padding: 0.5rem 1rem; /* Give the text space */
+  width: auto; /* Allow width to be flexible */
+  height: auto; /* Allow height to be flexible */
 
-    /* Rest of the styles are similar */
-    border: none;
-    color: white;
-    /*font-weight: 600; /* A slightly less bold font looks better with full words */
-    font-size: 0.875rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    transition: all 0.2s ease-in-out;
-    background-color: var(--base-button-color);
+  /* Rest of the styles are similar */
+  border: none;
+  color: white;
+  /*font-weight: 600; /* A slightly less bold font looks better with full words */
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease-in-out;
+  background-color: var(--base-button-color);
 }
 
 .audience-buttons button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .audience-buttons button.active {
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
-    transform: scale(1.05);
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
+  transform: scale(1.05);
 }
 
 .audience-buttons button.inactive {
-    opacity: 0.4;
-    transform: scale(0.95);
-    box-shadow: none;
+  opacity: 0.4;
+  transform: scale(0.95);
+  box-shadow: none;
 }
 
-.content-type-filter { 
-    display: grid;
-    grid-template-columns: repeat(3, auto); 
-    justify-content: left; 
-    gap: 0.75rem; 
+.content-type-filter {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: left;
+  gap: 0.75rem;
 }
 
 .content-type-filter button {
-    border-radius: 9999px; /* This creates the pill shape */
-    padding: 0.5rem 1rem; /* Give the text space */
-    width: auto; /* Allow width to be flexible */
-    height: auto; /* Allow height to be flexible */
+  border-radius: 9999px; /* This creates the pill shape */
+  padding: 0.5rem 1rem; /* Give the text space */
+  width: auto; /* Allow width to be flexible */
+  height: auto; /* Allow height to be flexible */
 
-    /* Rest of the styles are similar */
-    border: none;
-    color: white;
-    font-weight: 600; /* A slightly less bold font looks better with full words */
-    font-size: 0.875rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    transition: all 0.2s ease-in-out;
-    /* background-color: var(--base-button-color); */
+  /* Rest of the styles are similar */
+  border: none;
+  color: white;
+  font-weight: 600; /* A slightly less bold font looks better with full words */
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease-in-out;
+  /* background-color: var(--base-button-color); */
 }
 
 /* Dynamic grow effect on hover */
 .content-type-filter button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .content-type-filter button.active {
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
-    transform: scale(1.05);
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
+  transform: scale(1.05);
 }
 
 /* Fade out non-selected buttons when a filter is active */
 .content-type-filter button.inactive {
-    opacity: 0.4;
-    transform: scale(0.95);
-    box-shadow: none;
+  opacity: 0.4;
+  transform: scale(0.95);
+  box-shadow: none;
 }
 
 /* Reset all filters button */
 .remove-filters-btn {
-    width: 100%; margin-top: 1.5rem; padding: 0.75rem;
-    background-color: var(--accent-color); color: white;
-    border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 /* Visualization panel grid */
 .viz-panel {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 0.25fr 1fr 1fr;
-    grid-template-areas:
-        "timeline timeline"
-        "treemap  side-charts"
-        "sankey   sankey"
-        "quantity quantity"
-        "price price";
-    /* overflow-y: auto;     */
-    /* height: calc(100vh - var(--header-height)); */
-    padding-right: 0.5rem; /* small padding so scrollbar doesn’t overlap */
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 0.25fr 1fr 1fr;
+  grid-template-areas:
+    "timeline timeline"
+    "treemap  side-charts"
+    "sankey   sankey"
+    "quantity quantity"
+    "price price";
+  /* overflow-y: auto;     */
+  /* height: calc(100vh - var(--header-height)); */
+  padding-right: 0.5rem; /* small padding so scrollbar doesn’t overlap */
 }
 /* Generic chart card */
 .viz-card {
-    background-color: var(--card-bg);
-    padding: 0.2rem;
-    border-radius: 0.75rem;
-    box-shadow: var(--shadow);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  background-color: var(--card-bg);
+  padding: 0.2rem;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 /* Assign specific grid areas */
-#timeline-filter { grid-area: timeline; }
-#treemap-chart { grid-area: treemap; }
-#sankey-chart { grid-area: sankey; height: 450px; }
-#quantity-chart { grid-area: quantity; }
-#price-chart { grid-area: price; }
+#timeline-filter {
+  grid-area: timeline;
+}
+#treemap-chart {
+  grid-area: treemap;
+}
+#sankey-chart {
+  grid-area: sankey;
+  height: 450px;
+}
+#quantity-chart {
+  grid-area: quantity;
+}
+#price-chart {
+  grid-area: price;
+}
 /* Side charts stacked vertically */
 .side-charts-container {
-    grid-area: side-charts;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    overflow: hidden;
+  grid-area: side-charts;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: hidden;
 }
-.side-charts-container .viz-card { flex: 1 1 0; }
+.side-charts-container .viz-card {
+  flex: 1 1 0;
+}
 /* Loading overlay */
 #loading {
-    position: fixed; inset: 0; background-color: rgba(255, 255, 255, 0.8);
-    display: flex; align-items: center; justify-content: center; z-index: 50;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
 }
 /* Spinner animation */
 .spinner {
-    width: 3rem; height: 3rem; border-radius: 50%;
-    border: 4px solid #e2e8f0; border-top-color: var(--accent-color);
-    animation: spin 1s linear infinite;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 4px solid #e2e8f0;
+  border-top-color: var(--accent-color);
+  animation: spin 1s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* Chart defaults */
-.viz-card svg { display: block; width: 100%; height: 100%; }
-.axis path, .axis line { stroke: var(--border-color); }
-.axis text { fill: var(--muted-text); font-size: 0.75rem; }
-.line { fill: none; stroke-width: 2px; }
-.sankey-link { fill: none; stroke-opacity: 0.4; }
-.sankey-node rect { stroke: #333; stroke-width: 1px; }
-.sankey-node text { font-size: 11px; font-weight: 500; text-shadow: 0 0 2px white; }
-.brush .selection { fill: rgba(100, 116, 139, 0.2); stroke: #475569; }
+.viz-card svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.axis path,
+.axis line {
+  stroke: var(--border-color);
+}
+.axis text {
+  fill: var(--muted-text);
+  font-size: 0.75rem;
+}
+.line {
+  fill: none;
+  stroke-width: 2px;
+}
+.sankey-link {
+  fill: none;
+  stroke-opacity: 0.4;
+}
+.sankey-node rect {
+  stroke: #333;
+  stroke-width: 1px;
+}
+.sankey-node text {
+  font-size: 11px;
+  font-weight: 500;
+  text-shadow: 0 0 2px white;
+}
+.brush .selection {
+  fill: rgba(100, 116, 139, 0.2);
+  stroke: #475569;
+}
 
 /* Responsive: single column for smaller screens */
 @media (max-width: 992px) {
-    .dashboard-container { grid-template-columns: 1fr; height: auto;}
-    body, html { overflow: auto; height: auto;}
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  body,
+  html {
+    overflow: auto;
+    height: auto;
+  }
 }
 
 /* IMDb slider spacing */
 .imdb-slider {
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Special styling for year slider card */
 #timeline-filter {
-    display: flex;
-    flex-direction: column;
-    padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
 }
 .viz-card-header {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #334155;
-    text-align: center;
-    margin-bottom: -0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  text-align: center;
+  margin-bottom: -0.5rem;
 }
 
 /* Generic container for the D3 sliders */
 .d3-slider-container {
-    width: 100%;
-    height: 50px;
+  width: 100%;
+  height: 50px;
 }
 
 /* Generic label styling */
 .slider-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    color: var(--muted-text);
-    margin-top: -0.89rem; /* Pull labels closer to the axis */
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--muted-text);
+  margin-top: -0.89rem; /* Pull labels closer to the axis */
 }
 
 /* Generic styles for any D3 brush slider */
 .d3-slider-container .selection {
-    fill: var(--slider-color);
+  fill: var(--slider-color);
 }
 .d3-slider-container .handle {
-    fill: #f1f5f9;
-    stroke: #64748b;
+  fill: #f1f5f9;
+  stroke: #64748b;
 }
 .d3-slider-container .axis text {
-    fill: var(--muted-text);
-    font-size: 0.75rem;
+  fill: var(--muted-text);
+  font-size: 0.75rem;
 }
 .d3-slider-container .axis path,
 .d3-slider-container .axis line {
-    stroke: var(--border-color);
+  stroke: var(--border-color);
 }
 
-
 .platform-buttons {
-    display: grid;
-    grid-template-columns: repeat(3, auto); 
-    justify-content: center; 
-    gap: 0.75rem; 
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: center;
+  gap: 0.75rem;
 }
 
 .platform-buttons button {
-    /* From circle to pill shape */
-    border-radius: 9999px; /* This creates the pill shape */
-    padding: 0.5rem 1rem; /* Give the text space */
-    width: auto; /* Allow width to be flexible */
-    height: auto; /* Allow height to be flexible */
+  /* From circle to pill shape */
+  border-radius: 9999px; /* This creates the pill shape */
+  padding: 0.5rem 1rem; /* Give the text space */
+  width: auto; /* Allow width to be flexible */
+  height: auto; /* Allow height to be flexible */
 
-    /* Rest of the styles are similar */
-    border: none;
-    color: white;
-    /*font-weight: 600; /* A slightly less bold font looks better with full words */
-    font-size: 0.875rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    transition: all 0.2s ease-in-out;
+  /* Rest of the styles are similar */
+  border: none;
+  color: white;
+  /*font-weight: 600; /* A slightly less bold font looks better with full words */
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease-in-out;
 }
 
 /* Dynamic grow effect on hover */
 .platform-buttons button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* "Halo" effect for active selection, plus a slight press effect */
 .platform-buttons button.active {
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
-    transform: scale(1.05);
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
+  transform: scale(1.05);
 }
 
 /* Fade out non-selected buttons when a filter is active */
 .platform-buttons button.inactive {
-    opacity: 0.4;
-    transform: scale(0.95);
-    box-shadow: none;
+  opacity: 0.4;
+  transform: scale(0.95);
+  box-shadow: none;
 }
 
 /* Styling for charts */
 div.tooltip-donut {
-     position: absolute;
-     text-align: center;
-     padding: .3rem;
-     background: #FFFFFF;
-     color: #313639;
-     border: 1px solid #313639;
-     border-radius: 8px;
-     pointer-events: none;
-     font-size: 1rem;
+  position: absolute;
+  text-align: center;
+  padding: 0.3rem;
+  background: #ffffff;
+  color: #313639;
+  border: 1px solid #313639;
+  border-radius: 8px;
+  pointer-events: none;
+  font-size: 1rem;
 }
 
 .viz-card img.card-image {
@@ -363,4 +458,3 @@ div.tooltip-donut {
   height: 100%;
   object-fit: contain;
 }
-
