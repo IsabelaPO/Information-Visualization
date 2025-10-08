@@ -1,4 +1,3 @@
-//checks if string exists and not just whitespace
 const isValidString = (str) =>
   str && typeof str === "string" && str.trim() !== "";
 
@@ -32,6 +31,7 @@ const defaultFilters = {
   yearRange: null,
   selectedAudiences: [],
   selectedPlatforms: [],
+  selectedCountries: [], 
 };
 
 //apply the initial to the current filters
@@ -50,20 +50,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const processedPlatformData = rawPlatformData.map((d) => ({
         ...d,
         streaming_platform: d.streaming_platform,
-        release_year: +d.release_year, //convert into number
-        imdb_score: +d.imdb_score, //convert into number
+        release_year: +d.release_year,
+        imdb_score: +d.imdb_score,
         type: d.type,
-        genres: d.genres || "", //ensures not empty
-        age_category: d.age_category || "Unknown", //ensures not empty
-        //extracts first genre to main genre because there are many genres in one movie
+        genres: d.genres || "",
+        age_category: d.age_category || "Unknown",
         main_genre: isValidString(d.genres)
           ? d.genres.split(",")[0].trim()
           : "Unknown",
-        main_country: isValidString(d.production_countries)
-          ? d.production_countries.split(",")[0].trim()
-          : "Unknown",
+        // This is the important change from main_country to countries array
+        countries: isValidString(d.production_countries)
+          ? d.production_countries.split(',').map(c => c.trim())
+          : [],
       }));
-
       const processedPriceData = rawPriceData.map((d) => ({
         ...d,
         year: +d.year,
@@ -93,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
       imdbSlider = setupImdbSlider(); // Store the returned slider object
       yearSlider = setupYearSlider(allPlatformData); // Store the returned slider object
       setupAudienceFilter();
+      setupCountryFilter(allPlatformData);
       setupRemoveFiltersButton();
 
       //draws initial visualizations
@@ -113,13 +113,127 @@ document.addEventListener("DOMContentLoaded", () => {
 function renderAllVisualizations(data, price) {
   renderSankeyChart(data);
   renderQuantityChart(data);
-}
+  renderTreemapChart(data); // Add this line
 
+}
+function renderTreemapChart(data) {
+  const container = d3.select("#treemap-chart");
+  container.selectAll("*").remove(); // Clear previous contents
+
+  const bounds = container.node().getBoundingClientRect();
+  if (bounds.width < 10 || bounds.height < 10) return;
+
+  const margin = { top: 40, right: 10, bottom: 10, left: 10 };
+  const width = bounds.width - margin.left - margin.right;
+  const height = bounds.height - margin.top - margin.bottom;
+
+  const svg = container.append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+let treemapData;
+  
+  // First, get the counts for all countries present in the filtered data
+  const countryCounts = new Map();
+  data.forEach(d => {
+    d.countries.forEach(country => {
+      if(country) {
+        countryCounts.set(country, (countryCounts.get(country) || 0) + 1);
+      }
+    });
+  });
+
+  if (currentFilters.selectedCountries.length > 0) {
+    // If countries ARE selected, build the treemap using ONLY those countries
+    const filteredChildren = currentFilters.selectedCountries.map(country => ({
+      name: country,
+      value: countryCounts.get(country) || 0
+    }));
+
+    treemapData = {
+      name: "root",
+      children: filteredChildren.sort((a,b) => b.value - a.value)
+    };
+  } else {
+    // If NO country is selected, show all countries
+    treemapData = {
+      name: "root",
+      children: Array.from(countryCounts, ([name, value]) => ({ name, value }))
+        .filter(d => d.name !== 'Unknown')
+        .sort((a, b) => b.value - a.value)
+    };
+  }
+
+  // --- 2. Create the Treemap Layout ---
+  const root = d3.hierarchy(treemapData).sum(d => d.value); // Sum values to size rectangles
+
+  const treemapLayout = d3.treemap()
+    .size([width, height])
+    .padding(2);
+
+  treemapLayout(root); // This computes the x, y, width, and height for each rectangle
+
+  // --- 3. Create a Color Scale ---
+  const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
+
+  // --- 4. Draw the Rectangles (Cells) ---
+  const cell = svg.selectAll("g")
+    .data(root.leaves()) // .leaves() gives us the individual country rectangles
+    .join("g")
+    .attr("transform", d => `translate(${d.x0}, ${d.y0})`);
+
+  cell.append("rect")
+    .attr("width", d => d.x1 - d.x0)
+    .attr("height", d => d.y1 - d.y0)
+    .attr("fill", d => colorScale(d.data.name))
+    .style("stroke", "#fff")
+    .on("mouseover", function(event, d) {
+      tooltip.transition().duration(200).style("opacity", 1);
+      tooltip.html(`
+        <div><b>Country:</b> ${d.data.name}</div>
+        <div><b>Titles:</b> ${d.data.value}</div>
+      `);
+      const bbox = tooltip.node().getBoundingClientRect();
+      tooltip.style("left", (event.pageX - bbox.width / 2) + "px")
+             .style("top", (event.pageY - bbox.height - 10) + "px");
+    })
+    .on("mouseout", function() {
+      tooltip.transition().duration(500).style("opacity", 0);
+    });
+
+  // --- 5. Add Labels to the Cells ---
+  cell.append("text")
+    .selectAll("tspan")
+    .data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g)) // Split words for wrapping
+    .join("tspan")
+      .attr("x", 4)
+      .attr("y", (d, i) => 13 + i * 10)
+      .text(d => d)
+      .attr("font-size", "0.7em")
+      .attr("fill", "white")
+      .style("pointer-events", "none") // Make text unclickable
+      // Hide text if the box is too small
+      .attr("opacity", function(d) {
+        const parent = this.parentNode.__data__;
+        const width = parent.x1 - parent.x0;
+        const height = parent.y1 - parent.y0;
+        return (width > 35 && height > 20) ? 1 : 0;
+      });
+
+  // Chart title
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", -15)
+    .attr("text-anchor", "middle")
+    .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155")
+    .text("Content Quantity by Country");
+}
 function applyFilters() {
   let filteredPlatformData = allPlatformData;
   let filteredPriceData = allPriceData;
 
-  //filter platform
   if (currentFilters.selectedPlatforms.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedPlatforms.includes(d.streaming_platform)
@@ -132,21 +246,18 @@ function applyFilters() {
     );
   }
 
-  //filter imdb range
   filteredPlatformData = filteredPlatformData.filter(
     (d) =>
       d.imdb_score >= currentFilters.imdbRange[0] &&
       d.imdb_score <= currentFilters.imdbRange[1]
   );
 
-  //filter by genre
   if (currentFilters.selectedGenres.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedGenres.includes(d.main_genre)
     );
   }
 
-  //filter by year
   if (currentFilters.yearRange) {
     filteredPlatformData = filteredPlatformData.filter(
       (d) =>
@@ -160,10 +271,15 @@ function applyFilters() {
     );
   }
 
-  //filter target audience
   if (currentFilters.selectedAudiences.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedAudiences.includes(d.age_category)
+    );
+  }
+  
+  if (currentFilters.selectedCountries.length > 0) {
+    filteredPlatformData = filteredPlatformData.filter(d => 
+      currentFilters.selectedCountries.some(country => d.countries.includes(country))
     );
   }
 
@@ -171,36 +287,32 @@ function applyFilters() {
   const result = filteredPriceData.filter((d) =>
     platformsSet.has(d.streaming_platform)
   );
+  
+  // This line now correctly syncs the visual state of the list with the filter state.
+  d3.selectAll(".country-list-item")
+    .classed("active", d => currentFilters.selectedCountries.includes(d));
 
-  //re-render charts
   renderAllVisualizations(filteredPlatformData, result);
-}
-
-function setupRemoveFiltersButton() {
+}function setupRemoveFiltersButton() {
   d3.select(".remove-filters-btn").on("click", () => {
-    // 1. Reset the state object
+    // 1. Reset the state object (this clears currentFilters.selectedCountries)
     currentFilters = { ...defaultFilters };
 
-    // 2. Reset the UI controls
-    d3.selectAll(".content-type-filter button")
+    // 2. Reset the other UI controls
+    d3.selectAll(".content-type-filter button, .platform-buttons button, .audience-buttons button")
       .classed("active", false)
       .classed("inactive", false);
-    d3.selectAll(".platform-buttons button")
-      .classed("active", false)
-      .classed("inactive", false);
-    d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
-      "checked",
-      false
-    );
-    d3.selectAll(".audience-buttons button")
-      .classed("active", false)
-      .classed("inactive", false);
+    d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", false);
+    
+    // Clear the country search bar and make all items visible
+    d3.select("#country-search").property("value", "");
+    d3.selectAll(".country-list-item").style("display", "block");
 
-    // Reset the sliders using their returned methods
+    // Reset the sliders
     if (imdbSlider) imdbSlider.reset();
     if (yearSlider) yearSlider.reset();
 
-    // 3. Apply the cleared filters to re-render the chart
+    // 3. Apply filters, which will now handle the visual update for the country list
     applyFilters();
   });
 }
@@ -927,4 +1039,37 @@ function renderSankeyChart(data) {
     .style("font-weight", "600")
     .style("fill", "#334155")
     .text("Content Flow: Platform → Genre → Target Audience");
+}
+function populateCountryFilter(data) {
+  const allCountries = new Set(data.flatMap(d => d.countries).filter(c => c && c !== ""));
+
+  d3.select("#country-filter-list")
+    .selectAll(".country-list-item")
+    .data(Array.from(allCountries).sort(), d => d)
+    .join("div")
+      .attr("class", "country-list-item")
+      .text(d => d)
+        .on("click", function(event, d) {
+        const index = currentFilters.selectedCountries.indexOf(d);
+        if (index > -1) {
+          // If the country is already selected, remove it
+          currentFilters.selectedCountries.splice(index, 1);
+        } else {
+          // Otherwise, add the country to the selection
+          currentFilters.selectedCountries.push(d);
+        }
+        applyFilters();
+      });
+}
+
+function setupCountryFilter(data) {
+  populateCountryFilter(data);
+
+  d3.select("#country-search").on("input", function(event) {
+    const searchTerm = event.target.value.toLowerCase();
+    d3.selectAll(".country-list-item").style("display", function() {
+      const countryName = d3.select(this).text().toLowerCase();
+      return countryName.includes(searchTerm) ? "block" : "none";
+    });
+  });
 }
