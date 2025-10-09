@@ -1,4 +1,3 @@
-//checks if string exists and not just whitespace
 const isValidString = (str) =>
   str && typeof str === "string" && str.trim() !== "";
 
@@ -31,7 +30,7 @@ const defaultFilters = {
   selectedGenres: [],
   yearRange: null,
   selectedAudiences: [],
-  selectedPlatforms: [],
+  selectedPlatforms: []
 };
 
 //apply the initial to the current filters
@@ -50,20 +49,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const processedPlatformData = rawPlatformData.map((d) => ({
         ...d,
         streaming_platform: d.streaming_platform,
-        release_year: +d.release_year, //convert into number
-        imdb_score: +d.imdb_score, //convert into number
+        release_year: +d.release_year,
+        imdb_score: +d.imdb_score,
         type: d.type,
-        genres: d.genres || "", //ensures not empty
-        age_category: d.age_category || "Unknown", //ensures not empty
-        //extracts first genre to main genre because there are many genres in one movie
+        genres: d.genres || "",
+        age_category: d.age_category || "Unknown",
         main_genre: isValidString(d.genres)
           ? d.genres.split(",")[0].trim()
           : "Unknown",
-        main_country: isValidString(d.production_countries)
-          ? d.production_countries.split(",")[0].trim()
-          : "Unknown",
+        // This is the important change from main_country to countries array
+        countries: isValidString(d.production_countries)
+          ? d.production_countries.split(',').map(c => c.trim())
+          : [],
       }));
-
       const processedPriceData = rawPriceData.map((d) => ({
         ...d,
         year: +d.year,
@@ -83,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .style("opacity", 0);
 
       document.getElementById("loading").style.display = "none";
-      document.querySelector("main").style.visibility = "visible";
+      // document.getElementById("dashboard-main").style.visibility = "visible";
 
       //initializes al filters and sliders
       setupPlatformFilter();
@@ -119,7 +117,6 @@ function applyFilters() {
   let filteredPlatformData = allPlatformData;
   let filteredPriceData = allPriceData;
 
-  //filter platform
   if (currentFilters.selectedPlatforms.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedPlatforms.includes(d.streaming_platform)
@@ -132,21 +129,18 @@ function applyFilters() {
     );
   }
 
-  //filter imdb range
   filteredPlatformData = filteredPlatformData.filter(
     (d) =>
       d.imdb_score >= currentFilters.imdbRange[0] &&
       d.imdb_score <= currentFilters.imdbRange[1]
   );
 
-  //filter by genre
   if (currentFilters.selectedGenres.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedGenres.includes(d.main_genre)
     );
   }
 
-  //filter by year
   if (currentFilters.yearRange) {
     filteredPlatformData = filteredPlatformData.filter(
       (d) =>
@@ -160,7 +154,6 @@ function applyFilters() {
     );
   }
 
-  //filter target audience
   if (currentFilters.selectedAudiences.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedAudiences.includes(d.age_category)
@@ -172,35 +165,23 @@ function applyFilters() {
     platformsSet.has(d.streaming_platform)
   );
 
-  //re-render charts
   renderAllVisualizations(filteredPlatformData, result);
-}
-
-function setupRemoveFiltersButton() {
+}function setupRemoveFiltersButton() {
   d3.select(".remove-filters-btn").on("click", () => {
     // 1. Reset the state object
     currentFilters = { ...defaultFilters };
 
-    // 2. Reset the UI controls
-    d3.selectAll(".content-type-filter button")
+    // 2. Reset the other UI controls
+    d3.selectAll(".content-type-filter button, .platform-buttons button, .audience-buttons button")
       .classed("active", false)
       .classed("inactive", false);
-    d3.selectAll(".platform-buttons button")
-      .classed("active", false)
-      .classed("inactive", false);
-    d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
-      "checked",
-      false
-    );
-    d3.selectAll(".audience-buttons button")
-      .classed("active", false)
-      .classed("inactive", false);
+    d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", false);
 
-    // Reset the sliders using their returned methods
+    // Reset the sliders
     if (imdbSlider) imdbSlider.reset();
     if (yearSlider) yearSlider.reset();
 
-    // 3. Apply the cleared filters to re-render the chart
+    // 3. Apply filters
     applyFilters();
   });
 }
@@ -621,7 +602,7 @@ function renderQuantityChart(data) {
 
   } else {
     // --- B. ANIMATE TO BUTTERFLY CHART ---
-    svg.selectAll(".chart-title").data(["Movies vs. TV Shows"]).join("text")
+    svg.selectAll(".chart-title").data(["TV Shows vs. Movies"]).join("text")
         .attr("class", "chart-title").attr("x", width / 2).attr("y", -15).attr("text-anchor", "middle")
         .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155").text(d => d);
 

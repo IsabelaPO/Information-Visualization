@@ -34,13 +34,27 @@ body {
   color: var(--text-color);
 }
 /* Overall dashboard layout */
-.dashboard-wrapper {
+/* .dashboard-wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
+} */
+
+.dashboard-wrapper {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 5fr; /* Left column narrower than right */
+  grid-template-rows: 1fr 1fr; /* Two rows for the left side */
+  grid-template-areas:
+    "header viz"
+    "filters viz";
+  gap: 10px;
+  padding: 10px;
 }
+
 /* Header bar */
 header {
+  grid-area: header;
   height: var(--header-height);
   background-color: var(--base-button-color);
   padding: 0.5rem 1.5rem;
@@ -60,27 +74,25 @@ header div h2 {
   color: var(--accent-color);
 }
 /* Main grid: sidebar + visualizations */
-.dashboard-container {
+/* .dashboard-container {
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 1rem;
   padding: 1rem;
-  /*height: calc(100vh - var(--header-height));*/
   height: auto;
   overflow: hidden;
-  /* overflow: visible; */
-}
+} */
 /* Sidebar filters panel */
 .filters-panel {
+  grid-area: filters;
   background-color: var(--card-bg);
   padding: 1rem;
   border-radius: 0.75rem;
   box-shadow: var(--shadow);
-  /* position: sticky; */
   top: 1rem;
   overflow-y: visible;
-  /* height: calc(100vh - var(--header-height) - 2rem); */
 }
+
 /* Filter block spacing */
 .filter-group {
   margin-bottom: 1rem;
@@ -205,7 +217,7 @@ select {
 /* Reset all filters button */
 .remove-filters-btn {
   width: 100%;
-  margin-top: 1.5rem;
+  margin-top: 0.3rem;
   padding: 0.75rem;
   background-color: var(--accent-color);
   color: white;
@@ -216,19 +228,18 @@ select {
 }
 /* Visualization panel grid */
 .viz-panel {
+  grid-area: viz;
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 0.25fr 1fr 1fr;
+  grid-template-rows: 0.17fr 0.6fr 1fr;
   grid-template-areas:
     "timeline timeline"
     "treemap  side-charts"
-    "sankey   sankey"
-    "quantity quantity"
-    "price price";
+    "sankey   sankey";
   /* overflow-y: auto;     */
   /* height: calc(100vh - var(--header-height)); */
-  padding-right: 0.5rem; /* small padding so scrollbar doesn’t overlap */
+   /* small padding so scrollbar doesn’t overlap */
 }
 /* Generic chart card */
 .viz-card {
@@ -249,7 +260,7 @@ select {
 }
 #sankey-chart {
   grid-area: sankey;
-  height: 450px;
+  height: 400px;
 }
 #quantity-chart {
   grid-area: quantity;
@@ -355,7 +366,10 @@ select {
 #timeline-filter {
   display: flex;
   flex-direction: column;
-  padding: 0.75rem 1rem;
+  /* padding: 0.75rem 1rem;
+  padding-bottom: 0px; */
+  padding-top: 5px;
+
 }
 .viz-card-header {
   font-size: 1rem;
