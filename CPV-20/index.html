@@ -26,9 +26,9 @@
       <div id="loading"><div class="spinner"></div></div>
 
       <!--Main dashboard content (hidden until data loads)-->
-      <main class="dashboard-container" style="visibility: hidden">
+      <!-- <div id="dashboard-main" class="dashboard-container" style="visibility: hidden"> -->
         <!-- Sidebar: Filters panel -->
-        <aside class="filters-panel">
+        <div class="filters-panel">
           <div class="filter-group">
             <input type="text" placeholder="TV Show / Movie Name" />
           </div>
@@ -83,10 +83,10 @@
           </div>
           <!-- Reset filters button -->
           <button class="remove-filters-btn">Remove All Filters</button>
-        </aside>
+        </div>
 
         <!-- Visualization panel -->
-        <section class="viz-panel">
+        <div class="viz-panel">
           <!-- Timeline filter (release year slider) -->
           <div id="timeline-filter" class="viz-card">
             <div class="viz-card-header">Filter by Release Year</div>
@@ -104,8 +104,8 @@
           </div>
           <!-- Sankey chart visualization -->
           <div id="sankey-chart" class="viz-card"></div>
-        </section>
-      </main>
+        </div>
+      <!-- </div> -->
     </div>
   </body>
 </html>

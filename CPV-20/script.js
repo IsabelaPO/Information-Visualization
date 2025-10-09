@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .style("opacity", 0);
 
       document.getElementById("loading").style.display = "none";
-      document.querySelector("main").style.visibility = "visible";
+      // document.getElementById("dashboard-main").style.visibility = "visible";
 
       //initializes al filters and sliders
       setupPlatformFilter();
@@ -733,7 +733,7 @@ function renderQuantityChart(data) {
 
   } else {
     // --- B. ANIMATE TO BUTTERFLY CHART ---
-    svg.selectAll(".chart-title").data(["Movies vs. TV Shows"]).join("text")
+    svg.selectAll(".chart-title").data(["TV Shows vs. Movies"]).join("text")
         .attr("class", "chart-title").attr("x", width / 2).attr("y", -15).attr("text-anchor", "middle")
         .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155").text(d => d);
 
