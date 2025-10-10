@@ -25,87 +25,84 @@
       <!--Loading spinner, shown until data is loaded-->
       <div id="loading"><div class="spinner"></div></div>
 
-      <!--Main dashboard content (hidden until data loads)-->
-      <!-- <div id="dashboard-main" class="dashboard-container" style="visibility: hidden"> -->
-        <!-- Sidebar: Filters panel -->
-        <div class="filters-panel">
-          <div class="filter-group">
-            <input type="text" placeholder="TV Show / Movie Name" />
+      <!-- Sidebar: Filters panel -->
+      <div class="filters-panel">
+        <!-- Platform filter (buttons with brand colors) -->
+        <div class="filter-group">
+          <label>Platforms</label>
+          <div class="platform-buttons">
+            <button data-platform="Netflix">Netflix</button>
+            <button data-platform="Amazon">Amazon</button>
+            <button data-platform="Disney">Disney</button>
+            <button data-platform="HBO">HBO</button>
+            <button data-platform="Paramount">Paramount</button>
+            <button data-platform="Apple">Apple</button>
           </div>
-          <!-- Platform filter (buttons with brand colors) -->
-          <div class="filter-group">
-            <label>Platforms</label>
-            <div class="platform-buttons">
-              <button data-platform="Netflix">Netflix</button>
-              <button data-platform="Amazon">Amazon</button>
-              <button data-platform="Disney">Disney</button>
-              <button data-platform="HBO">HBO</button>
-              <button data-platform="Paramount">Paramount</button>
-              <button data-platform="Apple">Apple</button>
-            </div>
-          </div>
-          <!-- Dropdown: content type filter -->
-          <div class="filter-group">
-            <label>Content Type</label>
-            <div class="content-type-filter">
-              <button content-type-filter="SHOW">TV Shows</button>
-              <button content-type-filter="MOVIE">Movies</button>
-            </div>
-          </div>
-          <!-- Genres: dynamically populated checkboxes (JS populates this) -->
-          <div class="filter-group">
-            <label>Genres</label>
-            <div class="genre-list" id="genre-filter-list"></div>
-          </div>
-          <div class="filter-group">
-              <label>Production Country</label>
-              <input type="text" id="country-search" placeholder="Search for a country...">
-              <div class="country-list" id="country-filter-list"></div>
-          </div>
-          <!-- Audience filter (buttons, JS maps to age categories) -->
-          <div class="filter-group">
-            <label>Target Audience</label>
-            <div class="audience-buttons">
-              <button audience-buttons="toddlers">Toddler</button>
-              <button audience-buttons="child">Children</button>
-              <button audience-buttons="teenager">Teenager</button>
-              <button audience-buttons="adult">Adult</button>
-            </div>
-          </div>
-          <!-- IMDb slider: interactive filter for rating range -->
-          <div class="filter-group">
-            <label>IMDB Score</label>
-            <div id="imdb-slider-container" class="d3-slider-container"></div>
-            <div class="slider-labels">
-              <span id="imdb-min-value">1.0</span>
-              <span id="imdb-max-value">10.0</span>
-            </div>
-          </div>
-          <!-- Reset filters button -->
-          <button class="remove-filters-btn">Remove All Filters</button>
         </div>
+        <!-- Dropdown: content type filter -->
+        <div class="filter-group">
+          <label>Content Type</label>
+          <div class="content-type-filter">
+            <button content-type-filter="SHOW">TV Shows</button>
+            <button content-type-filter="MOVIE">Movies</button>
+          </div>
+        </div>
+        <!-- Genres: dynamically populated checkboxes (JS populates this) -->
+        <div class="filter-group">
+          <label>Genres</label>
+          <div class="genre-list" id="genre-filter-list"></div>
+        </div>
+        <div class="filter-group">
+          <label>Production Country</label>
+          <input
+            type="text"
+            id="country-search"
+            placeholder="Search for a country..."
+          />
+          <div class="country-list" id="country-filter-list"></div>
+        </div>
+        <!-- Audience filter (buttons, JS maps to age categories) -->
+        <div class="filter-group">
+          <label>Target Audience</label>
+          <div class="audience-buttons">
+            <button audience-buttons="toddlers">Toddler</button>
+            <button audience-buttons="child">Children</button>
+            <button audience-buttons="teenager">Teenager</button>
+            <button audience-buttons="adult">Adult</button>
+          </div>
+        </div>
+        <!-- IMDb slider: interactive filter for rating range -->
+        <div class="filter-group">
+          <label>IMDB Score</label>
+          <div id="imdb-slider-container" class="d3-slider-container"></div>
+          <div class="slider-labels">
+            <span id="imdb-min-value">1.0</span>
+            <span id="imdb-max-value">10.0</span>
+          </div>
+        </div>
+        <!-- Reset filters button -->
+        <button class="remove-filters-btn">Remove All Filters</button>
+      </div>
 
-        <!-- Visualization panel -->
-        <div class="viz-panel">
-          <!-- Timeline filter (release year slider) -->
-          <div id="timeline-filter" class="viz-card">
-            <div class="viz-card-header">Filter by Release Year</div>
-            <div id="year-slider-container" class="d3-slider-container"></div>
-            <div class="slider-labels">
-              <span id="year-min-value">...</span>
-              <span id="year-max-value">...</span>
-            </div>
+      <!-- Visualization panel -->
+      <div class="viz-panel">
+        <!-- Timeline filter (release year slider) -->
+        <div id="timeline-filter" class="viz-card">
+          <div class="viz-card-header">Filter by Release Year</div>
+          <div id="year-slider-container" class="d3-slider-container"></div>
+          <div class="slider-labels">
+            <span id="year-min-value">...</span>
+            <span id="year-max-value">...</span>
           </div>
-          <!-- Other visualization cards -->
-          <div id="treemap-chart" class="viz-card">
-          </div>
-          <div class="side-charts-container">
-            <div id="quantity-chart" class="viz-card"></div>
-          </div>
-          <!-- Sankey chart visualization -->
-          <div id="sankey-chart" class="viz-card"></div>
         </div>
-      <!-- </div> -->
+        <!-- Other visualization cards -->
+        <div id="treemap-chart" class="viz-card"></div>
+        <div class="side-charts-container">
+          <div id="quantity-chart" class="viz-card"></div>
+        </div>
+        <!-- Sankey chart visualization -->
+        <div id="sankey-chart" class="viz-card"></div>
+      </div>
     </div>
   </body>
 </html>

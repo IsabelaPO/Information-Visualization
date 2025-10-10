@@ -232,7 +232,7 @@ select {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 0.17fr 0.7fr 1fr;
+  grid-template-rows: 0.17fr 0.6fr 1fr;
   grid-template-areas:
     "timeline timeline"
     "treemap  side-charts"
@@ -260,7 +260,7 @@ select {
 }
 #sankey-chart {
   grid-area: sankey;
-  height: 450px;
+  height: 400px;
 }
 #quantity-chart {
   grid-area: quantity;
@@ -424,11 +424,8 @@ select {
   padding: 0.5rem 1rem; /* Give the text space */
   width: auto; /* Allow width to be flexible */
   height: auto; /* Allow height to be flexible */
-
-  /* Rest of the styles are similar */
   border: none;
   color: white;
-  /*font-weight: 600; /* A slightly less bold font looks better with full words */
   font-size: 0.875rem;
   cursor: pointer;
   display: flex;

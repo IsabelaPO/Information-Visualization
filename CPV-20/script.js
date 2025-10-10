@@ -3,7 +3,6 @@ const isValidString = (str) =>
 
 //stores all platform data
 let allPlatformData = [];
-let allPriceData = [];
 let tooltip; // Tooltip is defined once globally
 firstRender = true;
 
@@ -31,7 +30,7 @@ const defaultFilters = {
   yearRange: null,
   selectedAudiences: [],
   selectedPlatforms: [],
-  selectedCountries: [], 
+  selectedCountries: [],
 };
 
 //apply the initial to the current filters
@@ -42,11 +41,8 @@ let currentFilters = { ...defaultFilters };
 let imdbSlider, yearSlider;
 //loads the csv files with d3
 document.addEventListener("DOMContentLoaded", () => {
-  Promise.all([
-    d3.csv("streaming_platforms.csv"),
-    d3.csv("streaming_prices.csv"),
-  ])
-    .then(([rawPlatformData, rawPriceData]) => {
+  Promise.all([d3.csv("streaming_platforms.csv")])
+    .then(([rawPlatformData]) => {
       const processedPlatformData = rawPlatformData.map((d) => ({
         ...d,
         streaming_platform: d.streaming_platform,
@@ -60,21 +56,17 @@ document.addEventListener("DOMContentLoaded", () => {
           : "Unknown",
         // This is the important change from main_country to countries array
         countries: isValidString(d.production_countries)
-          ? d.production_countries.split(',').map(c => c.trim())
+          ? d.production_countries.split(",").map((c) => c.trim())
           : [],
-      }));
-      const processedPriceData = rawPriceData.map((d) => ({
-        ...d,
-        year: +d.year,
-        price: +d.price,
       }));
 
       //stores the processed data
       allPlatformData = processedPlatformData;
-      allPriceData = processedPriceData;
-      
+
       // --- Create the tooltip div once and for all. ---
-      tooltip = d3.select("body").selectAll(".tooltip-donut")
+      tooltip = d3
+        .select("body")
+        .selectAll(".tooltip-donut")
         .data([0])
         .join("div")
         .attr("class", "tooltip-donut")
@@ -96,12 +88,12 @@ document.addEventListener("DOMContentLoaded", () => {
       setupRemoveFiltersButton();
 
       //draws initial visualizations
-      renderAllVisualizations(allPlatformData, allPriceData);
+      renderAllVisualizations(allPlatformData);
 
       window.addEventListener("resize", () => {
         clearTimeout(window.resizeTimer);
         window.resizeTimer = setTimeout(
-          () => renderAllVisualizations(allPlatformData, allPriceData),
+          () => renderAllVisualizations(allPlatformData),
           250
         );
       });
@@ -110,140 +102,41 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch((error) => console.error("Data loading failed:", error));
 });
 
-function renderAllVisualizations(data, price) {
+function renderAllVisualizations(data) {
   renderSankeyChart(data);
   renderQuantityChart(data);
   renderTreemapChart(data); // Add this line
-
 }
-function renderTreemapChart(data) {
-  const container = d3.select("#treemap-chart");
-  container.selectAll("*").remove(); // Clear previous contents
 
-  const bounds = container.node().getBoundingClientRect();
-  if (bounds.width < 10 || bounds.height < 10) return;
-
-  const margin = { top: 40, right: 10, bottom: 10, left: 10 };
-  const width = bounds.width - margin.left - margin.right;
-  const height = bounds.height - margin.top - margin.bottom;
-
-  const svg = container.append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-let treemapData;
-  
-  // First, get the counts for all countries present in the filtered data
-  const countryCounts = new Map();
-  data.forEach(d => {
-    d.countries.forEach(country => {
-      if(country) {
-        countryCounts.set(country, (countryCounts.get(country) || 0) + 1);
-      }
-    });
-  });
-
-  if (currentFilters.selectedCountries.length > 0) {
-    // If countries ARE selected, build the treemap using ONLY those countries
-    const filteredChildren = currentFilters.selectedCountries.map(country => ({
-      name: country,
-      value: countryCounts.get(country) || 0
-    }));
-
-    treemapData = {
-      name: "root",
-      children: filteredChildren.sort((a,b) => b.value - a.value)
-    };
-  } else {
-    // If NO country is selected, show all countries
-    treemapData = {
-      name: "root",
-      children: Array.from(countryCounts, ([name, value]) => ({ name, value }))
-        .filter(d => d.name !== 'Unknown')
-        .sort((a, b) => b.value - a.value)
-    };
-  }
-
-  // --- 2. Create the Treemap Layout ---
-  const root = d3.hierarchy(treemapData).sum(d => d.value); // Sum values to size rectangles
-
-  const treemapLayout = d3.treemap()
-    .size([width, height])
-    .padding(2);
-
-  treemapLayout(root); // This computes the x, y, width, and height for each rectangle
-
-  // --- 3. Create a Color Scale ---
-  const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
-
-  // --- 4. Draw the Rectangles (Cells) ---
-  const cell = svg.selectAll("g")
-    .data(root.leaves()) // .leaves() gives us the individual country rectangles
-    .join("g")
-    .attr("transform", d => `translate(${d.x0}, ${d.y0})`);
-
-  cell.append("rect")
-    .attr("width", d => d.x1 - d.x0)
-    .attr("height", d => d.y1 - d.y0)
-    .attr("fill", d => colorScale(d.data.name))
-    .style("stroke", "#fff")
-    .on("mouseover", function(event, d) {
-      tooltip.transition().duration(200).style("opacity", 1);
-      tooltip.html(`
-        <div><b>Country:</b> ${d.data.name}</div>
-        <div><b>Titles:</b> ${d.data.value}</div>
-      `);
-      const bbox = tooltip.node().getBoundingClientRect();
-      tooltip.style("left", (event.pageX - bbox.width / 2) + "px")
-             .style("top", (event.pageY - bbox.height - 10) + "px");
-    })
-    .on("mouseout", function() {
-      tooltip.transition().duration(500).style("opacity", 0);
-    });
-
-  // --- 5. Add Labels to the Cells ---
-  cell.append("text")
-    .selectAll("tspan")
-    .data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g)) // Split words for wrapping
-    .join("tspan")
-      .attr("x", 4)
-      .attr("y", (d, i) => 13 + i * 10)
-      .text(d => d)
-      .attr("font-size", "0.7em")
-      .attr("fill", "white")
-      .style("pointer-events", "none") // Make text unclickable
-      // Hide text if the box is too small
-      .attr("opacity", function(d) {
-        const parent = this.parentNode.__data__;
-        const width = parent.x1 - parent.x0;
-        const height = parent.y1 - parent.y0;
-        return (width > 35 && height > 20) ? 1 : 0;
-      });
-
-  // Chart title
-  svg.append("text")
-    .attr("x", width / 2)
-    .attr("y", -15)
-    .attr("text-anchor", "middle")
-    .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155")
-    .text("Content Quantity by Country");
-}
 function applyFilters() {
   let filteredPlatformData = allPlatformData;
-  let filteredPriceData = allPriceData;
 
   if (currentFilters.selectedPlatforms.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedPlatforms.includes(d.streaming_platform)
     );
+
+    d3.selectAll(".platform-buttons button")
+      .classed("active", (d, i, nodes) =>
+        currentFilters.selectedPlatforms.includes(nodes[i].innerText)
+      )
+      .classed("inactive", (d, i, nodes) =>
+        !currentFilters.selectedPlatforms.includes(nodes[i].innerText)
+      );
   }
 
   if (currentFilters.type.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.type.includes(d.type)
     );
+    
+    d3.selectAll(".content-type-filter button")
+      .classed("active", (d, i, nodes) =>
+        currentFilters.type.includes(nodes[i].getAttribute("content-type-filter"))
+      )
+      .classed("inactive", (d, i, nodes) =>
+        !currentFilters.type.includes(nodes[i].getAttribute("content-type-filter"))
+      );
   }
 
   filteredPlatformData = filteredPlatformData.filter(
@@ -256,6 +149,12 @@ function applyFilters() {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedGenres.includes(d.main_genre)
     );
+
+    d3.selectAll('#genre-filter-list input[type="checkbox"]')
+      .property("checked", function() {
+        const genre = this.parentNode.textContent.trim();
+        return currentFilters.selectedGenres.includes(genre);
+      });
   }
 
   if (currentFilters.yearRange) {
@@ -264,49 +163,65 @@ function applyFilters() {
         d.release_year >= currentFilters.yearRange[0] &&
         d.release_year <= currentFilters.yearRange[1]
     );
-    filteredPriceData = filteredPriceData.filter(
-      (d) =>
-        d.year >= currentFilters.yearRange[0] &&
-        d.year <= currentFilters.yearRange[1]
-    );
   }
 
   if (currentFilters.selectedAudiences.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedAudiences.includes(d.age_category)
     );
+
+    d3.selectAll(".audience-buttons button")
+      .classed("active", (d, i, nodes) =>
+        currentFilters.selectedAudiences.includes(nodes[i].getAttribute("audience-buttons"))
+      )
+      .classed("inactive", (d, i, nodes) =>
+        !currentFilters.selectedAudiences.includes(nodes[i].getAttribute("audience-buttons"))
+      );
   }
-  
+
   if (currentFilters.selectedCountries.length > 0) {
-    filteredPlatformData = filteredPlatformData.filter(d => 
-      currentFilters.selectedCountries.some(country => d.countries.includes(country))
+    filteredPlatformData = filteredPlatformData.filter((d) =>
+      currentFilters.selectedCountries.some((country) =>
+        d.countries.includes(country)
+      )
     );
   }
 
-  const platformsSet = new Set(filteredPlatformData.map(d => d.streaming_platform));
-  const result = filteredPriceData.filter((d) =>
-    platformsSet.has(d.streaming_platform)
+  const platformsSet = new Set(
+    filteredPlatformData.map((d) => d.streaming_platform)
   );
-  
+
   // This line now correctly syncs the visual state of the list with the filter state.
-  d3.selectAll(".country-list-item")
-    .classed("active", d => currentFilters.selectedCountries.includes(d));
+  d3.selectAll(".country-list-item").classed("active", (d) =>
+    currentFilters.selectedCountries.includes(d)
+  );
 
-  renderAllVisualizations(filteredPlatformData, result);
-}function setupRemoveFiltersButton() {
+  renderAllVisualizations(filteredPlatformData);
+}
+
+function setupRemoveFiltersButton() {
   d3.select(".remove-filters-btn").on("click", () => {
-    // 1. Reset the state object (this clears currentFilters.selectedCountries)
+    // 1. Reset the state object
     currentFilters = { ...defaultFilters };
-
+    currentFilters.selectedCountries = [];
     // 2. Reset the other UI controls
-    d3.selectAll(".content-type-filter button, .platform-buttons button, .audience-buttons button")
+    d3.selectAll(
+      ".content-type-filter button, .platform-buttons button, .audience-buttons button"
+    )
       .classed("active", false)
       .classed("inactive", false);
-    d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", false);
-    
+    d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
+      "checked",
+      true
+    );
+
     // Clear the country search bar and make all items visible
     d3.select("#country-search").property("value", "");
-    d3.selectAll(".country-list-item").style("display", "block");
+    //d3.selectAll(".country-list-item").style("display", "block");
+    d3.selectAll(".country-list-item")
+      .classed("active", false)
+      .style("display", "block");
+
 
     // Reset the sliders
     if (imdbSlider) imdbSlider.reset();
@@ -577,7 +492,7 @@ function populateGenreFilter(data) {
     .append("div")
     .html(
       (d) =>
-        `<label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;"><input type="checkbox" style="margin-right: 0.5rem;">${d}</label>`
+        `<label style="display: flex; align-items: center; cursor: pointer; font-weight: normal;"><input type="checkbox" style="margin-right: 0.5rem;" checked>${d}</label>`
     );
 }
 
@@ -627,10 +542,46 @@ function renderTimelineFilter(data) {
     .text("Filter by Release Year");
 }
 
+function populateCountryFilter(data) {
+  const allCountries = new Set(
+    data.flatMap((d) => d.countries).filter((c) => c && c !== "")
+  );
+
+  d3.select("#country-filter-list")
+    .selectAll(".country-list-item")
+    .data(Array.from(allCountries).sort(), (d) => d)
+    .join("div")
+    .attr("class", "country-list-item")
+    .text((d) => d)
+    .on("click", function (event, d) {
+      const index = currentFilters.selectedCountries.indexOf(d);
+      if (index > -1) {
+        // If the country is already selected, remove it
+        currentFilters.selectedCountries.splice(index, 1);
+      } else {
+        // Otherwise, add the country to the selection
+        currentFilters.selectedCountries.push(d);
+      }
+      applyFilters();
+    });
+}
+
+function setupCountryFilter(data) {
+  populateCountryFilter(data);
+
+  d3.select("#country-search").on("input", function (event) {
+    const searchTerm = event.target.value.toLowerCase();
+    d3.selectAll(".country-list-item").style("display", function () {
+      const countryName = d3.select(this).text().toLowerCase();
+      return countryName.includes(searchTerm) ? "block" : "none";
+    });
+  });
+}
+
 function renderQuantityChart(data) {
   const container = d3.select("#quantity-chart");
   // No longer removing everything, to allow for transitions
-  
+
   const bounds = container.node().getBoundingClientRect();
   if (bounds.width < 10 || bounds.height < 10) return;
 
@@ -641,18 +592,20 @@ function renderQuantityChart(data) {
   const t = d3.transition().duration(750);
 
   // Use .join() to create the SVG canvas once
-  const svg = container.selectAll("svg")
+  const svg = container
+    .selectAll("svg")
     .data([null])
     .join("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
     .selectAll("g") // Select g, or create it if it doesn't exist
     .data([null])
     .join("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
   // Check if a single content type is selected
-  const singleTypeSelected = currentFilters.type.length === 1 ? currentFilters.type[0] : null;
+  const singleTypeSelected =
+    currentFilters.type.length === 1 ? currentFilters.type[0] : null;
 
   const aggData = Array.from(
     d3.group(
@@ -665,139 +618,308 @@ function renderQuantityChart(data) {
       movies: values.filter((d) => d.type === "MOVIE").length,
     })
   );
-  aggData.sort((a, b) => (b.movies + b.tvShows) - (a.movies + a.tvShows));
-  
-  const noDataMessage = svg.selectAll(".no-data-message").data(aggData.length === 0 ? [1] : []);
-  noDataMessage.enter().append("text").attr("class", "no-data-message")
-    .attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle")
-    .text("No data available for the current filter selection.").style("fill", "var(--muted-text)");
+  aggData.sort((a, b) => b.movies + b.tvShows - (a.movies + a.tvShows));
+
+  const noDataMessage = svg
+    .selectAll(".no-data-message")
+    .data(aggData.length === 0 ? [1] : []);
+  noDataMessage
+    .enter()
+    .append("text")
+    .attr("class", "no-data-message")
+    .attr("x", width / 2)
+    .attr("y", height / 2)
+    .attr("text-anchor", "middle")
+    .text("No data available for the current filter selection.")
+    .style("fill", "var(--muted-text)");
   noDataMessage.exit().transition(t).style("opacity", 0).remove();
-  
+
   if (aggData.length === 0) {
-    svg.selectAll(".tv-show-bar, .movie-bar, .bar, .center-line").transition(t).attr("width", 0).attr("height", 0).remove();
+    svg
+      .selectAll(".tv-show-bar, .movie-bar, .bar, .center-line")
+      .transition(t)
+      .attr("width", 0)
+      .attr("height", 0)
+      .remove();
     return;
   }
 
   if (singleTypeSelected) {
     // --- A. ANIMATE TO NORMAL BAR CHART ---
-    const dataType = singleTypeSelected === 'SHOW' ? 'tvShows' : 'movies';
-    
-    svg.selectAll(".chart-title").data([singleTypeSelected === 'SHOW' ? "TV Show Quantities" : "Movie Quantities"]).join("text")
-        .attr("class", "chart-title").attr("x", width / 2).attr("y", -15).attr("text-anchor", "middle")
-        .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155").text(d => d);
+    const dataType = singleTypeSelected === "SHOW" ? "tvShows" : "movies";
 
-    const xScale = d3.scaleBand().domain(aggData.map(d => d.platform)).range([0, width]).padding(0.2);
-    const yScale = d3.scaleLinear().domain([0, d3.max(aggData, d => d[dataType]) * 1.1]).range([height, 0]);
+    svg
+      .selectAll(".chart-title")
+      .data([
+        singleTypeSelected === "SHOW"
+          ? "TV Show Quantities"
+          : "Movie Quantities",
+      ])
+      .join("text")
+      .attr("class", "chart-title")
+      .attr("x", width / 2)
+      .attr("y", -15)
+      .attr("text-anchor", "middle")
+      .style("font-size", "1rem")
+      .style("font-weight", "600")
+      .style("fill", "#334155")
+      .text((d) => d);
 
-    svg.selectAll(".x-axis").data([null]).join("g").attr("class", "axis x-axis")
-        .attr("transform", `translate(0, ${height})`).transition(t).call(d3.axisBottom(xScale));
-    svg.selectAll(".y-axis").data([null]).join("g").attr("class", "axis y-axis")
-        .transition(t).call(d3.axisLeft(yScale).ticks(5));
+    const xScale = d3
+      .scaleBand()
+      .domain(aggData.map((d) => d.platform))
+      .range([0, width])
+      .padding(0.2);
+    const yScale = d3
+      .scaleLinear()
+      .domain([0, d3.max(aggData, (d) => d[dataType]) * 1.1])
+      .range([height, 0]);
 
-    svg.selectAll(".tv-show-bar, .movie-bar, .center-line").transition(t).attr("width", 0).style("opacity", 0).remove();
-    
-    svg.selectAll(".bar")
-      .data(aggData, d => d.platform)
+    svg
+      .selectAll(".x-axis")
+      .data([null])
+      .join("g")
+      .attr("class", "axis x-axis")
+      .attr("transform", `translate(0, ${height})`)
+      .transition(t)
+      .call(d3.axisBottom(xScale));
+    svg
+      .selectAll(".y-axis")
+      .data([null])
+      .join("g")
+      .attr("class", "axis y-axis")
+      .transition(t)
+      .call(d3.axisLeft(yScale).ticks(5));
+
+    svg
+      .selectAll(".tv-show-bar, .movie-bar, .center-line")
+      .transition(t)
+      .attr("width", 0)
+      .style("opacity", 0)
+      .remove();
+
+    svg
+      .selectAll(".bar")
+      .data(aggData, (d) => d.platform)
       .join(
-        enter => enter.append("rect")
-          .attr("class", "bar")
-          .attr("fill", typeFilterColors[singleTypeSelected])
-          .attr("x", d => xScale(d.platform))
-          .attr("y", height)
-          .attr("width", xScale.bandwidth())
-          .attr("height", 0)
-          .call(enter => enter.transition(t)
-            .attr("y", d => yScale(d[dataType]))
-            .attr("height", d => height - yScale(d[dataType]))),
-        update => update
-          .call(update => update.transition(t)
-            .attr("x", d => xScale(d.platform))
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "bar")
+            .attr("fill", typeFilterColors[singleTypeSelected])
+            .attr("x", (d) => xScale(d.platform))
+            .attr("y", height)
             .attr("width", xScale.bandwidth())
-            .attr("y", d => yScale(d[dataType]))
-            .attr("height", d => height - yScale(d[dataType]))),
-        exit => exit.transition(t)
-          .attr("y", height)
-          .attr("height", 0)
-          .remove()
+            .attr("height", 0)
+            .call((enter) =>
+              enter
+                .transition(t)
+                .attr("y", (d) => yScale(d[dataType]))
+                .attr("height", (d) => height - yScale(d[dataType]))
+            ),
+        (update) =>
+          update.call((update) =>
+            update
+              .transition(t)
+              .attr("x", (d) => xScale(d.platform))
+              .attr("width", xScale.bandwidth())
+              .attr("y", (d) => yScale(d[dataType]))
+              .attr("height", (d) => height - yScale(d[dataType]))
+          ),
+        (exit) =>
+          exit.transition(t).attr("y", height).attr("height", 0).remove()
       )
       .on("mouseover", function (event, d) {
-          tooltip.transition().duration(50).style("opacity", 1);
-          tooltip.html(`<div>${d.platform}</div><div>${singleTypeSelected}: ${d[dataType]}</div>`);
-          const bbox = tooltip.node().getBoundingClientRect();
-          tooltip.style("left", (event.pageX - bbox.width / 2) + "px")
-               .style("top", (event.pageY - bbox.height - 10) + "px");
+        tooltip.transition().duration(50).style("opacity", 1);
+        tooltip.html(
+          `<div>${d.platform}</div><div>${singleTypeSelected}: ${d[dataType]}</div>`
+        );
+        const bbox = tooltip.node().getBoundingClientRect();
+        tooltip
+          .style("left", event.pageX - bbox.width / 2 + "px")
+          .style("top", event.pageY - bbox.height - 10 + "px");
       })
       .on("mouseout", function () {
-          tooltip.transition().duration(50).style("opacity", 0);
+        tooltip.transition().duration(50).style("opacity", 0);
       });
-
   } else {
     // --- B. ANIMATE TO BUTTERFLY CHART ---
-    svg.selectAll(".chart-title").data(["TV Shows vs. Movies"]).join("text")
-        .attr("class", "chart-title").attr("x", width / 2).attr("y", -15).attr("text-anchor", "middle")
-        .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155").text(d => d);
+    svg
+      .selectAll(".chart-title")
+      .data(["TV Shows vs. Movies"])
+      .join("text")
+      .attr("class", "chart-title")
+      .attr("x", width / 2)
+      .attr("y", -15)
+      .attr("text-anchor", "middle")
+      .style("font-size", "1rem")
+      .style("font-weight", "600")
+      .style("fill", "#334155")
+      .text((d) => d);
 
     const maxVal = d3.max(aggData, (d) => Math.max(d.tvShows, d.movies)) * 1.1;
     const xScale = d3.scaleLinear().domain([-maxVal, maxVal]).range([0, width]);
-    const yScale = d3.scaleBand().domain(aggData.map((d) => d.platform)).range([0, height]).padding(0.4);
+    const yScale = d3
+      .scaleBand()
+      .domain(aggData.map((d) => d.platform))
+      .range([0, height])
+      .padding(0.4);
 
-    svg.selectAll(".x-axis").data([null]).join("g").attr("class", "axis x-axis")
-        .attr("transform", `translate(0, ${height})`).transition(t).call(d3.axisBottom(xScale).ticks(7).tickFormat(Math.abs));
-    svg.selectAll(".y-axis").data([null]).join("g").attr("class", "axis y-axis")
-        .transition(t).call(d3.axisLeft(yScale));
-    
-    svg.selectAll(".bar").transition(t).attr("height", 0).attr("y", height).remove();
-    
-    svg.selectAll(".center-line").data([null]).join("line").attr("class", "center-line")
-        .attr("y1", 0).attr("y2", height).attr("stroke", "#B0B0B0").attr("stroke-width", 1)
-        .style("opacity", 0) // Start transparent
-        .transition(t).style("opacity", 1).attr("x1", xScale(0)).attr("x2", xScale(0));
+    svg
+      .selectAll(".x-axis")
+      .data([null])
+      .join("g")
+      .attr("class", "axis x-axis")
+      .attr("transform", `translate(0, ${height})`)
+      .transition(t)
+      .call(d3.axisBottom(xScale).ticks(7).tickFormat(Math.abs));
+    svg
+      .selectAll(".y-axis")
+      .data([null])
+      .join("g")
+      .attr("class", "axis y-axis")
+      .transition(t)
+      .call(d3.axisLeft(yScale));
 
-    svg.selectAll(".tv-show-bar").data(aggData, d => d.platform)
+    svg
+      .selectAll(".bar")
+      .transition(t)
+      .attr("height", 0)
+      .attr("y", height)
+      .remove();
+
+    svg
+      .selectAll(".center-line")
+      .data([null])
+      .join("line")
+      .attr("class", "center-line")
+      .attr("y1", 0)
+      .attr("y2", height)
+      .attr("stroke", "#B0B0B0")
+      .attr("stroke-width", 1)
+      .style("opacity", 0) // Start transparent
+      .transition(t)
+      .style("opacity", 1)
+      .attr("x1", xScale(0))
+      .attr("x2", xScale(0));
+
+    svg
+      .selectAll(".tv-show-bar")
+      .data(aggData, (d) => d.platform)
       .join(
-        enter => enter.append("rect")
-          .attr("class", "tv-show-bar").attr("y", d => yScale(d.platform)).attr("height", yScale.bandwidth())
-          .attr("fill", typeFilterColors.SHOW).attr("x", xScale(0)).attr("width", 0)
-          .call(enter => enter.transition(t).attr("x", d => xScale(-d.tvShows)).attr("width", d => xScale(0) - xScale(-d.tvShows))),
-        update => update.transition(t)
-          .attr("y", d => yScale(d.platform)).attr("height", yScale.bandwidth())
-          .attr("x", d => xScale(-d.tvShows)).attr("width", d => xScale(0) - xScale(-d.tvShows)),
-        exit => exit.transition(t).attr("x", xScale(0)).attr("width", 0).remove()
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "tv-show-bar")
+            .attr("y", (d) => yScale(d.platform))
+            .attr("height", yScale.bandwidth())
+            .attr("fill", typeFilterColors.SHOW)
+            .attr("x", xScale(0))
+            .attr("width", 0)
+            .call((enter) =>
+              enter
+                .transition(t)
+                .attr("x", (d) => xScale(-d.tvShows))
+                .attr("width", (d) => xScale(0) - xScale(-d.tvShows))
+            ),
+        (update) =>
+          update
+            .transition(t)
+            .attr("y", (d) => yScale(d.platform))
+            .attr("height", yScale.bandwidth())
+            .attr("x", (d) => xScale(-d.tvShows))
+            .attr("width", (d) => xScale(0) - xScale(-d.tvShows)),
+        (exit) =>
+          exit.transition(t).attr("x", xScale(0)).attr("width", 0).remove()
       )
       .on("mouseover", function (event, d) {
-          tooltip.transition().duration(50).style("opacity", 1);
-          tooltip.html(`<div>${d.platform}</div><div>TV Shows: ${d.tvShows}</div>`);
-          const bbox = tooltip.node().getBoundingClientRect();
-          tooltip.style("left", (event.pageX - bbox.width / 2) + "px")
-               .style("top", (event.pageY - bbox.height - 10) + "px");
+        tooltip.transition().duration(50).style("opacity", 1);
+        tooltip.html(
+          `<div>${d.platform}</div><div>TV Shows: ${d.tvShows}</div>`
+        );
+        const bbox = tooltip.node().getBoundingClientRect();
+        tooltip
+          .style("left", event.pageX - bbox.width / 2 + "px")
+          .style("top", event.pageY - bbox.height - 10 + "px");
       })
       .on("mouseout", function () {
-          tooltip.transition().duration(50).style("opacity", 0);
+        tooltip.transition().duration(50).style("opacity", 0);
+      })
+      .on("click", function(event, d) {
+        currentFilters.selectedPlatforms = [d.platform];
+        currentFilters.type = ["SHOW"];
+        applyFilters();
       });
 
-    svg.selectAll(".movie-bar").data(aggData, d => d.platform)
+    svg
+      .selectAll(".movie-bar")
+      .data(aggData, (d) => d.platform)
       .join(
-        enter => enter.append("rect")
-          .attr("class", "movie-bar").attr("y", d => yScale(d.platform)).attr("height", yScale.bandwidth())
-          .attr("fill", typeFilterColors.MOVIE).attr("x", xScale(0)).attr("width", 0)
-          .call(enter => enter.transition(t).attr("width", d => xScale(d.movies) - xScale(0))),
-        update => update.transition(t)
-          .attr("y", d => yScale(d.platform)).attr("height", yScale.bandwidth())
-          .attr("x", xScale(0)).attr("width", d => xScale(d.movies) - xScale(0)),
-        exit => exit.transition(t).attr("width", 0).remove()
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "movie-bar")
+            .attr("y", (d) => yScale(d.platform))
+            .attr("height", yScale.bandwidth())
+            .attr("fill", typeFilterColors.MOVIE)
+            .attr("x", xScale(0))
+            .attr("width", 0)
+            .call((enter) =>
+              enter
+                .transition(t)
+                .attr("width", (d) => xScale(d.movies) - xScale(0))
+            ),
+        (update) =>
+          update
+            .transition(t)
+            .attr("y", (d) => yScale(d.platform))
+            .attr("height", yScale.bandwidth())
+            .attr("x", xScale(0))
+            .attr("width", (d) => xScale(d.movies) - xScale(0)),
+        (exit) => exit.transition(t).attr("width", 0).remove()
       )
       .on("mouseover", function (event, d) {
-          tooltip.transition().duration(50).style("opacity", 1);
-          tooltip.html(`<div>${d.platform}</div><div>Movies: ${d.movies}</div>`);
-          const bbox = tooltip.node().getBoundingClientRect();
-          tooltip.style("left", (event.pageX - bbox.width / 2) + "px")
-               .style("top", (event.pageY - bbox.height - 10) + "px");
+        tooltip.transition().duration(50).style("opacity", 1);
+        tooltip.html(`<div>${d.platform}</div><div>Movies: ${d.movies}</div>`);
+        const bbox = tooltip.node().getBoundingClientRect();
+        tooltip
+          .style("left", event.pageX - bbox.width / 2 + "px")
+          .style("top", event.pageY - bbox.height - 10 + "px");
       })
       .on("mouseout", function () {
-          tooltip.transition().duration(50).style("opacity", 0);
+        tooltip.transition().duration(50).style("opacity", 0);
+      })
+      .on("click", function(event, d) {
+        currentFilters.selectedPlatforms = [d.platform];
+        currentFilters.type = ["MOVIE"];
+        applyFilters();
       });
   }
 }
+
+const handleClick = function (event, d) {
+  const name = d.name;
+
+  // Check if the name exists in the genre list
+  if (d3.selectAll('#genre-filter-list input').nodes().some((n) => n.parentNode.textContent.trim() === name)) {
+    currentFilters.selectedGenres = [name];
+  }
+  // Check if the name exists in platform buttons
+  else if (d3.selectAll('.platform-buttons button').nodes().some((n) => n.getAttribute('data-platform') === name)) {
+    currentFilters.selectedPlatforms = [name];
+  }
+  // Check if the name exists in audience buttons
+  else if (d3.selectAll('.audience-buttons button').nodes().some((n) => n.getAttribute('audience-buttons') === name)) {
+    currentFilters.selectedAudiences = [name];
+  }
+  // Check if it’s a country (optional)
+  else if (d3.selectAll('.country-list-item').nodes().some((n) => n.textContent.trim() === name)) {
+    currentFilters.selectedCountries = [name];
+  }
+
+  // Re-apply filters and re-render
+  applyFilters();
+};
 
 function renderSankeyChart(data) {
   const container = d3.select("#sankey-chart");
@@ -887,7 +1009,9 @@ function renderSankeyChart(data) {
   });
 
   const genreSet = new Set(validData.map((d) => d.main_genre));
-  const genreColorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(Array.from(genreSet));
+  const genreColorScale = d3
+    .scaleOrdinal(d3.schemeCategory10)
+    .domain(Array.from(genreSet));
   const color = (d) => {
     if (platformColors[d.name]) return platformColors[d.name];
     if (genreSet.has(d.name)) return genreColorScale(d.name);
@@ -898,6 +1022,32 @@ function renderSankeyChart(data) {
     d3.select(this).transition().duration(50).attr("opacity", 0.65);
     tooltip.transition().duration(50).style("opacity", 0);
   };
+
+  
+ const handleClick = function (event, d) {
+    const name = d.name;
+
+    // Check if the name exists in the genre list
+    if (d3.selectAll('#genre-filter-list input').nodes().some((n) => n.parentNode.textContent.trim() === name)) {
+      currentFilters.selectedGenres = [name];
+    }
+    // Check if the name exists in platform buttons
+    else if (d3.selectAll('.platform-buttons button').nodes().some((n) => n.getAttribute('data-platform') === name)) {
+      currentFilters.selectedPlatforms = [name];
+    }
+    // Check if the name exists in audience buttons
+    else if (d3.selectAll('.audience-buttons button').nodes().some((n) => n.getAttribute('audience-buttons') === name)) {
+      currentFilters.selectedAudiences = [name];
+    }
+    // Check if it’s a country (optional)
+    else if (d3.selectAll('.country-list-item').nodes().some((n) => n.textContent.trim() === name)) {
+      currentFilters.selectedCountries = [name];
+    }
+
+    // Re-apply filters and re-render
+    applyFilters();
+  };
+
 
   const handleLinkMouseOver = function (event, d) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
@@ -982,6 +1132,7 @@ function renderSankeyChart(data) {
         update
           .on("mouseover", handleNodeMouseOver)
           .on("mouseout", handleMouseOut)
+          .on("click", handleClick)
           .call((update) =>
             update
               .transition(t)
@@ -1040,36 +1191,130 @@ function renderSankeyChart(data) {
     .style("fill", "#334155")
     .text("Content Flow: Platform → Genre → Target Audience");
 }
-function populateCountryFilter(data) {
-  const allCountries = new Set(data.flatMap(d => d.countries).filter(c => c && c !== ""));
 
-  d3.select("#country-filter-list")
-    .selectAll(".country-list-item")
-    .data(Array.from(allCountries).sort(), d => d)
-    .join("div")
-      .attr("class", "country-list-item")
-      .text(d => d)
-        .on("click", function(event, d) {
-        const index = currentFilters.selectedCountries.indexOf(d);
-        if (index > -1) {
-          // If the country is already selected, remove it
-          currentFilters.selectedCountries.splice(index, 1);
-        } else {
-          // Otherwise, add the country to the selection
-          currentFilters.selectedCountries.push(d);
-        }
-        applyFilters();
-      });
-}
+function renderTreemapChart(data) {
+  const container = d3.select("#treemap-chart");
+  container.selectAll("*").remove(); // Clear previous contents
 
-function setupCountryFilter(data) {
-  populateCountryFilter(data);
+  const bounds = container.node().getBoundingClientRect();
+  if (bounds.width < 10 || bounds.height < 10) return;
 
-  d3.select("#country-search").on("input", function(event) {
-    const searchTerm = event.target.value.toLowerCase();
-    d3.selectAll(".country-list-item").style("display", function() {
-      const countryName = d3.select(this).text().toLowerCase();
-      return countryName.includes(searchTerm) ? "block" : "none";
+  const margin = { top: 40, right: 10, bottom: 10, left: 10 };
+  const width = bounds.width - margin.left - margin.right;
+  const height = bounds.height - margin.top - margin.bottom;
+
+  const svg = container
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  let treemapData;
+
+  // First, get the counts for all countries present in the filtered data
+  const countryCounts = new Map();
+  data.forEach((d) => {
+    d.countries.forEach((country) => {
+      if (country) {
+        countryCounts.set(country, (countryCounts.get(country) || 0) + 1);
+      }
     });
   });
+
+  if (currentFilters.selectedCountries.length > 0) {
+    // If countries ARE selected, build the treemap using ONLY those countries
+    const filteredChildren = currentFilters.selectedCountries.map(
+      (country) => ({
+        name: country,
+        value: countryCounts.get(country) || 0,
+      })
+    );
+
+    treemapData = {
+      name: "root",
+      children: filteredChildren.sort((a, b) => b.value - a.value),
+    };
+  } else {
+    // If NO country is selected, show all countries
+    treemapData = {
+      name: "root",
+      children: Array.from(countryCounts, ([name, value]) => ({ name, value }))
+        .filter((d) => d.name !== "Unknown")
+        .sort((a, b) => b.value - a.value),
+    };
+  }
+
+  // --- 2. Create the Treemap Layout ---
+  const root = d3.hierarchy(treemapData).sum((d) => d.value); // Sum values to size rectangles
+
+  const treemapLayout = d3.treemap().size([width, height]).padding(2);
+
+  treemapLayout(root); // This computes the x, y, width, and height for each rectangle
+
+  // --- 3. Create a Color Scale ---
+  const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
+
+  // --- 4. Draw the Rectangles (Cells) ---
+  const cell = svg
+    .selectAll("g")
+    .data(root.leaves()) // .leaves() gives us the individual country rectangles
+    .join("g")
+    .attr("transform", (d) => `translate(${d.x0}, ${d.y0})`);
+
+  cell
+    .append("rect")
+    .attr("width", (d) => d.x1 - d.x0)
+    .attr("height", (d) => d.y1 - d.y0)
+    .attr("fill", (d) => colorScale(d.data.name))
+    .style("stroke", "#fff")
+    .on("mouseover", function (event, d) {
+      tooltip.transition().duration(200).style("opacity", 1);
+      tooltip.html(`
+        <div><b>Country:</b> ${d.data.name}</div>
+        <div><b>Titles:</b> ${d.data.value}</div>
+      `);
+      const bbox = tooltip.node().getBoundingClientRect();
+      tooltip
+        .style("left", event.pageX - bbox.width / 2 + "px")
+        .style("top", event.pageY - bbox.height - 10 + "px");
+    })
+    .on("mouseout", function () {
+      tooltip.transition().duration(500).style("opacity", 0);
+    })
+    .on("click", function (event, d) {
+      currentFilters.selectedCountries = [d.data.name];
+      applyFilters();
+    });
+
+  // --- 5. Add Labels to the Cells ---
+  cell
+    .append("text")
+    .selectAll("tspan")
+    .data((d) => d.data.name.split(/(?=[A-Z][^A-Z])/g)) // Split words for wrapping
+    .join("tspan")
+    .attr("x", 4)
+    .attr("y", (d, i) => 13 + i * 10)
+    .text((d) => d)
+    .attr("font-size", "0.7em")
+    .attr("fill", "white")
+    .style("pointer-events", "none") // Make text unclickable
+    // Hide text if the box is too small
+    .attr("opacity", function (d) {
+      const parent = this.parentNode.__data__;
+      const width = parent.x1 - parent.x0;
+      const height = parent.y1 - parent.y0;
+      return width > 35 && height > 20 ? 1 : 0;
+    });
+
+  // Chart title
+  svg
+    .append("text")
+    .attr("x", width / 2)
+    .attr("y", -15)
+    .attr("text-anchor", "middle")
+    .style("font-size", "1rem")
+    .style("font-weight", "600")
+    .style("fill", "#334155")
+    .text("Content Quantity by Country");
 }
