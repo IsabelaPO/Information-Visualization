@@ -73,15 +73,7 @@ header div h2 {
   font-weight: 400;
   color: var(--accent-color);
 }
-/* Main grid: sidebar + visualizations */
-/* .dashboard-container {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 1rem;
-  padding: 1rem;
-  height: auto;
-  overflow: hidden;
-} */
+
 /* Sidebar filters panel */
 .filters-panel {
   grid-area: filters;
@@ -122,6 +114,11 @@ select {
 }
 /* Genres list scrollable */
 .genre-list {
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.country-list-aux {
   max-height: 100px;
   overflow-y: auto;
 }
@@ -493,4 +490,23 @@ div.tooltip-donut {
   background-color: var(--highlight-color);
   color: white;
   font-weight: bold;
+}
+
+/* Styling for the new "Select All" button */
+.select-all-button {
+  width: auto;
+  padding: 0.35rem 0.75rem;
+  margin-bottom: 0.5rem; /* Space below the button */
+  background-color: var(--highlight-color); /* Use a complementary color */
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.875rem;
+}
+
+.select-all-button:hover {
+  background-color: var(--accent-color); /* Darken on hover */
 }

@@ -466,6 +466,7 @@ function setupImdbSlider() {
 }
 
 function setupGenreFilter() {
+  // Existing logic for individual checkbox change
   d3.selectAll('#genre-filter-list input[type="checkbox"]').on("change", () => {
     const selected = [];
     d3.selectAll('#genre-filter-list input[type="checkbox"]:checked').each(
@@ -474,6 +475,40 @@ function setupGenreFilter() {
       }
     );
     currentFilters.selectedGenres = selected;
+    applyFilters();
+  });
+
+  // --- NEW LOGIC FOR "SELECT ALL" BUTTON ---
+  d3.select("#select-all-genres").on("click", function () {
+    const button = d3.select(this);
+    const isCurrentlyAllSelected = d3.selectAll(
+      '#genre-filter-list input[type="checkbox"]:not(:checked)'
+    ).empty();
+
+    if (isCurrentlyAllSelected) {
+      // If all are currently checked, uncheck all
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
+        "checked",
+        false
+      );
+      currentFilters.selectedGenres = [];
+      button.text("Select All"); // Change button text
+    } else {
+      // Otherwise, check all
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
+        "checked",
+        true
+      );
+      // Re-read all genre names from the checked boxes
+      const allGenres = [];
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').each(
+        function () {
+          allGenres.push(d3.select(this.parentNode).text().trim());
+        }
+      );
+      currentFilters.selectedGenres = allGenres;
+    }
+
     applyFilters();
   });
 }
