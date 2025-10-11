@@ -55,8 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
           ? d.genres.split(",")[0].trim()
           : "Unknown",
         // This is the important change from main_country to countries array
-        countries: isValidString(d.production_countries)
-          ? d.production_countries.split(",").map((c) => c.trim())
+        countries: isValidString(d.country_full_name)
+          ? d.country_full_name.split(",").map((c) => c.trim())
           : [],
       }));
 
