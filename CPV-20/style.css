@@ -44,7 +44,7 @@ body {
   height: 100vh;
   display: grid;
   grid-template-columns: 1fr 5fr; /* Left column narrower than right */
-  grid-template-rows: 1fr 1fr; /* Two rows for the left side */
+  grid-template-rows: var(--header-height) 1fr; /* Two rows for the left side */
   grid-template-areas:
     "header viz"
     "filters viz";
@@ -90,7 +90,9 @@ header div h2 {
   border-radius: 0.75rem;
   box-shadow: var(--shadow);
   top: 1rem;
-  overflow-y: visible;
+  /* overflow-y: visible; */
+  max-height: 100%;
+  
 }
 
 /* Filter block spacing */
