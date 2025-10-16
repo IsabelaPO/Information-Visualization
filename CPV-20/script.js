@@ -1,11 +1,43 @@
 const isValidString = (str) =>
   str && typeof str === "string" && str.trim() !== "";
-
+// Add this object near the top of script.js
+const countryToContinent = {
+    "Afghanistan": "Asia", "Albania": "Europe", "Algeria": "Africa", "Andorra": "Europe", "Angola": "Africa",
+    "Argentina": "South America", "Armenia": "Asia", "Australia": "Oceania", "Austria": "Europe", "Azerbaijan": "Asia",
+    "Bahamas": "North America", "Bahrain": "Asia", "Bangladesh": "Asia", "Barbados": "North America", "Belarus": "Europe",
+    "Belgium": "Europe", "Belize": "North America", "Benin": "Africa", "Bermuda": "North America", "Bhutan": "Asia",
+    "Bolivia": "South America", "Bosnia and Herzegovina": "Europe", "Botswana": "Africa", "Brazil": "South America",
+    "Brunei": "Asia", "Bulgaria": "Europe", "Burkina Faso": "Africa", "Cambodia": "Asia", "Cameroon": "Africa",
+    "Canada": "North America", "Cayman Islands": "North America", "Chile": "South America", "China": "Asia",
+    "Colombia": "South America", "Congo": "Africa", "Costa Rica": "North America", "Croatia": "Europe", "Cuba": "North America",
+    "Cyprus": "Asia", "Czech Republic": "Europe", "Denmark": "Europe", "Dominican Republic": "North America",
+    "Ecuador": "South America", "Egypt": "Africa", "El Salvador": "North America", "Estonia": "Europe", "Ethiopia": "Africa",
+    "Faroe Islands": "Europe", "Finland": "Europe", "France": "Europe", "Georgia": "Asia", "Germany": "Europe",
+    "Ghana": "Africa", "Greece": "Europe", "Guatemala": "North America", "Hong Kong": "Asia", "Hungary": "Europe",
+    "Iceland": "Europe", "India": "Asia", "Indonesia": "Asia", "Iran": "Asia", "Iraq": "Asia", "Ireland": "Europe",
+    "Israel": "Asia", "Italy": "Europe", "Jamaica": "North America", "Japan": "Asia", "Jordan": "Asia",
+    "Kazakhstan": "Asia", "Kenya": "Africa", "Kuwait": "Asia", "Kyrgyzstan": "Asia", "Latvia": "Europe",
+    "Lebanon": "Asia", "Libya": "Africa", "Liechtenstein": "Europe", "Lithuania": "Europe", "Luxembourg": "Europe",
+    "Malawi": "Africa", "Malaysia": "Asia", "Malta": "Europe", "Mauritius": "Africa", "Mexico": "North America",
+    "Moldova": "Europe", "Monaco": "Europe", "Mongolia": "Asia", "Montenegro": "Europe", "Morocco": "Africa",
+    "Namibia": "Africa", "Nepal": "Asia", "Netherlands": "Europe", "New Zealand": "Oceania", "Nicaragua": "North America",
+    "Nigeria": "Africa", "North Macedonia": "Europe", "Norway": "Europe", "Pakistan": "Asia", "Palestine": "Asia",
+    "Panama": "North America", "Paraguay": "South America", "Peru": "South America", "Philippines": "Asia",
+    "Poland": "Europe", "Portugal": "Europe", "Puerto Rico": "North America", "Qatar": "Asia", "Romania": "Europe",
+    "Russia": "Europe", "Saudi Arabia": "Asia", "Senegal": "Africa", "Serbia": "Europe", "Singapore": "Asia",
+    "Slovakia": "Europe", "Slovenia": "Europe", "South Africa": "Africa", "South Korea": "Asia", "Spain": "Europe",
+    "Sri Lanka": "Asia", "Sweden": "Europe", "Switzerland": "Europe", "Syria": "Asia", "Taiwan": "Asia",
+"Tanzania": "Africa", "Thailand": "Asia", "Trinidad and Tobago": "North America", "Tunisia": "Africa", "Turkey": "Asia",
+    "Uganda": "Africa", "Ukraine": "Europe", "United Arab Emirates": "Asia", "United Kingdom": "Europe",
+    "United States": "North America", "Uruguay": "South America", "Uzbekistan": "Asia", "Venezuela": "South America",
+    "Vietnam": "Asia", "Yugoslavia": "Europe", "Zimbabwe": "Africa"
+};
 //stores all platform data
 let allPlatformData = [];
 let tooltip; // Tooltip is defined once globally
 firstRender = true;
-
+// Add this line near where you define `currentFilters`
+let treemapCurrentView = 'Continents'; // Tracks the current view level
 //sets platform colors
 const platformColors = {
   Netflix: "#E50914",
@@ -204,6 +236,7 @@ function setupRemoveFiltersButton() {
     // 1. Reset the state object
     currentFilters = { ...defaultFilters };
     currentFilters.selectedCountries = [];
+    treemapCurrentView = 'Continents';
     // 2. Reset the other UI controls
     d3.selectAll(
       ".content-type-filter button, .platform-buttons button, .audience-buttons button"
@@ -1225,131 +1258,150 @@ function renderSankeyChart(data) {
     .style("font-weight", "600")
     .style("fill", "#334155")
     .text("Content Flow: Platform → Genre → Target Audience");
-}
+}function renderTreemapChart(data) {
+    const container = d3.select("#treemap-chart");
+    container.select("svg").remove(); // Clear previous SVG
 
-function renderTreemapChart(data) {
-  const container = d3.select("#treemap-chart");
-  container.selectAll("*").remove(); // Clear previous contents
+    const bounds = container.node().getBoundingClientRect();
+    if (bounds.width < 10 || bounds.height < 10) return;
 
-  const bounds = container.node().getBoundingClientRect();
-  if (bounds.width < 10 || bounds.height < 10) return;
+    const margin = { top: 40, right: 10, bottom: 10, left: 10 };
+    const width = bounds.width - margin.left - margin.right;
+    const height = bounds.height - margin.top - margin.bottom;
 
-  const margin = { top: 40, right: 10, bottom: 10, left: 10 };
-  const width = bounds.width - margin.left - margin.right;
-  const height = bounds.height - margin.top - margin.bottom;
+    const svg = container.append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+    
+    const backButton = d3.select("#treemap-back-btn");
 
-  const svg = container
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  let treemapData;
-
-  // First, get the counts for all countries present in the filtered data
-  const countryCounts = new Map();
-  data.forEach((d) => {
-    d.countries.forEach((country) => {
-      if (country) {
-        countryCounts.set(country, (countryCounts.get(country) || 0) + 1);
-      }
-    });
-  });
-
-  if (currentFilters.selectedCountries.length > 0) {
-    // If countries ARE selected, build the treemap using ONLY those countries
-    const filteredChildren = currentFilters.selectedCountries.map(
-      (country) => ({
-        name: country,
-        value: countryCounts.get(country) || 0,
-      })
-    );
-
-    treemapData = {
-      name: "root",
-      children: filteredChildren.sort((a, b) => b.value - a.value),
-    };
-  } else {
-    // If NO country is selected, show all countries
-    treemapData = {
-      name: "root",
-      children: Array.from(countryCounts, ([name, value]) => ({ name, value }))
-        .filter((d) => d.name !== "Unknown")
-        .sort((a, b) => b.value - a.value),
-    };
-  }
-
-  // --- 2. Create the Treemap Layout ---
-  const root = d3.hierarchy(treemapData).sum((d) => d.value); // Sum values to size rectangles
-
-  const treemapLayout = d3.treemap().size([width, height]).padding(2);
-
-  treemapLayout(root); // This computes the x, y, width, and height for each rectangle
-
-  // --- 3. Create a Color Scale ---
-  const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
-
-  // --- 4. Draw the Rectangles (Cells) ---
-  const cell = svg
-    .selectAll("g")
-    .data(root.leaves()) // .leaves() gives us the individual country rectangles
-    .join("g")
-    .attr("transform", (d) => `translate(${d.x0}, ${d.y0})`);
-
-  cell
-    .append("rect")
-    .attr("width", (d) => d.x1 - d.x0)
-    .attr("height", (d) => d.y1 - d.y0)
-    .attr("fill", (d) => colorScale(d.data.name))
-    .style("stroke", "#fff")
-    .on("mouseover", function (event, d) {
-      tooltip.transition().duration(200).style("opacity", 1);
-      tooltip.html(`
-        <div><b>Country:</b> ${d.data.name}</div>
-        <div><b>Titles:</b> ${d.data.value}</div>
-      `);
-      const bbox = tooltip.node().getBoundingClientRect();
-      tooltip
-        .style("left", event.pageX - bbox.width / 2 + "px")
-        .style("top", event.pageY - bbox.height - 10 + "px");
-    })
-    .on("mouseout", function () {
-      tooltip.transition().duration(500).style("opacity", 0);
-    })
-    .on("click", function (event, d) {
-      currentFilters.selectedCountries = [d.data.name];
-      applyFilters();
+    // 1. Always recalculate counts from the current filtered data
+    const countryCounts = new Map();
+    data.forEach(d => {
+        d.countries.forEach(country => {
+            if (country && countryToContinent[country]) {
+                countryCounts.set(country, (countryCounts.get(country) || 0) + 1);
+            }
+        });
     });
 
-  // --- 5. Add Labels to the Cells ---
-  cell
-    .append("text")
-    .selectAll("tspan")
-    .data((d) => d.data.name.split(/(?=[A-Z][^A-Z])/g)) // Split words for wrapping
-    .join("tspan")
-    .attr("x", 4)
-    .attr("y", (d, i) => 13 + i * 10)
-    .text((d) => d)
-    .attr("font-size", "0.7em")
-    .attr("fill", "white")
-    .style("pointer-events", "none") // Make text unclickable
-    // Hide text if the box is too small
-    .attr("opacity", function (d) {
-      const parent = this.parentNode.__data__;
-      const width = parent.x1 - parent.x0;
-      const height = parent.y1 - parent.y0;
-      return width > 35 && height > 20 ? 1 : 0;
+    // 2. Decide what data to show based on the current view state
+    let currentViewData;
+
+    // --- THIS IS THE NEW LOGIC ---
+    // If a country is selected in the sidebar, prioritize showing just that.
+    if (currentFilters.selectedCountries.length > 0) {
+        const children = currentFilters.selectedCountries
+            .filter(country => countryCounts.has(country)) // Ensure country exists in filtered data
+            .map(country => ({
+                name: country,
+                value: countryCounts.get(country)
+            }));
+        
+        currentViewData = { name: "Selected Countries", children };
+        backButton.style("display", "none");
+        treemapCurrentView = 'Continents'; // Reset state for when filter is cleared
+    } else if (treemapCurrentView === 'Continents') {
+        const continentChildren = Array.from(d3.group(
+            Array.from(countryCounts.keys()), d => countryToContinent[d]
+        ), ([continent, countries]) => ({
+            name: continent,
+            value: d3.sum(countries, c => countryCounts.get(c))
+        }));
+        
+        currentViewData = { name: "Continents", children: continentChildren };
+        backButton.style("display", "none");
+    } else { // Drilled-down view
+        const children = Array.from(countryCounts)
+            .filter(([country]) => countryToContinent[country] === treemapCurrentView)
+            .map(([name, value]) => ({ name, value }));
+
+        if (children.length === 0) {
+            treemapCurrentView = 'Continents'; // Go back if no data
+            renderTreemapChart(data); // Re-render
+            return; // Stop execution
+        }
+        
+        currentViewData = { name: treemapCurrentView, children };
+        backButton.style("display", "block");
+    }
+
+    backButton.on("click", () => {
+        treemapCurrentView = 'Continents';
+        renderTreemapChart(data);
     });
 
-  // Chart title
-  svg
-    .append("text")
-    .attr("x", width / 2)
-    .attr("y", -15)
-    .attr("text-anchor", "middle")
-    .style("font-size", "1rem")
-    .style("font-weight", "600")
-    .style("fill", "#334155")
-    .text("Content Quantity by Country");
+    const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
+
+    // 3. Drawing logic (draw function) - No changes needed here
+    function draw(viewData) {
+        const root = d3.hierarchy(viewData).sum(d => d.value);
+        d3.treemap().size([width, height]).padding(2)(root);
+
+        svg.selectAll(".chart-title").data([viewData.name]).join("text")
+            .attr("class", "chart-title")
+            .attr("x", width / 2).attr("y", -15).attr("text-anchor", "middle")
+            .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155")
+            .text(`Content Quantity by ${viewData.name}`);
+
+        const t = svg.transition().duration(750);
+        const cell = svg.selectAll("g.cell").data(root.leaves(), d => d.data.name);
+
+        cell.exit().selectAll("rect, text").transition(t).style("opacity", 0);
+        cell.exit().transition(t).remove();
+        
+        const cellEnter = cell.enter().append("g").attr("class", "cell");
+        
+        cellEnter.append("rect")
+            .attr("fill", d => colorScale(d.data.name))
+            .style("stroke", "#fff");
+
+        cellEnter.append("text").attr("class", "treemap-label")
+            .selectAll("tspan").data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g)).join("tspan")
+            .attr("x", 4).attr("y", (d, i) => 13 + i * 10).text(d => d)
+            .attr("font-size", "0.7em").attr("fill", "white").style("pointer-events", "none");
+
+        const allCells = cell.merge(cellEnter);
+        allCells.transition(t).attr("transform", d => `translate(${d.x0}, ${d.y0})`);
+        
+        allCells.select("rect").transition(t)
+            .attr("width", d => d.x1 - d.x0)
+            .attr("height", d => d.y1 - d.y0);
+        
+        allCells.select("text").transition(t)
+            .style("opacity", d => (d.x1 - d.x0 > 35 && d.y1 - d.y0 > 20 ? 1 : 0));
+        
+        allCells.on("click", (event, d) => {
+            if (d.parent.data.name === "Continents") {
+                treemapCurrentView = d.data.name;
+                renderTreemapChart(data);
+            } else if (d.parent.data.name !== "Selected Countries") { // Allow filtering from a continent view
+                currentFilters.selectedCountries = [d.data.name];
+                treemapCurrentView = 'Continents';
+                applyFilters();
+            }
+        });
+
+        allCells.select('rect')
+            .on("mouseover", function(event, d) {
+                tooltip.transition().duration(200).style("opacity", 1);
+                tooltip.html(`<div><b>${d.data.name}</b></div><div><b>Titles:</b> ${d.value.toLocaleString()}</div>`);
+                const bbox = tooltip.node().getBoundingClientRect();
+                tooltip.style("left", `${event.pageX - bbox.width / 2}px`).style("top", `${event.pageY - bbox.height - 10}px`);
+            })
+            .on("mouseout", () => tooltip.transition().duration(500).style("opacity", 0));
+    }
+
+    if (currentViewData.children.length === 0) {
+        svg.append("text").attr("class", "no-data-message")
+            .attr("x", width / 2).attr("y", height / 2)
+            .attr("text-anchor", "middle")
+            .text("No country data for this selection.")
+            .style("fill", "var(--muted-text)");
+        return;
+    }
+
+    draw(currentViewData);
 }

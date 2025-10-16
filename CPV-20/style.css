@@ -249,6 +249,7 @@ select {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 /* Assign specific grid areas */
 #timeline-filter {
@@ -509,4 +510,26 @@ div.tooltip-donut {
 
 .select-all-button:hover {
   background-color: var(--accent-color); /* Darken on hover */
+}
+/* Add this to the end of your style.css file */
+.back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  padding: 0.35rem 0.75rem;
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  display: none; /* Hidden by default */
+  opacity: 0.9;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  opacity: 1;
+  background-color: #f1f5f9;
 }
