@@ -54,8 +54,22 @@
           <div class="genre-list" id="genre-filter-list"></div>
         </div>
         <div class="filter-group">
-          <label>Production Country</label>
-          <div class="country-list" id="country-filter-list"></div>
+          <label>Production Location</label>
+
+          <div class="view-toggle">
+            <button id="view-continents-btn" class="toggle-btn active">Continents</button>
+            <button id="view-countries-btn" class="toggle-btn">Countries</button>
+          </div>
+
+          <div id="continent-view-container">
+            <button id="select-all-continents" class="select-all-button">Deselect All</button>
+            <div id="continent-filter-list" class="country-list"></div>
+          </div>
+
+          <div id="country-view-container" style="display: none;">
+            <button id="select-all-countries" class="select-all-button">Deselect All</button>
+            <div id="country-filter-list" class="country-list"></div>
+          </div>
         </div>
         <!-- Audience filter (buttons, JS maps to age categories) -->
         <div class="filter-group">
