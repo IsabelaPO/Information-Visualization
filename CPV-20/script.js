@@ -636,79 +636,47 @@ function setupImdbSlider() {
 
   return slider;
 }
-
-// function setupImdbVisual() {
-//   const slider = createD3RangeSlider({
-//     containerId: "#imdb-slider-container",
-//     domain: [1.0, 10.0],
-//     tickFormat: d3.format(".1f"),
-//     showTickLabels: true, // show labels along ticks
-//     onBrushEnd: (range) => {
-//       const formattedRange = [
-//         parseFloat(range[0].toFixed(1)),
-//         parseFloat(range[1].toFixed(1)),
-//       ];
-//       //currentFilters.imdbRange = formattedRange;
-//       //applyFilters();
-//     },
-//   });
-
-//   // Remove the max tick label
-//   d3.select("#imdb-slider-container")
-//     .selectAll(".tick text")
-//     .filter((d) => d === 10) // filter the max value
-//     .text(""); // remove its text
-
-//   return slider;
-// }
-
 function setupGenreFilter() {
   // Existing logic for individual checkbox change
   d3.selectAll('#genre-filter-list input[type="checkbox"]').on("change", () => {
     const selected = [];
-    d3.selectAll('#genre-filter-list input[type="checkbox"]:checked').each(
-      function () {
-        selected.push(d3.select(this.parentNode).text().trim());
-      }
-    );
+    d3.selectAll('#genre-filter-list input[type="checkbox"]:checked').each(function () {
+      selected.push(d3.select(this.parentNode).text().trim());
+    });
     currentFilters.selectedGenres = selected;
+
+    // Update button text dynamically based on selection
+    const allSelected = d3.selectAll('#genre-filter-list input[type="checkbox"]:not(:checked)').empty();
+    d3.select("#select-all-genres").text(allSelected ? "Deselect All" : "Select All");
+
     applyFilters();
   });
 
-  // --- NEW LOGIC FOR "SELECT ALL" BUTTON ---
+  // --- TOGGLE LOGIC FOR "SELECT ALL / DESELECT ALL" BUTTON ---
   d3.select("#select-all-genres").on("click", function () {
     const button = d3.select(this);
-    const isCurrentlyAllSelected = d3.selectAll(
-      '#genre-filter-list input[type="checkbox"]:not(:checked)'
-    ).empty();
+    const allSelected = d3.selectAll('#genre-filter-list input[type="checkbox"]:not(:checked)').empty();
 
-    if (isCurrentlyAllSelected) {
-      // If all are currently checked, uncheck all
-      d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
-        "checked",
-        false
-      );
+    if (allSelected) {
+      // All are currently checked → uncheck all
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", false);
       currentFilters.selectedGenres = [];
-      button.text("Select All"); // Change button text
+      button.text("Select All");
     } else {
-      // Otherwise, check all
-      d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
-        "checked",
-        true
-      );
-      // Re-read all genre names from the checked boxes
+      // Not all are checked → select all
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", true);
       const allGenres = [];
-      d3.selectAll('#genre-filter-list input[type="checkbox"]').each(
-        function () {
-          allGenres.push(d3.select(this.parentNode).text().trim());
-        }
-      );
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').each(function () {
+        allGenres.push(d3.select(this.parentNode).text().trim());
+      });
       currentFilters.selectedGenres = allGenres;
+      button.text("Deselect All");
     }
 
     applyFilters();
   });
 }
+
 
 function populateGenreFilter(data) {
   const genres = new Set(
@@ -1544,9 +1512,27 @@ function renderTreemapChart(data) {
         
         const cellEnter = cell.enter().append("g").attr("class", "cell");
         
-        cellEnter.append("rect")
+        /*cellEnter.append("rect")
             .attr("fill", d => colorScale(d.parent.data.name === "Continents" || d.parent.data.name === "All Countries" || d.parent.data.name === "Selected Countries" ? d.data.name : d.parent.data.name))
-            .style("stroke", "#fff");
+            .style("stroke", "#fff");*/
+        cellEnter.append("rect")
+          .attr("fill", d => {
+            // If viewing all continents or all/selected countries — color by name
+            if (
+              d.parent.data.name === "Continents" ||
+              d.parent.data.name === "All Countries" ||
+              d.parent.data.name === "Selected Countries"
+            ) {
+              return colorScale(d.data.name);
+            }
+            // If viewing countries within a single continent — color each country uniquely
+            if (treemapCurrentView && d.parent.data.name === treemapCurrentView) {
+              return colorScale(d.data.name); // Different color per country
+            }
+            // Fallback
+            return colorScale(d.parent.data.name);
+          })
+          .style("stroke", "#fff");
 
         cellEnter.append("text").attr("class", "treemap-label")
             .selectAll("tspan").data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g)).join("tspan")
@@ -1563,8 +1549,6 @@ function renderTreemapChart(data) {
         allCells.select("text").transition(t)
             .style("opacity", d => (d.x1 - d.x0 > 35 && d.y1 - d.y0 > 20 ? 1 : 0));
         
-        // --- FIX #2 IS HERE ---
-        // The click handler is simplified to always ensure a clean state update.
         allCells.on("click", (event, d) => {
             if (d.parent.data.name === "Continents") {
                 // For drilling down, set the view and apply filters
