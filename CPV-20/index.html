@@ -17,6 +17,7 @@
     <div class="dashboard-wrapper">
       <!--Dahsboard header-->
       <header>
+        <button onclick="toggleFilters()">Toggle Filters</button>
         <div>
           <h1>Streaming Platforms</h1>
         </div>
@@ -26,7 +27,7 @@
       <div id="loading"><div class="spinner"></div></div>
 
       <!-- Sidebar: Filters panel -->
-      <div class="filters-panel">
+      <div id="filters-panel">
         <!-- Platform filter (buttons with brand colors) -->
         <div class="filter-group">
           <label>Platforms</label>
@@ -94,24 +95,23 @@
         <button class="remove-filters-btn">Remove All Filters</button>
       </div>
 
+      <!-- Timeline filter (release year slider) -->
+      <div id="timeline-filter">
+        <div class="viz-card-header">Filter by Release Year</div>
+        <div id="year-slider-container" class="d3-slider-container"></div>
+        <div class="slider-labels">
+          <span id="year-min-value">...</span>
+          <span id="year-max-value">...</span>
+        </div>
+      </div>
+      
       <!-- Visualization panel -->
       <div class="viz-panel">
-        <!-- Timeline filter (release year slider) -->
-        <div id="timeline-filter" class="viz-card">
-          <div class="viz-card-header">Filter by Release Year</div>
-          <div id="year-slider-container" class="d3-slider-container"></div>
-          <div class="slider-labels">
-            <span id="year-min-value">...</span>
-            <span id="year-max-value">...</span>
-          </div>
-        </div>
         <!-- Other visualization cards -->
         <div id="treemap-chart" class="viz-card">
           <button id="treemap-back-btn" class="back-button">← Back to Continents</button>
         </div>
-        <div class="side-charts-container">
-          <div id="quantity-chart" class="viz-card"></div>
-        </div>
+        <div id="quantity-chart" class="viz-card"></div>
         <!-- Sankey chart visualization -->
         <div id="sankey-chart" class="viz-card"></div>
       </div>

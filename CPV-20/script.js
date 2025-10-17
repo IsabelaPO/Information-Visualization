@@ -75,6 +75,7 @@ let currentFilters = { ...defaultFilters };
 let imdbSlider, yearSlider;
 //loads the csv files with d3
 document.addEventListener("DOMContentLoaded", () => {
+  toggleFilters();
   Promise.all([d3.csv("streaming_platforms.csv")])
     .then(([rawPlatformData]) => {
       const processedPlatformData = rawPlatformData.map((d) => ({
@@ -128,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setupContentTypeFilter();
       populateGenreFilter(allPlatformData);
       setupGenreFilter();
-      imdbSlider = setupImdbSlider();
+      //imdbSlider = setupImdbSlider();
       yearSlider = setupYearSlider(allPlatformData);
       setupAudienceFilter();
       setupLocationFilter(allPlatformData);
@@ -152,8 +153,19 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch((error) => console.error("Data loading failed:", error));
 });
 
+function toggleFilters() 
+{
+  const panel = document.getElementById("filters-panel");
+  if (panel.style.display) {
+      panel.style.removeProperty("display");
+      imdbSlider = setupImdbSlider();
+    } else {
+      panel.style.display = "none";
+    }
+}
+
 function renderAllVisualizations(data) {
-  renderSankeyChart(data);
+  renderSankeyChart(data, true);
   renderQuantityChart(data);
   renderTreemapChart(data); // Add this line
 }
@@ -351,7 +363,9 @@ function applyFilters() {
   );
 
   renderAllVisualizations(filteredPlatformData);
-}function setupRemoveFiltersButton() {
+}
+
+function setupRemoveFiltersButton() {
   d3.select(".remove-filters-btn").on("click", () => {
     // 1. Reset the state object
     currentFilters = { ...defaultFilters };
@@ -546,7 +560,10 @@ function createD3RangeSlider(config) {
     });
 
   const gBrush = svg.append("g").attr("class", "brush").call(brush);
-  gBrush.call(brush.move, config.domain.map(xScale));
+
+  const initialRange = config.initialRange || config.domain;
+  gBrush.call(brush.move, initialRange.map(xScale));
+  //gBrush.call(brush.move, config.domain.map(xScale));
 
   // Update the min/max labels outside the slider with formatted values
   d3.select(config.minLabelId).text(config.tickFormat(config.domain[0]));
@@ -571,6 +588,7 @@ function setupYearSlider(data) {
     maxLabelId: "#year-max-value",
     domain: yearExtent,
     tickFormat: d3.format("d"),
+    //initialRange: currentFilters.yearRange || [1.0, 10.0],
     onBrushEnd: (range) => {
       const roundedRange = [Math.round(range[0]), Math.round(range[1])];
       if (
@@ -599,6 +617,7 @@ function setupImdbSlider() {
     domain: [1.0, 10.0],
     tickFormat: d3.format(".1f"),
     showTickLabels: true, // show labels along ticks
+    initialRange: currentFilters.imdbRange || [1.0, 10.0],
     onBrushEnd: (range) => {
       const formattedRange = [
         parseFloat(range[0].toFixed(1)),
@@ -617,6 +636,31 @@ function setupImdbSlider() {
 
   return slider;
 }
+
+// function setupImdbVisual() {
+//   const slider = createD3RangeSlider({
+//     containerId: "#imdb-slider-container",
+//     domain: [1.0, 10.0],
+//     tickFormat: d3.format(".1f"),
+//     showTickLabels: true, // show labels along ticks
+//     onBrushEnd: (range) => {
+//       const formattedRange = [
+//         parseFloat(range[0].toFixed(1)),
+//         parseFloat(range[1].toFixed(1)),
+//       ];
+//       //currentFilters.imdbRange = formattedRange;
+//       //applyFilters();
+//     },
+//   });
+
+//   // Remove the max tick label
+//   d3.select("#imdb-slider-container")
+//     .selectAll(".tick text")
+//     .filter((d) => d === 10) // filter the max value
+//     .text(""); // remove its text
+
+//   return slider;
+// }
 
 function setupGenreFilter() {
   // Existing logic for individual checkbox change
@@ -1134,7 +1178,7 @@ const handleClick = function (event, d) {
   applyFilters();
 };
 
-function renderSankeyChart(data) {
+function renderSankeyChart(data, toReload) {
   const container = d3.select("#sankey-chart");
   const bounds = container.node().getBoundingClientRect();
   if (bounds.width < 10 || bounds.height < 10) return;
@@ -1403,7 +1447,12 @@ function renderSankeyChart(data) {
     .style("font-weight", "600")
     .style("fill", "#334155")
     .text("Content Flow: Platform → Genre → Target Audience");
+
+  // if(toReload)
+  //   renderSankeyChart(data, false);
 }
+
+
 function renderTreemapChart(data) {
     const container = d3.select("#treemap-chart");
     container.select("svg").remove();

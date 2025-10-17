@@ -26,28 +26,23 @@ body {
   height: auto;
   width: 100vw;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
 }
-/* Overall dashboard layout */
-/* .dashboard-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-} */
 
 .dashboard-wrapper {
   height: 100vh;
+  max-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 5fr; /* Left column narrower than right */
-  grid-template-rows: var(--header-height) 1fr; /* Two rows for the left side */
-  grid-template-areas:
-    "header viz"
-    "filters viz";
+  grid-template-columns: 1fr 5fr;
+  grid-template-rows: var(--header-height) 1fr;
+  grid-template-areas: 
+    "header timeline"
+    "viz viz";
   gap: 10px;
   padding: 10px;
 }
@@ -64,28 +59,32 @@ header {
   align-items: center;
   flex-shrink: 0;
 }
+
 header div h1 {
   font-size: 1.25rem;
   font-weight: 700;
 }
+
 header div h2 {
   font-size: 1rem;
   font-weight: 400;
   color: var(--accent-color);
 }
 
-/* Sidebar filters panel */
-.filters-panel {
-  grid-area: filters;
+#filters-panel {
+  position: fixed;      
+  top: 0;
+  right: 0;                   
+  height: 100vh;              
+  width: 300px;         
   background-color: var(--card-bg);
   padding: 1rem;
-  border-radius: 0.75rem;
-  box-shadow: var(--shadow);
-  top: 1rem;
-  /* overflow-y: visible; */
-  max-height: 100%;
-  
+  border-radius: 0;           
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2); 
+  overflow-y: auto;       
+  z-index: 100;         
 }
+
 
 /* Filter block spacing */
 .filter-group {
@@ -225,21 +224,20 @@ select {
   font-weight: 600;
   cursor: pointer;
 }
+
 /* Visualization panel grid */
 .viz-panel {
   grid-area: viz;
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 0.17fr 0.6fr 1fr;
+  padding-bottom: 5px;
   grid-template-areas:
-    "timeline timeline"
-    "treemap  side-charts"
+    /* "timeline timeline" */
+    "treemap  quantity"
     "sankey   sankey";
-  /* overflow-y: auto;     */
-  /* height: calc(100vh - var(--header-height)); */
-   /* small padding so scrollbar doesn’t overlap */
 }
+
 /* Generic chart card */
 .viz-card {
   background-color: var(--card-bg);
@@ -264,20 +262,6 @@ select {
 }
 #quantity-chart {
   grid-area: quantity;
-}
-#price-chart {
-  grid-area: price;
-}
-/* Side charts stacked vertically */
-.side-charts-container {
-  grid-area: side-charts;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  overflow: hidden;
-}
-.side-charts-container .viz-card {
-  flex: 1 1 0;
 }
 /* Loading overlay */
 #loading {
@@ -366,11 +350,16 @@ select {
 #timeline-filter {
   display: flex;
   flex-direction: column;
-  /* padding: 0.75rem 1rem;
-  padding-bottom: 0px; */
-  padding-top: 5px;
-
+  background-color: var(--card-bg);
+  /* padding: 0.2rem;
+  border-radius: 0.75rem; */
+  box-shadow: var(--shadow);
+  /* display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative; */
 }
+
 .viz-card-header {
   font-size: 1rem;
   font-weight: 600;
