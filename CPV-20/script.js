@@ -371,7 +371,7 @@ function setupRemoveFiltersButton() {
     currentFilters = { ...defaultFilters };
 
     // Re-select all countries, which is the default state
-    const allCountryNames = d3.selectAll("#country-filter-list .country-list-item").data();
+    const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
     currentFilters.selectedCountries = [...allCountryNames];
     
     treemapCurrentView = 'Continents';
@@ -817,6 +817,7 @@ function renderQuantityChart(data) {
   const t = d3.transition().duration(750);
 
   // Use .join() to create the SVG canvas once
+  container.selectAll("svg").remove();
   const svg = container
     .selectAll("svg")
     .data([null])
@@ -1423,7 +1424,6 @@ function renderSankeyChart(data, toReload) {
 
 function renderTreemapChart(data) {
     const container = d3.select("#treemap-chart");
-    container.select("svg").remove();
 
     const bounds = container.node().getBoundingClientRect();
     if (bounds.width < 10 || bounds.height < 10) return;
@@ -1431,7 +1431,8 @@ function renderTreemapChart(data) {
     const margin = { top: 40, right: 10, bottom: 10, left: 10 };
     const width = bounds.width - margin.left - margin.right;
     const height = bounds.height - margin.top - margin.bottom;
-
+    
+    container.selectAll("svg").remove();
     const svg = container.append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
