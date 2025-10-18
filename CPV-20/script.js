@@ -76,6 +76,7 @@ let imdbSlider, yearSlider;
 //loads the csv files with d3
 document.addEventListener("DOMContentLoaded", () => {
   toggleFilters();
+  setupCloseButton();
   Promise.all([d3.csv("streaming_platforms.csv")])
     .then(([rawPlatformData]) => {
       const processedPlatformData = rawPlatformData.map((d) => ({
@@ -161,6 +162,17 @@ function toggleFilters()
       imdbSlider = setupImdbSlider();
     } else {
       panel.style.display = "none";
+    }
+}
+function setupCloseButton() {
+    const closeButton = d3.select("#close-filters-btn");
+    
+    // Check if the button exists before adding the listener
+    if (closeButton.node()) {
+        closeButton.on("click", () => {
+            // The simplest way to close the panel is to call your existing toggle function
+            toggleFilters(); 
+        });
     }
 }
 
@@ -371,10 +383,16 @@ function setupRemoveFiltersButton() {
     currentFilters = { ...defaultFilters };
 
     // Re-select all countries, which is the default state
+    treemapCurrentView = 'Continents';
+    currentLocationView = 'Continents'; 
     const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
     currentFilters.selectedCountries = [...allCountryNames];
+    d3.select("#continent-view-container").style("display", "block");
+    d3.select("#country-view-container").style("display", "none");
+    d3.select("#view-continents-btn").classed("active", true);
+    d3.select("#view-countries-btn").classed("active", false);
     
-    treemapCurrentView = 'Continents';
+    
     // 2. Reset the other UI controls
     d3.selectAll(
       ".content-type-filter button, .platform-buttons button, .audience-buttons button"
@@ -1256,6 +1274,7 @@ function renderSankeyChart(data, toReload) {
     // Check if the name exists in the genre list
     if (d3.selectAll('#genre-filter-list input').nodes().some((n) => n.parentNode.textContent.trim() === name)) {
       currentFilters.selectedGenres = [name];
+      d3.select("#select-all-genres").text("Select All");
     }
     // Check if the name exists in platform buttons
     else if (d3.selectAll('.platform-buttons button').nodes().some((n) => n.getAttribute('data-platform') === name)) {
@@ -1439,10 +1458,7 @@ function renderTreemapChart(data) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
     
-    const backButton = d3.select("#treemap-back-btn");
-
-    // --- FIX #1 IS HERE ---
-    // The country counting logic is updated to respect the current filter.
+    
     const countryCounts = new Map();
     data.forEach(d => {
         d.countries.forEach(country => {
@@ -1462,7 +1478,7 @@ function renderTreemapChart(data) {
         const isFullSelection = currentFilters.selectedCountries.length > 0 && currentFilters.selectedCountries.length === allCountryNames.length;
         const title = isFullSelection ? "All Countries" : "Selected Countries";
         currentViewData = { name: title, children };
-        backButton.style("display", "none");
+        //backButton.style("display", "none");
         treemapCurrentView = 'Continents';
     } else { 
         if (treemapCurrentView === 'Continents') {
@@ -1473,7 +1489,7 @@ function renderTreemapChart(data) {
                 value: d3.sum(countries, c => countryCounts.get(c))
             }));
             currentViewData = { name: "Continents", children: continentChildren };
-            backButton.style("display", "none");
+            //backButton.style("display", "none");
         } else {
             const children = Array.from(countryCounts)
                 .filter(([country]) => countryToContinent[country] === treemapCurrentView)
@@ -1484,14 +1500,14 @@ function renderTreemapChart(data) {
                 return;
             }
             currentViewData = { name: treemapCurrentView, children };
-            backButton.style("display", "block");
+            //backButton.style("display", "block");
         }
     }
 
-    backButton.on("click", () => {
+    /*onutton.on("click", () => {
         treemapCurrentView = 'Continents';
         applyFilters();
-    });
+    });*/
 
     const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
 
@@ -1552,14 +1568,26 @@ function renderTreemapChart(data) {
         
         allCells.on("click", (event, d) => {
             if (d.parent.data.name === "Continents") {
-                // For drilling down, set the view and apply filters
+                // 1. Treemap Drill-down: Set the view for the treemap to render countries
                 treemapCurrentView = d.data.name;
+
+                // 2. Filter Panel Update: Get all countries in this continent
+                const continentName = d.data.name;
+                const countriesInContinent = Object.keys(countryToContinent).filter(
+                    (country) => countryToContinent[country] === continentName
+                );
+
+                // 3. Update Global Filter State
+                currentFilters.selectedCountries = countriesInContinent;
+                
+                // 4. Update Filter Panel View (optional, but good practice for consistency)
+                currentLocationView = 'Continents'; // Keep the filter panel on the continent view initially
+
+                // 5. Apply filters to re-render all visualizations
                 applyFilters(); 
             } else {
                 // For filtering, update the selection and apply filters
                 currentFilters.selectedCountries = [d.data.name];
-                treemapCurrentView = 'Continents'; // Go back to continent view after filtering
-                currentLocationView = 'Continents'; // Also reset the filter panel view
                 applyFilters();
             }
         });

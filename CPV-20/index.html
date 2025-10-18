@@ -17,10 +17,10 @@
     <div class="dashboard-wrapper">
       <!--Dahsboard header-->
       <header>
-        <button onclick="toggleFilters()">Toggle Filters</button>
         <div>
           <h1>Streaming Platforms</h1>
         </div>
+        <button id="toggle-filters-btn" onclick="toggleFilters()">Toggle Filters</button>
       </header>
 
       <!--Loading spinner, shown until data is loaded-->
@@ -28,6 +28,7 @@
 
       <!-- Sidebar: Filters panel -->
       <div id="filters-panel">
+      <button id="close-filters-btn">Close</button>
         <!-- Platform filter (buttons with brand colors) -->
         <div class="filter-group">
           <label>Platforms</label>
@@ -109,7 +110,7 @@
       <div class="viz-panel">
         <!-- Other visualization cards -->
         <div id="treemap-chart" class="viz-card">
-          <button id="treemap-back-btn" class="back-button">← Back to Continents</button>
+          <!--<button id="treemap-back-btn" class="back-button">← Back to Continents</button> -->
         </div>
         <div id="quantity-chart" class="viz-card"></div>
         <!-- Sankey chart visualization -->
