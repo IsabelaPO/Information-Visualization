@@ -74,7 +74,7 @@ header div h2 {
 #filters-panel {
   position: fixed;      
   top: 0;
-  right: 0;                   
+  left: 0;                   
   height: 100vh;              
   width: 300px;         
   background-color: var(--card-bg);
@@ -252,9 +252,9 @@ select {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr auto;
   padding-bottom: 5px;
   grid-template-areas:
-    /* "timeline timeline" */
     "treemap  quantity"
     "sankey   sankey";
 }
@@ -264,11 +264,12 @@ select {
   background-color: var(--card-bg);
   padding: 0.2rem;
   border-radius: 0.75rem;
+  flex: 1;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  position: relative;
+  /* position: relative; */
 }
 /* Assign specific grid areas */
 #timeline-filter {
@@ -311,7 +312,7 @@ select {
 
 /* Chart defaults */
 .viz-card svg {
-  display: block;
+  /* display: block; */
   width: 100%;
   height: 100%;
 }
@@ -476,12 +477,12 @@ div.tooltip-donut {
   pointer-events: none;
   font-size: 1rem;
 }
-
+/* 
 .viz-card img.card-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
+} */
 .country-list {
   max-height: 120px;
   overflow-y: auto;

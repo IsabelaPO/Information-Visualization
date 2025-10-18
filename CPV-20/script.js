@@ -179,7 +179,7 @@ function setupCloseButton() {
 function renderAllVisualizations(data) {
   renderSankeyChart(data, true);
   renderQuantityChart(data);
-  renderTreemapChart(data); // Add this line
+  renderTreemapChart(data);
 }
 function setupLocationFilter(data) {
     const allCountries = Array.from(new Set(data.flatMap(d => d.countries).filter(c => c && c !== ""))).sort();
@@ -835,17 +835,16 @@ function renderQuantityChart(data) {
   const t = d3.transition().duration(750);
 
   // Use .join() to create the SVG canvas once
-  container.selectAll("svg").remove();
-  const svg = container
-    .selectAll("svg")
-    .data([null])
-    .join("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .selectAll("g") // Select g, or create it if it doesn't exist
-    .data([null])
-    .join("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+  //container.selectAll("svg").remove();
+  const svg = container.selectAll("svg").data([null]).join(
+    enter => enter
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`),
+    update => update.select("g")
+  );
 
   // Check if a single content type is selected
   const singleTypeSelected =
@@ -1451,12 +1450,16 @@ function renderTreemapChart(data) {
     const width = bounds.width - margin.left - margin.right;
     const height = bounds.height - margin.top - margin.bottom;
     
-    container.selectAll("svg").remove();
-    const svg = container.append("svg")
+    //container.selectAll("svg").remove();
+    const svg = container.selectAll("svg").data([null]).join(
+      enter => enter
+        .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        .attr("transform", `translate(${margin.left},${margin.top})`),
+      update => update.select("g")
+    );
     
     
     const countryCounts = new Map();
