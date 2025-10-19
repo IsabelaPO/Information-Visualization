@@ -82,7 +82,25 @@ header div h2 {
   border-radius: 0;           
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2); 
   overflow-y: auto;       
-  z-index: 100;         
+  z-index: 100;   
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  pointer-events: none;
+  display: none; /* start hidden */      
+}
+
+#filters-panel.visible {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hidden state (slide out) */
+#filters-panel.hidden {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Style and position the Close button */

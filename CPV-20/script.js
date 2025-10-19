@@ -75,8 +75,6 @@ let currentFilters = { ...defaultFilters };
 let imdbSlider, yearSlider;
 //loads the csv files with d3
 document.addEventListener("DOMContentLoaded", () => {
-  toggleFilters();
-  setupCloseButton();
   Promise.all([d3.csv("streaming_platforms.csv")])
     .then(([rawPlatformData]) => {
       const processedPlatformData = rawPlatformData.map((d) => ({
@@ -154,27 +152,42 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch((error) => console.error("Data loading failed:", error));
 });
 
-function toggleFilters() 
-{
+function toggleFilters() {
   const panel = document.getElementById("filters-panel");
-  if (panel.style.display) {
-      panel.style.removeProperty("display");
-      imdbSlider = setupImdbSlider();
-    } else {
-      panel.style.display = "none";
+
+  if (!panel.classList.contains("visible")) {
+    // --- OPEN PANEL ---
+    panel.style.display = "block";
+
+    requestAnimationFrame(() => {
+      panel.classList.add("visible");
+      panel.classList.remove("hidden");
+    });
+
+    const closeButton = panel.querySelector("#close-filters-btn");
+    if (closeButton) {
+      closeButton.onclick = () => toggleFilters();
     }
+    imdbSlider = setupImdbSlider();
+
+  } else {
+    // --- CLOSE PANEL ---
+    panel.classList.add("hidden");
+    panel.classList.remove("visible");
+
+    panel.addEventListener(
+      "transitionend",
+      () => {
+        if (panel.classList.contains("hidden")) {
+          panel.style.display = "none";
+        }
+      },
+      { once: true }
+    );
+  }
 }
-function setupCloseButton() {
-    const closeButton = d3.select("#close-filters-btn");
-    
-    // Check if the button exists before adding the listener
-    if (closeButton.node()) {
-        closeButton.on("click", () => {
-            // The simplest way to close the panel is to call your existing toggle function
-            toggleFilters(); 
-        });
-    }
-}
+
+
 
 function renderAllVisualizations(data) {
   renderSankeyChart(data, true);
@@ -412,9 +425,6 @@ function setupRemoveFiltersButton() {
       true
     );
 
-    // Clear the country search bar and make all items visible
-    // Note: The search bar is now gone, you can remove this if you like
-    // d3.select("#country-search").property("value", "");
     d3.selectAll(".country-list-item").style("display", "block");
 
     // Reset the sliders
@@ -1634,9 +1644,7 @@ function renderTreemapChart(data) {
 
 document.addEventListener('click', function(event) {
     const filtersPanel = document.getElementById('filters-panel');
-    //const vizPanel = document.querySelector('.viz-panel');
     const toggleButton = document.getElementById('toggle-filters-btn');
-    const treemap = document.getElementById('treemap-chart');
 
     const isFiltersVisible = filtersPanel && window.getComputedStyle(filtersPanel).display !== 'none';
 
@@ -1661,4 +1669,92 @@ document.addEventListener('click', function(event) {
             }
         }
     }
+});
+
+function removeChartFilters(chartId) {
+  
+    // --- Logic for Treemap Chart (Assumed to filter by Geographic Location) ---
+    // The treemap is typically tied to the 'Continent/Country' filter.
+    if (chartId === 'treemap-chart') {
+      treemapCurrentView = 'Continents';
+      currentLocationView = 'Continents'; 
+      const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
+      currentFilters.selectedCountries = [...allCountryNames];
+      d3.select("#continent-view-container").style("display", "block");
+      d3.select("#country-view-container").style("display", "none");
+      d3.select("#view-continents-btn").classed("active", true);
+      d3.select("#view-countries-btn").classed("active", false);
+      d3.selectAll(".country-list-item").style("display", "block");
+      applyFilters();
+    }
+
+    
+    if (chartId === 'quantity-chart') {
+      currentFilters.selectedPlatforms = [];
+      currentFilters.type = [];
+      d3.selectAll(
+      ".content-type-filter button, .platform-buttons button"
+      )
+      .classed("active", false)
+      .classed("inactive", false);
+      applyFilters();
+    }
+
+    if (chartId === 'sankey-chart') {
+      currentFilters.selectedGenres = [];
+      currentFilters.selectedAudiences = [];
+      currentFilters.selectedPlatforms = [];
+      d3.selectAll(
+      ".content-type-filter button, .platform-buttons button, .audience-buttons button"
+      )
+        .classed("active", false)
+        .classed("inactive", false);
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
+        "checked",
+        true
+      );
+      applyFilters();
+    }
+    if (chartId === 'timeline-filter'){
+      yearSlider.reset();
+      applyFilters();
+    }
+    
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Select the main chart containers
+    const treemapChart = document.getElementById('treemap-chart');
+    const quantityChart = document.getElementById('quantity-chart');
+    const sankeyChart = document.getElementById('sankey-chart');
+    const timeLine = document.getElementById('timeline-filter')
+
+    if (treemapChart) {
+        treemapChart.addEventListener('dblclick', (event) => {
+            // Prevent the double-click from propagating up and doing other things
+            event.stopPropagation(); 
+            removeChartFilters('treemap-chart');
+        });
+    }
+
+    if (quantityChart) {
+        quantityChart.addEventListener('dblclick', (event) => {
+            event.stopPropagation();
+            removeChartFilters('quantity-chart');
+        });
+    }
+
+    if (sankeyChart) {
+        sankeyChart.addEventListener('dblclick', (event) => {
+            event.stopPropagation();
+            removeChartFilters('sankey-chart');
+        });
+    }
+    if (timeLine) {
+        timeLine.addEventListener('dblclick', (event) => {
+            event.stopPropagation();
+            removeChartFilters('timeline-filter');
+        });
+    }
+
 });
