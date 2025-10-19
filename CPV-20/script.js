@@ -367,6 +367,14 @@ function applyFilters() {
         const countriesInContinent = continentToCountriesMap[d] || [];
         // A continent is "checked" if all its countries are selected
         return countriesInContinent.length > 0 && countriesInContinent.every(c => currentFilters.selectedCountries.includes(c));
+    })
+    .property("indeterminate", d => { 
+        const countriesInContinent = continentToCountriesMap[d] || [];
+        const selectedCount = countriesInContinent.filter(c => currentFilters.selectedCountries.includes(c)).length;
+        
+        // A continent is "indeterminate" (visually selected/dashed) if 
+        // some (selectedCount > 0) but not all (selectedCount < total) are selected.
+        return selectedCount > 0 && selectedCount < countriesInContinent.length;
     });
 
   // Sync continent "Select All" button text
@@ -1579,6 +1587,7 @@ function renderTreemapChart(data) {
                 const countriesInContinent = Object.keys(countryToContinent).filter(
                     (country) => countryToContinent[country] === continentName
                 );
+                
 
                 // 3. Update Global Filter State
                 currentFilters.selectedCountries = countriesInContinent;
@@ -1591,6 +1600,12 @@ function renderTreemapChart(data) {
             } else {
                 // For filtering, update the selection and apply filters
                 currentFilters.selectedCountries = [d.data.name];
+                d3.select("#country-view-container").style("display", "block");
+                d3.select("#continent-view-container").style("display", "none");
+                d3.select("#view-countries-btn").classed("active", true);
+                d3.select("#view-continents-btn").classed("active", false);
+                currentLocationView = 'Countries';
+                
                 applyFilters();
             }
         });
@@ -1616,3 +1631,34 @@ function renderTreemapChart(data) {
 
     draw(currentViewData);
 }
+
+document.addEventListener('click', function(event) {
+    const filtersPanel = document.getElementById('filters-panel');
+    //const vizPanel = document.querySelector('.viz-panel');
+    const toggleButton = document.getElementById('toggle-filters-btn');
+    const treemap = document.getElementById('treemap-chart');
+
+    const isFiltersVisible = filtersPanel && window.getComputedStyle(filtersPanel).display !== 'none';
+
+    if (isFiltersVisible) {
+        const clickedInsideFilters = event.target.closest('#filters-panel');
+        const clickedToggleButton = event.target.closest('#toggle-filters-btn');
+        const clickedTreemap = event.target.closest('#treemap-chart');
+        const clickedSankey = event.target.closest('#sankey-chart');
+        const clickedTime = event.target.closest('#timeline-filter');
+        const clickedQuantity = event.target.closest('#quantity-chart');
+
+        
+        if (!clickedInsideFilters && !clickedToggleButton && !clickedTreemap && !clickedSankey && !clickedTime && !clickedQuantity) {
+            
+            if (typeof toggleFilters === 'function') {
+                 toggleFilters(); 
+            } else {
+                filtersPanel.style.display = "none";
+                if (toggleButton) {
+                    toggleButton.classList.remove('active');
+                }
+            }
+        }
+    }
+});
