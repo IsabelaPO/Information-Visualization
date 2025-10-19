@@ -27,7 +27,7 @@ const countryToContinent = {
     "Russia": "Europe", "Saudi Arabia": "Asia", "Senegal": "Africa", "Serbia": "Europe", "Singapore": "Asia",
     "Slovakia": "Europe", "Slovenia": "Europe", "South Africa": "Africa", "South Korea": "Asia", "Spain": "Europe",
     "Sri Lanka": "Asia", "Sweden": "Europe", "Switzerland": "Europe", "Syria": "Asia", "Taiwan": "Asia",
-"Tanzania": "Africa", "Thailand": "Asia", "Trinidad and Tobago": "North America", "Tunisia": "Africa", "Turkey": "Asia",
+    "Tanzania": "Africa", "Thailand": "Asia", "Trinidad and Tobago": "North America", "Tunisia": "Africa", "Turkey": "Asia",
     "Uganda": "Africa", "Ukraine": "Europe", "United Arab Emirates": "Asia", "United Kingdom": "Europe",
     "United States": "North America", "Uruguay": "South America", "Uzbekistan": "Asia", "Venezuela": "South America",
     "Vietnam": "Asia", "Yugoslavia": "Europe", "Zimbabwe": "Africa"
@@ -97,8 +97,19 @@ document.addEventListener("DOMContentLoaded", () => {
       allPlatformData = processedPlatformData;
       
       const allCountriesInData = Array.from(new Set(
-        allPlatformData.flatMap(d => d.countries).filter(c => c && c !== "")
-      ));
+        allPlatformData.flatMap(d => d.countries).filter(c => {
+        return (
+          c !== 'XC' && 
+          c !== 'YU' && 
+          c !== 'Republic of' && 
+          c !== 'Islamic Republic of' && 
+          c !== 'Bolivarian Republic of' && 
+          c !== 'Federated States of' && 
+          c !== 'Plurinational State of'
+                );
+              })
+            )
+          );
       
       currentFilters.selectedCountries = [...allCountriesInData];
 
@@ -194,8 +205,11 @@ function renderAllVisualizations(data) {
   renderQuantityChart(data);
   renderTreemapChart(data);
 }
+
 function setupLocationFilter(data) {
-    const allCountries = Array.from(new Set(data.flatMap(d => d.countries).filter(c => c && c !== ""))).sort();
+    const allCountries = Array.from(new Set(data.flatMap(d => d.countries).filter(c => c 
+      && c !== "" && c !== 'XC' && c != 'YU' && c !== 'Republic of' && c !== 'Islamic Republic of' 
+      && c !== 'Bolivarian Republic of' && c !== 'Federated States of' && c !== 'Plurinational State of'))).sort();
     const allContinents = Object.keys(continentToCountriesMap).sort();
 
     // 1. Populate the Country list with checkboxes
@@ -284,6 +298,7 @@ function setupLocationFilter(data) {
         applyFilters();
     });
 }
+
 function applyFilters() {
   let filteredPlatformData = allPlatformData;
 
@@ -683,7 +698,7 @@ function setupGenreFilter() {
 
     // Update button text dynamically based on selection
     const allSelected = d3.selectAll('#genre-filter-list input[type="checkbox"]:not(:checked)').empty();
-    d3.select("#select-all-genres").text(allSelected ? "Deselect All" : "Select All");
+    d3.select("#select-all-genres").text(allSelected ? "Deselect All" : "3Select All");
 
     applyFilters();
   });
@@ -697,7 +712,7 @@ function setupGenreFilter() {
       // All are currently checked → uncheck all
       d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", false);
       currentFilters.selectedGenres = [];
-      button.text("Select All");
+      button.text("4Select All");
     } else {
       // Not all are checked → select all
       d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", true);
@@ -827,7 +842,7 @@ function setupCountryFilter(data) {
     if (areAllSelected) {
       // If everything is selected, clear the selection
       currentFilters.selectedCountries = [];
-      button.text("Select All");
+      button.text("5Select All");
     } else {
       // Otherwise, select all countries
       currentFilters.selectedCountries = [...allCountryNames];
@@ -1291,7 +1306,7 @@ function renderSankeyChart(data, toReload) {
     // Check if the name exists in the genre list
     if (d3.selectAll('#genre-filter-list input').nodes().some((n) => n.parentNode.textContent.trim() === name)) {
       currentFilters.selectedGenres = [name];
-      d3.select("#select-all-genres").text("Select All");
+      d3.select("#select-all-genres").text("6Select All");
     }
     // Check if the name exists in platform buttons
     else if (d3.selectAll('.platform-buttons button').nodes().some((n) => n.getAttribute('data-platform') === name)) {
@@ -1524,11 +1539,6 @@ function renderTreemapChart(data) {
             //backButton.style("display", "block");
         }
     }
-
-    /*onutton.on("click", () => {
-        treemapCurrentView = 'Continents';
-        applyFilters();
-    });*/
 
     const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
 

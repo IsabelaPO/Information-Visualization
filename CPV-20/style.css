@@ -264,6 +264,16 @@ select {
   cursor: pointer;
 }
 
+.remove-filters-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3); /* Deeper, more noticeable shadow */
+  
+  
+  
+  /* 3. Add a thick, contrasting white border */
+  border: 1px solid white;
+}
+
 /* Visualization panel grid */
 .viz-panel {
   grid-area: viz;
