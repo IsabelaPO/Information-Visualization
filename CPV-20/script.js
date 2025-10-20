@@ -265,6 +265,8 @@ function setupLocationFilter(data) {
         d3.select(this).classed("active", true);
         d3.select("#view-continents-btn").classed("active", false);
         currentLocationView = 'Countries';
+        d3.select("#country-continent-search")
+        .property("placeholder", "Search countries...");
         applyFilters();
     });
 
@@ -274,6 +276,8 @@ function setupLocationFilter(data) {
         d3.select(this).classed("active", true);
         d3.select("#view-countries-btn").classed("active", false);
         currentLocationView = 'Continents';
+        d3.select("#country-continent-search")
+        .property("placeholder", "Search continents...");
         applyFilters();
     });
 
@@ -421,6 +425,8 @@ function setupRemoveFiltersButton() {
     // Re-select all countries, which is the default state
     treemapCurrentView = 'Continents';
     currentLocationView = 'Continents'; 
+    d3.select("#country-continent-search")
+        .property("placeholder", "Search continents...");
     const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
     currentFilters.selectedCountries = [...allCountryNames];
     d3.select("#continent-view-container").style("display", "block");
@@ -621,11 +627,42 @@ function createD3RangeSlider(config) {
   d3.select(config.maxLabelId).text(config.tickFormat(config.domain[1]));
 
   // Return an object with a reset method
+  const transitionDuration = 750; // Set transition time for smoothness
+
+  // Return an object with a reset method
   return {
     reset: () => {
-      gBrush.call(brush.move, config.domain.map(xScale));
-      d3.select(config.minLabelId).text(config.tickFormat(config.domain[0]));
-      d3.select(config.maxLabelId).text(config.tickFormat(config.domain[1]));
+      const minYear = config.domain[0];
+      const maxYear = config.domain[1];
+
+      // 1. Smoothly move the brush handles (slider selection)
+      // Applying transition before call(brush.move, ...) makes the handles move smoothly.
+      gBrush
+        .transition()
+        .duration(transitionDuration)
+        .call(brush.move, config.domain.map(xScale));
+
+      // 2. Smoothly transition the minimum year label (text content)
+      d3.select(config.minLabelId)
+        .transition()
+        .duration(transitionDuration)
+        .tween("text", function() {
+          const i = d3.interpolateRound(+this.textContent, minYear);
+          return function(t) {
+            this.textContent = i(t);
+          };
+        });
+
+      // 3. Smoothly transition the maximum year label (text content)
+      d3.select(config.maxLabelId)
+        .transition()
+        .duration(transitionDuration)
+        .tween("text", function() {
+          const i = d3.interpolateRound(+this.textContent, maxYear);
+          return function(t) {
+            this.textContent = i(t);
+          };
+        });
     },
   };
 }
@@ -698,7 +735,7 @@ function setupGenreFilter() {
 
     // Update button text dynamically based on selection
     const allSelected = d3.selectAll('#genre-filter-list input[type="checkbox"]:not(:checked)').empty();
-    d3.select("#select-all-genres").text(allSelected ? "Deselect All" : "3Select All");
+    d3.select("#select-all-genres").text(allSelected ? "Deselect All" : "Select All");
 
     applyFilters();
   });
@@ -712,7 +749,7 @@ function setupGenreFilter() {
       // All are currently checked → uncheck all
       d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", false);
       currentFilters.selectedGenres = [];
-      button.text("4Select All");
+      button.text("Select All");
     } else {
       // Not all are checked → select all
       d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", true);
@@ -842,7 +879,7 @@ function setupCountryFilter(data) {
     if (areAllSelected) {
       // If everything is selected, clear the selection
       currentFilters.selectedCountries = [];
-      button.text("5Select All");
+      button.text("Select All");
     } else {
       // Otherwise, select all countries
       currentFilters.selectedCountries = [...allCountryNames];
@@ -1306,7 +1343,7 @@ function renderSankeyChart(data, toReload) {
     // Check if the name exists in the genre list
     if (d3.selectAll('#genre-filter-list input').nodes().some((n) => n.parentNode.textContent.trim() === name)) {
       currentFilters.selectedGenres = [name];
-      d3.select("#select-all-genres").text("6Select All");
+      d3.select("#select-all-genres").text("Select All");
     }
     // Check if the name exists in platform buttons
     else if (d3.selectAll('.platform-buttons button').nodes().some((n) => n.getAttribute('data-platform') === name)) {
@@ -1505,9 +1542,19 @@ function renderTreemapChart(data) {
         });
     });
 
+   
+    const selectedContinents = new Set(
+        currentFilters.selectedCountries
+            .map(country => countryToContinent[country])
+            .filter(continent => continent) // Filter out undefined/null
+    );
+    if (treemapCurrentView !== 'Continents' && treemapCurrentView !== 'Countries') {
+        if (selectedContinents.size > 1 || !selectedContinents.has(treemapCurrentView)) {
+            treemapCurrentView = 'Continents';
+        }
+    }
     let currentViewData;
     const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data();
-    
     // This logic to decide the view is already correct.
     if (currentLocationView === 'Countries') {
         const children = Array.from(countryCounts.entries()).map(([name, value]) => ({ name, value }));
@@ -1516,6 +1563,8 @@ function renderTreemapChart(data) {
         currentViewData = { name: title, children };
         //backButton.style("display", "none");
         treemapCurrentView = 'Continents';
+        d3.select("#country-continent-search")
+        .property("placeholder", "Search countries...");
     } else { 
         if (treemapCurrentView === 'Continents') {
             const continentChildren = Array.from(d3.group(
@@ -1525,18 +1574,19 @@ function renderTreemapChart(data) {
                 value: d3.sum(countries, c => countryCounts.get(c))
             }));
             currentViewData = { name: "Continents", children: continentChildren };
+            d3.select("#country-continent-search")
+        .property("placeholder", "Search continents...");
             //backButton.style("display", "none");
         } else {
             const children = Array.from(countryCounts)
                 .filter(([country]) => countryToContinent[country] === treemapCurrentView)
                 .map(([name, value]) => ({ name, value }));
             if (children.length === 0) {
-                treemapCurrentView = 'Continents';
+                treemapCurrentView = 'Countries';
                 renderTreemapChart(data); // Re-render if drill-down is empty
                 return;
             }
             currentViewData = { name: treemapCurrentView, children };
-            //backButton.style("display", "block");
         }
     }
 
@@ -1545,13 +1595,11 @@ function renderTreemapChart(data) {
     function draw(viewData) {
         const root = d3.hierarchy(viewData).sum(d => d.value);
         d3.treemap().size([width, height]).padding(2)(root);
-
         svg.selectAll(".chart-title").data([viewData.name]).join("text")
             .attr("class", "chart-title")
             .attr("x", width / 2).attr("y", -15).attr("text-anchor", "middle")
             .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155")
             .text(`Content Quantity by ${viewData.name}`);
-
         const t = svg.transition().duration(750);
         const cell = svg.selectAll("g.cell").data(root.leaves(), d => d.data.name);
 
@@ -1560,9 +1608,6 @@ function renderTreemapChart(data) {
         
         const cellEnter = cell.enter().append("g").attr("class", "cell");
         
-        /*cellEnter.append("rect")
-            .attr("fill", d => colorScale(d.parent.data.name === "Continents" || d.parent.data.name === "All Countries" || d.parent.data.name === "Selected Countries" ? d.data.name : d.parent.data.name))
-            .style("stroke", "#fff");*/
         cellEnter.append("rect")
           .attr("fill", d => {
             // If viewing all continents or all/selected countries — color by name
@@ -1614,6 +1659,8 @@ function renderTreemapChart(data) {
                 
                 // 4. Update Filter Panel View (optional, but good practice for consistency)
                 currentLocationView = 'Continents'; // Keep the filter panel on the continent view initially
+                d3.select("#country-continent-search")
+                  .property("placeholder", "Search continents...");
 
                 // 5. Apply filters to re-render all visualizations
                 applyFilters(); 
@@ -1625,7 +1672,8 @@ function renderTreemapChart(data) {
                 d3.select("#view-countries-btn").classed("active", true);
                 d3.select("#view-continents-btn").classed("active", false);
                 currentLocationView = 'Countries';
-                
+                d3.select("#country-continent-search")
+                  .property("placeholder", "Search countries...");
                 applyFilters();
             }
         });
@@ -1641,6 +1689,9 @@ function renderTreemapChart(data) {
     }
 
     if (!currentViewData.children || currentViewData.children.length === 0) {
+
+        svg.selectAll("g.cell, .chart-title, .no-data-message").remove(); 
+        
         svg.append("text").attr("class", "no-data-message")
             .attr("x", width / 2).attr("y", height / 2)
             .attr("text-anchor", "middle")
@@ -1687,7 +1738,9 @@ function removeChartFilters(chartId) {
     // The treemap is typically tied to the 'Continent/Country' filter.
     if (chartId === 'treemap-chart') {
       treemapCurrentView = 'Continents';
-      currentLocationView = 'Continents'; 
+      currentLocationView = 'Continents';
+      d3.select("#country-continent-search")
+        .property("placeholder", "Search continents..."); 
       const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
       currentFilters.selectedCountries = [...allCountryNames];
       d3.select("#continent-view-container").style("display", "block");
@@ -1767,4 +1820,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+});
+
+function handleCountryContinentSearch() {
+    // Get the search term and convert it to lower case for case-insensitive matching
+    const searchTerm = d3.select("#country-continent-search").property("value").toLowerCase();
+    
+    // --- 1. Filter Country View ---
+    d3.select("#country-filter-list").selectAll(".list-item-container")
+        .each(function(d) {
+            // 'd' is the bound country name for country view
+            const countryName = d.toLowerCase();
+            const matches = countryName.includes(searchTerm);
+            
+            // Apply the 'filter-hidden' class if it doesn't match
+            d3.select(this)
+                .classed("filter-hidden", !matches);
+        });
+
+    // --- 2. Filter Continent View ---
+    d3.select("#continent-filter-list").selectAll(".list-item-container")
+        .each(function(d) {
+            // 'd' is the bound continent name for continent view
+            const continentName = d.toLowerCase();
+            const matches = continentName.includes(searchTerm);
+            
+            // Apply the 'filter-hidden' class if it doesn't match
+            d3.select(this)
+                .classed("filter-hidden", !matches);
+        });
+}
+function handleGenreSearch() {
+    const searchTerm = d3.select("#genre-search").property("value").toLowerCase();
+    d3.select("#genre-filter-list").selectAll("#genre-filter-list > *")
+        .each(function() {
+          
+            const container = d3.select(this);
+            const listItemText = container.text().trim();
+        
+            const cleanText = listItemText
+                               .replace(/[\u2713\u2714✓]/g, '') // Remove checkmark symbols
+                               .replace(/\[\s*\]/g, '')     // Remove blank brackets
+                               .replace(/[\s\t\n]+/g, ' ')  // Collapse multiple spaces
+                               .trim();
+
+            const matches = cleanText.toLowerCase().includes(searchTerm);
+            
+            container.classed("filter-hidden", !matches);
+        });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    d3.select("#country-continent-search").on("input", handleCountryContinentSearch);
+    d3.select("#genre-search").on("input", handleGenreSearch);
 });

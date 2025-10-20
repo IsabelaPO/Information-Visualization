@@ -52,6 +52,7 @@
         <!-- Genres: dynamically populated checkboxes (JS populates this) -->
         <div class="filter-group">
           <label>Genres</label>
+          <input type="text" id="genre-search" class="genre-search" placeholder="Search genre..." aria-label="Search genre">
           <button id="select-all-genres" class="select-all-button">Deselect All</button>
           <div class="genre-list" id="genre-filter-list"></div>
         </div>
@@ -62,7 +63,7 @@
             <button id="view-continents-btn" class="toggle-btn active">Continents</button>
             <button id="view-countries-btn" class="toggle-btn">Countries</button>
           </div>
-
+          <input type="text" id="country-continent-search" class="country-continent-search" placeholder="Search continents..." aria-label="Search continents">
           <div id="continent-view-container">
             <button id="select-all-continents" class="select-all-button">Deselect All</button>
             <div id="continent-filter-list" class="country-list"></div>

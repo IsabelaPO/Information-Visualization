@@ -34,6 +34,10 @@ def codes_to_countries(codes):
 # Apply conversion
 df[country_new] = df[country_col].apply(codes_to_countries)
 
+genre_col = "genres"
+
+df[genre_col] = df[genre_col].astype(str).str.title()
+
 # Save result
 df.to_csv("streaming_platforms.csv", index=False)
 

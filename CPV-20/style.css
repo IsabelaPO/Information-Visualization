@@ -640,3 +640,44 @@ div.tooltip-donut {
   border: 2px solid var(--slider-color);
   /*background-color: var(--slider-color);*/
 }
+
+.country-continent-search {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem; 
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  transition: border-color 0.2s ease;
+}
+
+.country-continent-search:focus {
+  border-color: var(--base-button-color); 
+  outline: none;
+}
+
+.filter-hidden {
+    display: none !important;
+}
+.genre-search  {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem; 
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  transition: border-color 0.2s ease;
+}
+
+.genre-search:focus {
+  border-color: var(--base-button-color); 
+  outline: none;
+}
+
+.filter-hidden {
+    display: none !important;
+}
