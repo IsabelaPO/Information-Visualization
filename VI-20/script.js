@@ -1099,7 +1099,7 @@ function renderQuantityChart(data) {
       .on("mouseover", function (event, d) {
         tooltip.transition().duration(50).style("opacity", 1);
         tooltip.html(
-          `<div>${d.platform}</div><div>${singleTypeSelected}: ${d[dataType]}</div>`
+          `<div><b>${d.platform}</b></div><div><b>Movies</b>: ${d.movies}</div>`
         );
         const bbox = tooltip.node().getBoundingClientRect();
         tooltip
@@ -1202,7 +1202,7 @@ function renderQuantityChart(data) {
       .on("mouseover", function (event, d) {
         tooltip.transition().duration(50).style("opacity", 1);
         tooltip.html(
-          `<div>${d.platform}</div><div>TV Shows: ${d.tvShows}</div>`
+          `<div><b>${d.platform}</b></div><div><b>TV Shows</b>: ${d.tvShows}</div>`
         );
         const bbox = tooltip.node().getBoundingClientRect();
         tooltip
@@ -1247,7 +1247,7 @@ function renderQuantityChart(data) {
       )
       .on("mouseover", function (event, d) {
         tooltip.transition().duration(50).style("opacity", 1);
-        tooltip.html(`<div>${d.platform}</div><div>Movies: ${d.movies}</div>`);
+        tooltip.html(`<div><b>${d.platform}</b></div><div><b>Movies</b>: ${d.movies}</div>`);
         const bbox = tooltip.node().getBoundingClientRect();
         tooltip
           .style("left", event.pageX - bbox.width / 2 + "px")
@@ -1422,7 +1422,7 @@ function renderSankeyChart(data, toReload) {
     tooltip.transition().duration(50).style("opacity", 1);
     tooltip
       .html(
-        `Source: ${d.source.name}<br/>Target: ${d.target.name}<br/>Quantity: ${d.value}`
+        `<b>Source</b>: ${d.source.name}<br/><b>Target</b>: ${d.target.name}<br/><b>Quantity</b>: ${d.value}`
       )
       .style("left", event.pageX + 15 + "px")
       .style("top", event.pageY - 28 + "px");
@@ -1432,7 +1432,7 @@ function renderSankeyChart(data, toReload) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
     tooltip.transition().duration(50).style("opacity", 1);
     tooltip
-      .html(`Total quantity: ${d.value}`)
+      .html(`<b>Total quantity</b>: ${d.value}`)
       .style("left", event.pageX + 15 + "px")
       .style("top", event.pageY - 28 + "px");
   };
