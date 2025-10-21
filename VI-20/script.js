@@ -447,7 +447,13 @@ function setupRemoveFiltersButton() {
     d3.select("#country-view-container").style("display", "none");
     d3.select("#view-continents-btn").classed("active", true);
     d3.select("#view-countries-btn").classed("active", false);
+
     
+    const allGenres = [];
+    d3.selectAll('#genre-filter-list input[type="checkbox"]').each(function () {
+      allGenres.push(d3.select(this.parentNode).text().trim());
+    });
+    currentFilters.selectedGenres = allGenres;    
     
     // 2. Reset the other UI controls
     d3.selectAll(
@@ -1552,9 +1558,6 @@ function renderSankeyChart(data, toReload) {
     .style("font-weight", "600")
     .style("fill", "#334155")
     .text("Content Flow: Platform → Genre → Target Audience");
-
-  // if(toReload)
-  //   renderSankeyChart(data, false);
 }
 
 
@@ -1820,10 +1823,15 @@ function removeChartFilters(chartId) {
       )
         .classed("active", false)
         .classed("inactive", false);
-      d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
-        "checked",
-        true
-      );
+      // d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
+      //   "checked",
+      //   true
+      // );
+      const allGenres = [];
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').each(function () {
+        allGenres.push(d3.select(this.parentNode).text().trim());
+      });
+      currentFilters.selectedGenres = allGenres;
       applyFilters();
     }
     if (chartId === 'timeline-filter'){
