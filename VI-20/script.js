@@ -144,6 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setupAudienceFilter();
       setupLocationFilter(allPlatformData);
       setupRemoveFiltersButton();
+      setupRemoveFiltersButtonPP();
 
       //draws initial visualizations
       renderAllVisualizations(allPlatformData);
@@ -433,6 +434,52 @@ function applyFilters() {
 
 function setupRemoveFiltersButton() {
   d3.select(".remove-filters-btn").on("click", () => {
+    // 1. Reset the state object
+    currentFilters = { ...defaultFilters };
+
+    // Re-select all countries, which is the default state
+    treemapCurrentView = 'Continents';
+    currentLocationView = 'Continents'; 
+    d3.select("#country-continent-search")
+        .property("placeholder", "Search continents...");
+    const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
+    currentFilters.selectedCountries = [...allCountryNames];
+    d3.select("#continent-view-container").style("display", "block");
+    d3.select("#country-view-container").style("display", "none");
+    d3.select("#view-continents-btn").classed("active", true);
+    d3.select("#view-countries-btn").classed("active", false);
+
+    
+    const allGenres = [];
+    d3.selectAll('#genre-filter-list input[type="checkbox"]').each(function () {
+      allGenres.push(d3.select(this.parentNode).text().trim());
+    });
+    currentFilters.selectedGenres = allGenres;    
+    
+    // 2. Reset the other UI controls
+    d3.selectAll(
+      ".content-type-filter button, .platform-buttons button, .audience-buttons button"
+    )
+      .classed("active", false)
+      .classed("inactive", false);
+    d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
+      "checked",
+      true
+    );
+
+    d3.selectAll(".country-list-item").style("display", "block");
+
+    // Reset the sliders
+    if (imdbSlider) imdbSlider.reset();
+    if (yearSlider) yearSlider.reset();
+
+    // 3. Apply filters, which will now handle the visual update
+    applyFilters();
+  });
+}
+
+function setupRemoveFiltersButtonPP() {
+  d3.select(".remove-filters-btn-pp").on("click", () => {
     // 1. Reset the state object
     currentFilters = { ...defaultFilters };
 

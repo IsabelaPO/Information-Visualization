@@ -274,6 +274,28 @@ select {
   border: 1px solid white;
 }
 
+.remove-filters-btn-pp {
+  width: 100%;
+  /* height: 90%; */
+  margin-top: 0.0rem;
+  margin-right: -20px;
+  padding: 0.75rem;
+  background-color: var(--border-color);
+  color: rgb(0, 0, 0);
+  border: 1px solid black;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.remove-filters-btn-pp:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3); /* Deeper, more noticeable shadow */ 
+  /* 3. Add a thick, contrasting white border */
+  border: 1px solid rgb(255, 255, 255);
+  background-color: var(--accent-color);
+}
+
 /* Visualization panel grid */
 .viz-panel {
   grid-area: viz;
