@@ -691,6 +691,8 @@ function createD3RangeSlider(config) {
     ])
     .on("brush", (event) => {
       if (!event.selection) return;
+      if (!event.sourceEvent) return;
+
       const [x0, x1] = event.selection.map(xScale.invert);
 
         const src = event.sourceEvent;
