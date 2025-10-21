@@ -1702,16 +1702,15 @@ function renderTreemapChart(data) {
 
     draw(currentViewData);
 }
-
 document.addEventListener('click', function(event) {
     const filtersPanel = document.getElementById('filters-panel');
-    const toggleButton = document.getElementById('toggle-filters-btn');
+    const toggleButton = document.getElementById('open-filters-btn'); // UPDATED ID
 
     const isFiltersVisible = filtersPanel && window.getComputedStyle(filtersPanel).display !== 'none';
 
     if (isFiltersVisible) {
         const clickedInsideFilters = event.target.closest('#filters-panel');
-        const clickedToggleButton = event.target.closest('#toggle-filters-btn');
+        const clickedToggleButton = event.target.closest('#open-filters-btn'); // UPDATED ID
         const clickedTreemap = event.target.closest('#treemap-chart');
         const clickedSankey = event.target.closest('#sankey-chart');
         const clickedTime = event.target.closest('#timeline-filter');
@@ -1725,7 +1724,7 @@ document.addEventListener('click', function(event) {
             } else {
                 filtersPanel.style.display = "none";
                 if (toggleButton) {
-                    toggleButton.classList.remove('active');
+                    // This button doesn't use an 'active' class, so no need to remove it
                 }
             }
         }

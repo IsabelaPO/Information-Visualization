@@ -4,32 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Streaming Platforms Dashboard</title>
-    <!--D3.js core library-->
     <script src="/d3/d3.v7.min.js"></script>
-    <!--D3 Sankey plugin-->
     <script src="/d3/d3-sankey.min.js"></script>
-    <!--logic-->
     <script src="script.js"></script>
 
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="dashboard-wrapper">
-      <!--Dahsboard header-->
       <header>
         <div>
           <h1>Streaming Platforms</h1>
         </div>
-        <button id="toggle-filters-btn" onclick="toggleFilters()">Toggle Filters</button>
       </header>
 
-      <!--Loading spinner, shown until data is loaded-->
       <div id="loading"><div class="spinner"></div></div>
 
-      <!-- Sidebar: Filters panel -->
       <div id="filters-panel">
       <button id="close-filters-btn">Close</button>
-        <!-- Platform filter (buttons with brand colors) -->
         <div class="filter-group">
           <label>Platforms</label>
           <div class="platform-buttons">
@@ -41,7 +33,6 @@
             <button data-platform="Apple">Apple</button>
           </div>
         </div>
-        <!-- Dropdown: content type filter -->
         <div class="filter-group">
           <label>Content Type</label>
           <div class="content-type-filter">
@@ -49,7 +40,6 @@
             <button content-type-filter="MOVIE">Movies</button>
           </div>
         </div>
-        <!-- Genres: dynamically populated checkboxes (JS populates this) -->
         <div class="filter-group">
           <label>Genres</label>
           <input type="text" id="genre-search" class="genre-search" placeholder="Search genre..." aria-label="Search genre">
@@ -74,7 +64,6 @@
             <div id="country-filter-list" class="country-list"></div>
           </div>
         </div>
-        <!-- Audience filter (buttons, JS maps to age categories) -->
         <div class="filter-group">
           <label>Target Audience</label>
           <div class="audience-buttons">
@@ -84,7 +73,6 @@
             <button audience-buttons="adult">Adult</button>
           </div>
         </div>
-        <!-- IMDb slider: interactive filter for rating range -->
         <div class="filter-group">
           <label>IMDB Score</label>
           <div id="imdb-slider-container" class="d3-slider-container"></div>
@@ -93,11 +81,15 @@
             <span id="imdb-max-value">10.0</span>
           </div>
         </div>
-        <!-- Reset filters button -->
         <button class="remove-filters-btn">Remove All Filters</button>
       </div>
 
-      <!-- Timeline filter (release year slider) -->
+      <button id="open-filters-btn" class="open-filters-btn" onclick="toggleFilters()">
+        <img class="filter-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath d='M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.033c0 .694-.559 1.258-1.242 1.268l-.012.001c-.682.01-1.242-.56-1.242-1.269v-3.033a2.25 2.25 0 00-.659-1.59L3.31 6.22A2.25 2.25 0 012.65 4.63V2.34a.75.75 0 01.628-.74z' /%3E%3C/svg%3E" alt="Filter Icon">
+        
+        <span class="tooltip-text">Filters</span>
+      </button>
+
       <div id="timeline-filter">
         <div class="viz-card-header">Filter by Release Year</div>
         <div id="year-slider-container" class="d3-slider-container"></div>
@@ -107,14 +99,10 @@
         </div>
       </div>
       
-      <!-- Visualization panel -->
       <div class="viz-panel">
-        <!-- Other visualization cards -->
         <div id="treemap-chart" class="viz-card">
-          <!--<button id="treemap-back-btn" class="back-button">← Back to Continents</button> -->
-        </div>
+          </div>
         <div id="quantity-chart" class="viz-card"></div>
-        <!-- Sankey chart visualization -->
         <div id="sankey-chart" class="viz-card"></div>
       </div>
     </div>
