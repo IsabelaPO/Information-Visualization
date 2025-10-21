@@ -305,6 +305,7 @@ function setupLocationFilter(data) {
 
 function applyFilters() {
   let filteredPlatformData = allPlatformData;
+  console.log(currentFilters.selectedGenres);
 
   if (currentFilters.selectedPlatforms.length > 0) {
     filteredPlatformData = filteredPlatformData.filter((d) =>
@@ -340,17 +341,30 @@ function applyFilters() {
       d.imdb_score <= currentFilters.imdbRange[1]
   );
 
-  if (currentFilters.selectedGenres.length > 0) {
+  // if (currentFilters.selectedGenres.length > 0) {
+  //   filteredPlatformData = filteredPlatformData.filter((d) =>
+  //     currentFilters.selectedGenres.includes(d.main_genre)
+  //   );
+
+  //   d3.selectAll('#genre-filter-list input[type="checkbox"]')
+  //     .property("checked", function() {
+  //       const genre = this.parentNode.textContent.trim();
+  //       return currentFilters.selectedGenres.includes(genre);
+  //     });
+  // }
+
+  // Always filter by genre — if none are selected, result will be empty
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.selectedGenres.includes(d.main_genre)
     );
 
+    // Sync checkbox states regardless
     d3.selectAll('#genre-filter-list input[type="checkbox"]')
       .property("checked", function() {
         const genre = this.parentNode.textContent.trim();
         return currentFilters.selectedGenres.includes(genre);
-      });
-  }
+    });
+
 
   if (currentFilters.yearRange) {
     filteredPlatformData = filteredPlatformData.filter(
@@ -792,9 +806,9 @@ function setupGenreFilter() {
       currentFilters.selectedGenres = allGenres;
       button.text("Deselect All");
     }
-
     applyFilters();
   });
+  //applyFilters();
 }
 
 
@@ -804,6 +818,8 @@ function populateGenreFilter(data) {
       isValidString(d.genres) ? d.genres.split(",").map((g) => g.trim()) : []
     )
   );
+  
+  currentFilters.selectedGenres = [...genres];
 
   d3.select("#genre-filter-list")
     .selectAll("div")
