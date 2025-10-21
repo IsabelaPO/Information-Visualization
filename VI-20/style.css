@@ -502,7 +502,6 @@ select {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* "Halo" effect for active selection, plus a slight press effect */
 .platform-buttons button.active {
   box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-color);
   transform: scale(1.05);
@@ -702,4 +701,81 @@ div.tooltip-donut {
 
 .filter-hidden {
     display: none !important;
+}
+.open-filters-btn {
+  position: fixed; 
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleX(1);
+  transform-origin: left; 
+  z-index: 90; 
+  background-color: var(--base-button-color); 
+  color: white; 
+  border: none;
+  padding: 15px 10px; 
+  cursor: pointer;
+  writing-mode: unset;
+  text-orientation: unset;
+  letter-spacing: unset;
+  font-weight: unset;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.35s ease, opacity 0.35s ease, background-color 0.2s, filter 0.2s;
+  opacity: 1;
+  border-top-right-radius: 50%; 
+  border-bottom-right-radius: 50%; 
+  width: 60px; 
+  height: 50px;
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+}
+
+.open-filters-btn:hover {
+  background-color: var(--base-button-color);
+  filter: brightness(1.15); 
+  transform: translateY(-50%) scaleX(1.1); 
+}
+
+/* This rule hides the button when the panel is open */
+#filters-panel.visible ~ .open-filters-btn {
+   transform: translateX(-100%) translateY(-50%);
+   opacity: 0;
+   pointer-events: none;
+}
+
+/* This rule styles the icon image */
+.open-filters-btn .filter-icon {
+  width: 28px;
+  height: 28px;
+  pointer-events: none; 
+}
+
+/* This rule HIDES the "Filters" text by default */
+.open-filters-btn .tooltip-text {
+  visibility: hidden; 
+  opacity: 0;
+  width: auto; 
+  white-space: nowrap; 
+  background-color: #333; 
+  color: #fff; 
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.875rem;
+  
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 91; 
+  left: 105%; 
+  top: 50%;
+  transform: translateY(-50%);
+  
+  /* Fade-in transition */
+  transition: opacity 0.2s;
+}
+
+/* This rule SHOWS the text on hover */
+.open-filters-btn:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
