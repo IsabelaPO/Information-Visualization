@@ -1,6 +1,6 @@
 const isValidString = (str) =>
   str && typeof str === "string" && str.trim() !== "";
-// Add this object near the top of script.js
+
 const countryToContinent = {
     "Afghanistan": "Asia", "Albania": "Europe", "Algeria": "Africa", "Andorra": "Europe", "Angola": "Africa",
     "Argentina": "South America", "Armenia": "Asia", "Australia": "Oceania", "Austria": "Europe", "Azerbaijan": "Asia",
@@ -590,6 +590,20 @@ function createD3RangeSlider(config) {
     .range([0, width])
     .clamp(true);
 
+  // Create tooltip element (hidden initially)
+  const tooltip = container
+    .append("div")
+    .attr("class", "slider-tooltip")
+    .style("position", "fixed")
+    .style("padding", "4px 8px")
+    .style("background", "rgba(0, 0, 0, 0.7)")
+    .style("color", "white")
+    .style("font-size", "12px")
+    .style("border-radius", "4px")
+    .style("pointer-events", "none")
+    .style("opacity", 0)
+    .style("z-index", 1000);
+
   // Draw the bottom axis with ticks and formatting
   svg
     .append("g")
@@ -608,7 +622,25 @@ function createD3RangeSlider(config) {
       [0, 0],
       [width, height],
     ])
+    .on("brush", (event) => {
+      if (!event.selection) return;
+      const [x0, x1] = event.selection.map(xScale.invert);
+
+        const src = event.sourceEvent;
+        const clientX = src ? (src.touches ? src.touches[0].clientX : src.clientX) : 0;
+        const clientY = src ? (src.touches ? src.touches[0].clientY : src.clientY) : 0;
+      // Show tooltip and update its position/value
+      const [mouseX, mouseY] = d3.pointer(event, container.node());
+      tooltip
+        .style("opacity", 1)
+        // .style("left", `${mouseX + 10}px`)
+        // .style("top", `${mouseY - 25}px`)
+        .style("left", `${clientX}px`)
+        .style("top", `${clientY}py`)
+        .text(`${config.tickFormat(x0)} - ${config.tickFormat(x1)}`);
+    })
     .on("end", (event) => {
+      tooltip.transition().duration(200).style("opacity", 0);
       // When user stops dragging, convert pixel coords back into data values
       let valueRange = event.selection
         ? event.selection.map(xScale.invert)
