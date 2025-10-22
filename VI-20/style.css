@@ -310,6 +310,7 @@ select {
 }
 
 /* Generic chart card */
+/* Generic chart card */
 .viz-card {
   background-color: var(--card-bg);
   padding: 0.2rem;
@@ -319,7 +320,7 @@ select {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* position: relative; */
+  position: relative; 
 }
 /* Assign specific grid areas */
 #timeline-filter {
@@ -557,12 +558,7 @@ div.tooltip-donut {
 .select-all-button:hover {
   background-color: var(--accent-color); /* Darken on hover */
 }
-/* Add this to the end of your style.css file */
 .back-button {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 10;
   padding: 0.35rem 0.75rem;
   background-color: #f8fafc;
   border: 1px solid var(--border-color);
@@ -570,7 +566,6 @@ div.tooltip-donut {
   cursor: pointer;
   font-weight: 500;
   box-shadow: var(--shadow);
-  display: none; /* Hidden by default */
   opacity: 0.9;
   transition: all 0.2s ease;
 }
@@ -774,8 +769,44 @@ div.tooltip-donut {
   transition: opacity 0.2s;
 }
 
-/* This rule SHOWS the text on hover */
 .open-filters-btn:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
+}
+
+.viz-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  overflow: hidden; 
+  box-shadow: var(--shadow);
+}
+
+/* Position the Level 2 Button */
+#treemap-back-continents-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  display: none; /* Hide by default */
+}
+
+/* Position the Level 3 Button */
+#treemap-back-countries-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  display: none; /* Hide by default */
+}
+#quantity-back-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  display: none; /* Hide by default */
 }
