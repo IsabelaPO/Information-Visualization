@@ -17,7 +17,7 @@ To run this project, you must have **Python 3** installed on your system.
 Follow these steps to quickly launch the project using Python's built-in simple HTTP server:
 
 1.  **Navigate to the Project Directory:**
-    Open your terminal or command prompt and use the `cd` command to move into the directory named `VI-20` that contains the project files **`index.html`**, **`script.js`**, **`style.css`**, the data file **`streaming_platforms.csv`**, and the library folder **`d3`**.
+    Open your terminal or command prompt and use the `cd` command to move into the directory named `Project` that contains the project files **`index.html`**, **`script.js`**, **`style.css`**, the data file **`streaming_platforms.csv`**, and the library folder **`d3`**.
 
 2.  **Start the Local Server:**
     Run the following command inside that directory:
