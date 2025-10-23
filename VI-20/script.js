@@ -485,6 +485,9 @@ function setupRemoveFiltersButton() {
     if (imdbSlider) imdbSlider.reset();
     if (yearSlider) yearSlider.reset();
 
+    treemapDrillDownState = 'Continents';
+    treemapTopLevelView = 'Countries'; 
+
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
   });
@@ -530,6 +533,9 @@ function setupRemoveFiltersButtonPP() {
     // Reset the sliders
     if (imdbSlider) imdbSlider.reset();
     if (yearSlider) yearSlider.reset();
+
+    treemapDrillDownState = 'Continents';
+    treemapTopLevelView = 'Countries'; 
 
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
