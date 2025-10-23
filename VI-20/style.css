@@ -82,6 +82,7 @@ header div h2 {
   border-radius: 0;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
+  overflow-x: hidden;
   z-index: 100;
   transform: translateX(-100%);
   opacity: 0;

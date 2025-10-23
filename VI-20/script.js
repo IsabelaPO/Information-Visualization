@@ -725,16 +725,24 @@ function createD3RangeSlider(config) {
 
       const [x0, x1] = event.selection.map(xScale.invert);
 
-        const src = event.sourceEvent;
-        const clientX = src ? (src.touches ? src.touches[0].clientX : src.clientX) : 0;
-        const clientY = src ? (src.touches ? src.touches[0].clientY : src.clientY) : 0;
+      const src = event.sourceEvent;
+      const clientX = src ? (src.touches ? src.touches[0].clientX : src.clientX) : 0;
+      const clientY = src ? (src.touches ? src.touches[0].clientY : src.clientY) : 0;
+      const tooltipNode = tooltip.node();
+      const tooltipWidth = tooltipNode.offsetWidth;
+      const windowWidth = window.innerWidth;
+      let left = clientX;
+
+      if (left + tooltipWidth > windowWidth) { 
+        left = clientX - tooltipWidth - offsetX; 
+      }
       // Show tooltip and update its position/value
-      const [mouseX, mouseY] = d3.pointer(event, container.node());
+      //const [mouseX, mouseY] = d3.pointer(event, container.node());
       tooltip
         .style("opacity", 1)
         // .style("left", `${mouseX + 10}px`)
         // .style("top", `${mouseY - 25}px`)
-        .style("left", `${clientX}px`)
+        .style("left", `${left}px`)
         .style("top", `${clientY}py`)
         .text(`${config.tickFormat(x0)} - ${config.tickFormat(x1)}`);
     })
