@@ -1472,25 +1472,89 @@ function renderSankeyChart(data, toReload) {
   };
 
 
+  // const handleLinkMouseOver = function (event, d) {
+  //   d3.select(this).transition().duration(50).attr("opacity", 1);
+  //   tooltip.transition().duration(50).style("opacity", 1);
+  //   tooltip
+  //     .html(
+  //       `<b>Source</b>: ${d.source.name}<br/><b>Target</b>: ${d.target.name}<br/><b>Quantity</b>: ${d.value}`
+  //     )
+  //     .style("left", event.pageX + 15 + "px")
+  //     .style("top", event.pageY - 28 + "px");
+  // };
+
   const handleLinkMouseOver = function (event, d) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
     tooltip.transition().duration(50).style("opacity", 1);
-    tooltip
-      .html(
+    tooltip.html(
         `<b>Source</b>: ${d.source.name}<br/><b>Target</b>: ${d.target.name}<br/><b>Quantity</b>: ${d.value}`
-      )
-      .style("left", event.pageX + 15 + "px")
-      .style("top", event.pageY - 28 + "px");
+      );
+
+    // Get tooltip dimensions
+    const tooltipNode = tooltip.node();
+    const tooltipWidth = tooltipNode.offsetWidth;
+    const tooltipHeight = tooltipNode.offsetHeight;
+    const pageWidth = window.innerWidth;
+    const pageHeight = window.innerHeight;
+
+    let left = event.pageX + 15;
+    let top = event.pageY - 28;
+
+    // Adjust horizontally if it overflows
+    if (left + tooltipWidth > pageWidth) {
+      left = event.pageX - tooltipWidth - 15;
+    }
+    if (left < 0) left = 0;
+
+    // Adjust vertically if it overflows
+    if (top + tooltipHeight > pageHeight) {
+      top = pageHeight - tooltipHeight - 5;
+    }
+    if (top < 0) top = 0;
+
+    tooltip.style("left", left + "px").style("top", top + "px");
   };
+
+
+  // const handleNodeMouseOver = function (event, d) {
+  //   d3.select(this).transition().duration(50).attr("opacity", 1);
+  //   tooltip.transition().duration(50).style("opacity", 1);
+  //   tooltip
+  //     .html(`<b>Total quantity</b>: ${d.value}`)
+  //     .style("left", event.pageX + 15 + "px")
+  //     .style("top", event.pageY - 28 + "px");
+  // };
 
   const handleNodeMouseOver = function (event, d) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
     tooltip.transition().duration(50).style("opacity", 1);
-    tooltip
-      .html(`<b>Total quantity</b>: ${d.value}`)
-      .style("left", event.pageX + 15 + "px")
-      .style("top", event.pageY - 28 + "px");
+    tooltip.html(`<b>Total quantity</b>: ${d.value}`);
+
+    // Get tooltip dimensions
+    const tooltipNode = tooltip.node();
+    const tooltipWidth = tooltipNode.offsetWidth;
+    const tooltipHeight = tooltipNode.offsetHeight;
+    const pageWidth = window.innerWidth;
+    const pageHeight = window.innerHeight;
+
+    let left = event.pageX + 15;
+    let top = event.pageY - 28;
+
+    // Adjust horizontally if it overflows
+    if (left + tooltipWidth > pageWidth) {
+      left = event.pageX - tooltipWidth - 15;
+    }
+    if (left < 0) left = 0;
+
+    // Adjust vertically if it overflows
+    if (top + tooltipHeight > pageHeight) {
+      top = pageHeight - tooltipHeight - 5;
+    }
+    if (top < 0) top = 0;
+
+    tooltip.style("left", left + "px").style("top", top + "px");
   };
+
 
   const t = svg.transition().duration(750);
 
