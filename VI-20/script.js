@@ -56,6 +56,15 @@ const typeFilterColors = {
   MOVIE: "#015034ff",
 };
 
+const continentColors = {
+  ASIA: "#8166e4ff",
+  SOUTH_AMERICA: "#1c0080ff",
+  NORTH_AMERICA: "#96453fff",
+  EUROPE: "#e7cc51ff",
+  AFRICA: "#e41af7ff",
+  OCEANIA: "#3abad1ff"
+};
+
 // A constant to hold the default filter state for easy resetting ---
 //how filters look in the dashboard initially
 const defaultFilters = {
@@ -1783,7 +1792,7 @@ function renderTreemapChart(data) {
     }
 
 
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
+    //const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
 
     function draw(viewData) {
         const root = d3.hierarchy(viewData).sum(d => d.value);
@@ -1804,7 +1813,16 @@ function renderTreemapChart(data) {
         const cellEnter = cell.enter().append("g").attr("class", "cell");
         
         cellEnter.append("rect")
-          .attr("fill", d => colorScale(d.data.name)) 
+          .attr("fill", d => {
+              // If top-level continents
+              if (treemapDrillDownState === 'Continents' && treemapTopLevelView === 'Continents') {
+                  return continentColors[d.data.name.toUpperCase().replace(/\s+/g, "_")] || "#ccc";
+
+              } 
+              // Countries view or drilled-down
+              const continent = countryToContinent[d.data.name];
+              return continentColors[continent?.toUpperCase().replace(/\s+/g, "_")] || "#ccc";
+          })
           .style("stroke", "#fff");
 
         cellEnter.append("text").attr("class", "treemap-label")
@@ -1891,6 +1909,7 @@ function renderTreemapChart(data) {
 
     draw(currentViewData);
 }
+
 function removeChartFilters(chartId) {
   
     // --- Logic for Treemap Chart (Assumed to filter by Geographic Location) ---
