@@ -224,7 +224,7 @@ function toggleFilters() {
 
 
 function renderAllVisualizations(data) {
-  renderSankeyChart(data);
+  renderSankeyChart(data, true);
   renderQuantityChart(data);
   renderTreemapChart(data);
 }
@@ -1763,6 +1763,10 @@ const handleClick = function (event, d) {
     .style("font-weight", "600")
     .style("fill", "#334155")
     .text("Content Flow: Platform → Genre → Target Audience");
+
+  if (toReload) {
+    setTimeout(() => renderSankeyChart(data, false), 1000);
+  }
 }
 
 function renderTreemapChart(data) {
