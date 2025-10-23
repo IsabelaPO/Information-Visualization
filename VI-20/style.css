@@ -791,7 +791,7 @@ div.tooltip-donut {
 #treemap-back-continents-btn {
   position: absolute;
   top: 10px;
-  left: 10px;
+  right: 10px;
   z-index: 10;
   display: none; /* Hide by default */
 }
@@ -800,7 +800,7 @@ div.tooltip-donut {
 #treemap-back-countries-btn {
   position: absolute;
   top: 10px;
-  left: 10px;
+  right: 10px;
   z-index: 10;
   display: none; /* Hide by default */
 }

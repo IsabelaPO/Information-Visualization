@@ -279,6 +279,8 @@ function setupLocationFilter(data) {
         d3.select(this).classed("active", true);
         d3.select("#view-continents-btn").classed("active", false);
         currentLocationView = 'Countries';
+        treemapTopLevelView = 'Countries';
+        treemapDrillDownState = 'Continents'
         d3.select("#country-continent-search")
         .property("placeholder", "Search countries...");
         applyFilters();
@@ -290,6 +292,8 @@ function setupLocationFilter(data) {
         d3.select(this).classed("active", true);
         d3.select("#view-countries-btn").classed("active", false);
         currentLocationView = 'Continents';
+        treemapTopLevelView = 'Continents';
+        treemapDrillDownState = 'Continents'
         d3.select("#country-continent-search")
         .property("placeholder", "Search continents...");
         applyFilters();
@@ -487,8 +491,13 @@ function setupRemoveFiltersButton() {
     if (imdbSlider) imdbSlider.reset();
     if (yearSlider) yearSlider.reset();
 
-    treemapDrillDownState = 'Continents';
-    treemapTopLevelView = 'Countries'; 
+
+    //treemapDrillDownState = 'Continents';
+    //treemapTopLevelView = 'Countries'; 
+    d3.select("#sankey-back-btn").style("display", "none");
+    filterHistory = [];
+    d3.select("#quantity-back-btn").style("display", "none");
+    quantityFilterHistory = [];
 
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
@@ -538,7 +547,10 @@ function setupRemoveFiltersButtonPP() {
 
     //treemapDrillDownState = 'Continents';
     //treemapTopLevelView = 'Countries'; 
-
+    d3.select("#sankey-back-btn").style("display", "none");
+    filterHistory= [];
+    d3.select("#quantity-back-btn").style("display", "none");
+    quantityFilterHistory = [];
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
   });
