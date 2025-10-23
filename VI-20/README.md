@@ -52,4 +52,4 @@ This project has been tested and confirmed to display and function correctly on 
 
 4. **Between Amazon and Netflix, which one has more highly-rated shows (imdb_score > 7.5)?**
 
-5. **What was the streaming platform in 2023 where it was possible to watch Tarzan?**
+5. **What are the streaming platforms where it is possible to watch Tarzan?**

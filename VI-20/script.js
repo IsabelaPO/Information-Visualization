@@ -503,6 +503,9 @@ function setupRemoveFiltersButton() {
     filterHistory = [];
     d3.select("#quantity-back-btn").style("display", "none");
     quantityFilterHistory = [];
+    d3.select("#title-search").property("placeholder", "Search for titles...").property("value", "");
+    d3.select("#genre-search").property("placeholder", "Search genre...").property("value", "");
+    d3.select("#country-continent-search").property("placeholder", "Search continents...").property("value", "");
 
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
@@ -515,8 +518,9 @@ function setupRemoveFiltersButtonPP() {
     currentFilters = { ...defaultFilters };
 
     // Re-select all countries, which is the default state
-    treemapCurrentView = 'Continents';
-    currentLocationView = 'Continents'; 
+    treemapDrillDownState = 'Continents';
+    treemapTopLevelView = 'Continents';
+    currentLocationView = 'Continents';
     d3.select("#country-continent-search")
         .property("placeholder", "Search continents...");
     const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
@@ -556,6 +560,9 @@ function setupRemoveFiltersButtonPP() {
     filterHistory= [];
     d3.select("#quantity-back-btn").style("display", "none");
     quantityFilterHistory = [];
+    d3.select("#title-search").property("placeholder", "Search for titles...").property("value", "");
+    d3.select("#genre-search").property("placeholder", "Search genre...").property("value", "");
+    d3.select("#country-continent-search").property("placeholder", "Search continents...").property("value", "");
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
   });
