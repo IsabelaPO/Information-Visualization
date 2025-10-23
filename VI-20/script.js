@@ -1,5 +1,5 @@
 const isValidString = (str) =>
-  str && typeof str === "string" && str.trim() !== "";
+  str && typeof str === "string" && str.trim() !== "" && str.trim().toLowerCase() !== "nan";;
 
 const countryToContinent = {
     "Afghanistan": "Asia", "Albania": "Europe", "Algeria": "Africa", "Andorra": "Europe", "Angola": "Africa",
@@ -1480,18 +1480,6 @@ function renderSankeyChart(data, toReload) {
     applyFilters();
   };
 
-
-  // const handleLinkMouseOver = function (event, d) {
-  //   d3.select(this).transition().duration(50).attr("opacity", 1);
-  //   tooltip.transition().duration(50).style("opacity", 1);
-  //   tooltip
-  //     .html(
-  //       `<b>Source</b>: ${d.source.name}<br/><b>Target</b>: ${d.target.name}<br/><b>Quantity</b>: ${d.value}`
-  //     )
-  //     .style("left", event.pageX + 15 + "px")
-  //     .style("top", event.pageY - 28 + "px");
-  // };
-
   const handleLinkMouseOver = function (event, d) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
     tooltip.transition().duration(50).style("opacity", 1);
@@ -1523,16 +1511,6 @@ function renderSankeyChart(data, toReload) {
 
     tooltip.style("left", left + "px").style("top", top + "px");
   };
-
-
-  // const handleNodeMouseOver = function (event, d) {
-  //   d3.select(this).transition().duration(50).attr("opacity", 1);
-  //   tooltip.transition().duration(50).style("opacity", 1);
-  //   tooltip
-  //     .html(`<b>Total quantity</b>: ${d.value}`)
-  //     .style("left", event.pageX + 15 + "px")
-  //     .style("top", event.pageY - 28 + "px");
-  // };
 
   const handleNodeMouseOver = function (event, d) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
