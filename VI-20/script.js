@@ -1128,7 +1128,7 @@ function renderQuantityChart(data) {
           enter
             .append("rect")
             .attr("class", "bar")
-            .attr("fill", typeFilterColors[singleTypeSelected])
+            .attr("fill", (d) => platformColors[d.platform])
             .attr("x", (d) => xScale(d.platform))
             .attr("y", height)
             .attr("width", xScale.bandwidth())
