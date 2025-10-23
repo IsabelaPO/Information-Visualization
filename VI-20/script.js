@@ -1,5 +1,5 @@
 const isValidString = (str) =>
-  str && typeof str === "string" && str.trim() !== "";
+  str && typeof str === "string" && str.trim() !== ""  && str.trim().toLowerCase() !== "nan";
 
 const countryToContinent = {
     "Afghanistan": "Asia", "Albania": "Europe", "Algeria": "Africa", "Andorra": "Europe", "Angola": "Africa",
@@ -215,7 +215,7 @@ function toggleFilters() {
 
 
 function renderAllVisualizations(data) {
-  renderSankeyChart(data, true);
+  renderSankeyChart(data);
   renderQuantityChart(data);
   renderTreemapChart(data);
 }
@@ -1145,7 +1145,7 @@ function renderQuantityChart(data) {
           enter
             .append("rect")
             .attr("class", "bar")
-            .attr("fill", typeFilterColors[singleTypeSelected])
+            .attr("fill", (d) => platformColors[d.platform])
             .attr("x", (d) => xScale(d.platform))
             .attr("y", height)
             .attr("width", xScale.bandwidth())
@@ -1609,7 +1609,6 @@ const handleClick = function (event, d) {
 
     tooltip.style("left", left + "px").style("top", top + "px");
   };
-
 
   const t = svg.transition().duration(900);
 
