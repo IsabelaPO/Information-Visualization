@@ -1,5 +1,5 @@
 const isValidString = (str) =>
-  str && typeof str === "string" && str.trim() !== "" && str.trim().toLowerCase() !== "nan";;
+  str && typeof str === "string" && str.trim() !== "";
 
 const countryToContinent = {
     "Afghanistan": "Asia", "Albania": "Europe", "Algeria": "Africa", "Andorra": "Europe", "Angola": "Africa",
@@ -41,6 +41,8 @@ let treemapDrillDownState = 'Continents'; // Tracks drill-down. 'Continents' = t
 let treemapTopLevelView = 'Continents';   // Tracks the toggle. 'Continents' vs 'Countries'.
 let continentToCountriesMap = {};
 let currentLocationView = 'Continents'; // Tracks the active filter list view
+let filterHistory = [];
+let quantityFilterHistory = [];
 //sets platform colors
 const platformColors = {
   Netflix: "#E50914",
@@ -58,8 +60,8 @@ const typeFilterColors = {
 
 const continentColors = {
   ASIA: "#8166e4ff",
-  SOUTH_AMERICA: "#1c0080ff",
-  NORTH_AMERICA: "#96453fff",
+  SOUTH_AMERICA: "#34169fff",
+  NORTH_AMERICA: "#ef8a06ff",
   EUROPE: "#e7cc51ff",
   AFRICA: "#e41af7ff",
   OCEANIA: "#3abad1ff"
@@ -213,7 +215,7 @@ function toggleFilters() {
 
 
 function renderAllVisualizations(data) {
-  renderSankeyChart(data);
+  renderSankeyChart(data, true);
   renderQuantityChart(data);
   renderTreemapChart(data);
 }
@@ -534,8 +536,8 @@ function setupRemoveFiltersButtonPP() {
     if (imdbSlider) imdbSlider.reset();
     if (yearSlider) yearSlider.reset();
 
-    treemapDrillDownState = 'Continents';
-    treemapTopLevelView = 'Countries'; 
+    //treemapDrillDownState = 'Continents';
+    //treemapTopLevelView = 'Countries'; 
 
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
@@ -1014,7 +1016,8 @@ function setupCountryFilter(data) {
 
 function renderQuantityChart(data) {
   const container = d3.select("#quantity-chart");
-  const backBtn = d3.select("#quantity-back-btn"); // <-- 1. GET THE BUTTON
+  // Select the button using D3 for visibility control
+  const backBtn = d3.select("#quantity-back-btn"); 
 
   const bounds = container.node().getBoundingClientRect();
   if (bounds.width < 10 || bounds.height < 10) return;
@@ -1039,10 +1042,9 @@ function renderQuantityChart(data) {
   const singleTypeSelected =
     currentFilters.type.length === 1 ? currentFilters.type[0] : null;
 
-  // --- 2. NEW: SHOW/HIDE BUTTON LOGIC ---
-  // Show the button if any platform or type filters are active
-  const isFiltered = currentFilters.selectedPlatforms.length > 0 || currentFilters.type.length > 0;
-  backBtn.style("display", isFiltered ? "block" : "none");
+  // --- 2. NEW: SHOW/HIDE BUTTON LOGIC (MODIFIED) ---
+  // Show the button ONLY if there is history from a previous click on this chart.
+  backBtn.style("display", quantityFilterHistory.length > 0 ? "block" : "none");
 
   const aggData = Array.from(
     d3.group(
@@ -1143,7 +1145,7 @@ function renderQuantityChart(data) {
           enter
             .append("rect")
             .attr("class", "bar")
-            .attr("fill", (d) => platformColors[d.platform])
+            .attr("fill", typeFilterColors[singleTypeSelected])
             .attr("x", (d) => xScale(d.platform))
             .attr("y", height)
             .attr("width", xScale.bandwidth())
@@ -1174,8 +1176,7 @@ function renderQuantityChart(data) {
         const bbox = tooltip.node().getBoundingClientRect();
         tooltip
           .style("left", event.pageX - bbox.width / 2 + "px")
-          .style("top", event.pageY - bbox.height - 10 + "px")
-          .style("text-align", "right");
+          .style("top", event.pageY - bbox.height - 10 + "px");
       })
       .on("mouseout", function () {
         tooltip.transition().duration(50).style("opacity", 0);
@@ -1283,9 +1284,20 @@ function renderQuantityChart(data) {
       .on("mouseout", function () {
         tooltip.transition().duration(50).style("opacity", 0);
       })
+      // --- CLICK HANDLER MODIFIED FOR HISTORY ---
       .on("click", function(event, d) {
+        // 1. Save the state of the filters that this chart modifies
+        quantityFilterHistory.push({
+            selectedPlatforms: [...currentFilters.selectedPlatforms],
+            type: [...currentFilters.type]
+        });
+
+        // 2. Apply the new filter state
         currentFilters.selectedPlatforms = [d.platform];
         currentFilters.type = ["SHOW"];
+
+        // 3. Update button visibility and re-render
+        updateQuantityBackButton();
         applyFilters();
       });
 
@@ -1327,9 +1339,20 @@ function renderQuantityChart(data) {
       .on("mouseout", function () {
         tooltip.transition().duration(50).style("opacity", 0);
       })
+      // --- CLICK HANDLER MODIFIED FOR HISTORY ---
       .on("click", function(event, d) {
+        // 1. Save the state of the filters that this chart modifies
+        quantityFilterHistory.push({
+            selectedPlatforms: [...currentFilters.selectedPlatforms],
+            type: [...currentFilters.type]
+        });
+        
+        // 2. Apply the new filter state
         currentFilters.selectedPlatforms = [d.platform];
         currentFilters.type = ["MOVIE"];
+
+        // 3. Update button visibility and re-render
+        updateQuantityBackButton();
         applyFilters();
       });
   }
@@ -1338,6 +1361,7 @@ function renderQuantityChart(data) {
 const handleClick = function (event, d) {
   const name = d.name;
 
+
   // Check if the name exists in the genre list
   if (d3.selectAll('#genre-filter-list input').nodes().some((n) => n.parentNode.textContent.trim() === name)) {
     currentFilters.selectedGenres = [name];
@@ -1345,10 +1369,12 @@ const handleClick = function (event, d) {
   // Check if the name exists in platform buttons
   else if (d3.selectAll('.platform-buttons button').nodes().some((n) => n.getAttribute('data-platform') === name)) {
     currentFilters.selectedPlatforms = [name];
+    
   }
   // Check if the name exists in audience buttons
   else if (d3.selectAll('.audience-buttons button').nodes().some((n) => n.getAttribute('audience-buttons') === name)) {
     currentFilters.selectedAudiences = [name];
+    
   }
   // Check if it’s a country (optional)
   else if (d3.selectAll('.country-list-item').nodes().some((n) => n.textContent.trim() === name)) {
@@ -1357,9 +1383,10 @@ const handleClick = function (event, d) {
 
   // Re-apply filters and re-render
   applyFilters();
+
 };
 
-function renderSankeyChart(data) {
+function renderSankeyChart(data, toReload) {
   const container = d3.select("#sankey-chart");
   const bounds = container.node().getBoundingClientRect();
   if (bounds.width < 10 || bounds.height < 10) return;
@@ -1461,31 +1488,55 @@ function renderSankeyChart(data) {
     tooltip.transition().duration(50).style("opacity", 0);
   };
 
-  
- const handleClick = function (event, d) {
+  // External (Global) Setup:
+// let filterHistory = [];
+// let currentFilters = { selectedPlatforms: [], selectedGenres: [], selectedAudiences: [], selectedCountries: [] };
+
+// Corrected handleClick to ensure proper filter history and application flow
+
+const handleClick = function (event, d) {
     const name = d.name;
+    
+    // Save the current state of filters BEFORE any changes are made.
+    const oldFiltersState = { ...currentFilters }; 
+    let filterApplied = false;
+
+    // --- 1. SET THE NEW FILTER DIRECTLY ON THE GLOBAL currentFilters ---
 
     // Check if the name exists in the genre list
     if (d3.selectAll('#genre-filter-list input').nodes().some((n) => n.parentNode.textContent.trim() === name)) {
-      currentFilters.selectedGenres = [name];
+      currentFilters.selectedGenres = [name]; // Apply change directly
       d3.select("#select-all-genres").text("Select All");
+      filterApplied = true;
     }
     // Check if the name exists in platform buttons
     else if (d3.selectAll('.platform-buttons button').nodes().some((n) => n.getAttribute('data-platform') === name)) {
-      currentFilters.selectedPlatforms = [name];
+      currentFilters.selectedPlatforms = [name]; // Apply change directly
+      filterApplied = true;
     }
     // Check if the name exists in audience buttons
     else if (d3.selectAll('.audience-buttons button').nodes().some((n) => n.getAttribute('audience-buttons') === name)) {
       currentFilters.selectedAudiences = [name];
+      filterApplied = true;
     }
     // Check if it’s a country (optional)
     else if (d3.selectAll('.country-list-item').nodes().some((n) => n.textContent.trim() === name)) {
-      currentFilters.selectedCountries = [name];
+      currentFilters.selectedCountries = [name]; // Apply change directly
+      filterApplied = true;
     }
 
-    // Re-apply filters and re-render
-    applyFilters();
+    // --- 2. PUSH HISTORY AND RENDER ONLY IF A FILTER WAS APPLIED ---
+    if (filterApplied) {
+      filterHistory.push(oldFiltersState);
+      
+      updateSankeyBackButton();
+
+      // Re-apply filters and re-render (this triggers the transition)
+      applyFilters();
+    }
+    // If no filter was applied, do nothing (no history push, no re-render)
   };
+
 
   const handleLinkMouseOver = function (event, d) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
@@ -1493,7 +1544,6 @@ function renderSankeyChart(data) {
     tooltip.html(
         `<b>Source</b>: ${d.source.name}<br/><b>Target</b>: ${d.target.name}<br/><b>Quantity</b>: ${d.value}`
       );
-    
 
     // Get tooltip dimensions
     const tooltipNode = tooltip.node();
@@ -1517,9 +1567,18 @@ function renderSankeyChart(data) {
     }
     if (top < 0) top = 0;
 
-    tooltip
-      .style("left", left + "px").style("top", top + "px");
+    tooltip.style("left", left + "px").style("top", top + "px");
   };
+
+
+  // const handleNodeMouseOver = function (event, d) {
+  //   d3.select(this).transition().duration(50).attr("opacity", 1);
+  //   tooltip.transition().duration(50).style("opacity", 1);
+  //   tooltip
+  //     .html(`<b>Total quantity</b>: ${d.value}`)
+  //     .style("left", event.pageX + 15 + "px")
+  //     .style("top", event.pageY - 28 + "px");
+  // };
 
   const handleNodeMouseOver = function (event, d) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
@@ -1552,7 +1611,7 @@ function renderSankeyChart(data) {
   };
 
 
-  const t = svg.transition().duration(750);
+  const t = svg.transition().duration(900);
 
   svg
     .select(".links-group")
@@ -1955,43 +2014,6 @@ function removeChartFilters(chartId) {
     
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Select the main chart containers
-    const treemapChart = document.getElementById('treemap-chart');
-    const quantityChart = document.getElementById('quantity-chart');
-    const sankeyChart = document.getElementById('sankey-chart');
-    const timeLine = document.getElementById('timeline-filter')
-
-    if (treemapChart) {
-        treemapChart.addEventListener('dblclick', (event) => {
-            // Prevent the double-click from propagating up and doing other things
-            event.stopPropagation(); 
-            removeChartFilters('treemap-chart');
-        });
-    }
-
-    if (quantityChart) {
-        quantityChart.addEventListener('dblclick', (event) => {
-            event.stopPropagation();
-            removeChartFilters('quantity-chart');
-        });
-    }
-
-    if (sankeyChart) {
-        sankeyChart.addEventListener('dblclick', (event) => {
-            event.stopPropagation();
-            removeChartFilters('sankey-chart');
-        });
-    }
-    if (timeLine) {
-        timeLine.addEventListener('dblclick', (event) => {
-            event.stopPropagation();
-            removeChartFilters('timeline-filter');
-        });
-    }
-
-});
-
 function handleCountryContinentSearch() {
     // Get the search term and convert it to lower case for case-insensitive matching
     const searchTerm = d3.select("#country-continent-search").property("value").toLowerCase();
@@ -2020,6 +2042,7 @@ function handleCountryContinentSearch() {
                 .classed("filter-hidden", !matches);
         });
 }
+
 function handleGenreSearch() {
     const searchTerm = d3.select("#genre-search").property("value").toLowerCase();
     d3.select("#genre-filter-list").selectAll("#genre-filter-list > *")
@@ -2045,7 +2068,8 @@ document.addEventListener('DOMContentLoaded', () => {
     d3.select("#country-continent-search").on("input", handleCountryContinentSearch);
     d3.select("#genre-search").on("input", handleGenreSearch);
 });
-// REPLACE your entire setupTreemapToggle function
+
+
 function setupTreemapToggle() {
     // --- Set up clicks for the Top-Level Toggle ---
     d3.select("#treemap-view-continents").on("click", () => {
@@ -2091,3 +2115,117 @@ function setupQuantityChartToggle() {
         removeChartFilters('quantity-chart');
     });
 }
+
+function updateSankeyBackButton() {
+    const backButton = document.getElementById('sankey-back-btn');
+    if (backButton) {
+        // Show the button if there is history, hide it otherwise
+        backButton.style.display = filterHistory.length > 0 ? 'block' : 'none';
+    }
+}
+
+function updateFilterPanelUI(filters) {
+    // A. Update Platform Buttons
+    d3.selectAll('.platform-buttons button').each(function() {
+        const platform = d3.select(this).attr('data-platform');
+        const isActive = filters.selectedPlatforms.includes(platform);
+        d3.select(this).classed('active', isActive).classed("inactive", false);
+    });
+
+    // B. Update Audience Buttons (Assuming data-audience attribute)
+    d3.selectAll('.audience-buttons button').each(function() {
+        const audience = d3.select(this).attr('data-audience');
+        const isActive = filters.selectedAudiences.includes(audience);
+        d3.select(this).classed('active', isActive).classed("inactive", false);;
+    });
+}
+
+function goBackToPreviousSankeyView() {
+    if (filterHistory.length > 0) {
+        // 1. Pop the last saved filter state
+        const previousFilters = filterHistory.pop(); 
+
+        // 2. Replace the current filters with the previous state (assuming currentFilters is a global mutable object)
+        Object.assign(currentFilters, previousFilters); 
+
+        updateFilterPanelUI(previousFilters);
+        
+        // 3. Update the button's visibility/state
+        updateSankeyBackButton(); 
+
+        // 4. Re-render the chart and other components with the old filter state
+        // NOTE: This assumes applyFilters() is a global function that re-renders all visualizations.
+        applyFilters(); 
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const backButton = document.getElementById('sankey-back-btn');
+    if (backButton) {
+        backButton.addEventListener('click', goBackToPreviousSankeyView);
+    }
+    // Initialize the button visibility (it should be hidden initially)
+    updateSankeyBackButton();
+});
+
+/** Updates the visibility of the Quantity Chart undo button based on history. */
+function updateQuantityBackButton() {
+    const backButton = document.getElementById('quantity-back-btn'); 
+    if (backButton) {
+        backButton.style.display = quantityFilterHistory.length > 0 ? 'block' : 'none';
+    }
+}
+
+/** Handles the click event for the Quantity Chart's "Undo Filter" button. */
+function goBackToPreviousQuantityView() {
+    if (quantityFilterHistory.length > 0) {
+        // Pop the last saved filter state (which contains selectedPlatforms and type)
+        const previousFilters = quantityFilterHistory.pop(); 
+        
+        // Restore ONLY the filters that the Quantity Chart sets
+        currentFilters.selectedPlatforms = previousFilters.selectedPlatforms;
+        currentFilters.type = previousFilters.type;
+        
+        updateQuantityBackButton(); 
+        applyFilters(); 
+    }
+}
+
+// Add event listener setup (ensure this runs when the DOM is ready)
+document.addEventListener('DOMContentLoaded', () => {
+    const backButton = document.getElementById('quantity-back-btn');
+    if (backButton) {
+        backButton.addEventListener('click', goBackToPreviousQuantityView);
+    }
+    // Initialize the button state
+    updateQuantityBackButton();
+});
+
+document.addEventListener('click', (event) => {
+    const filtersPanel = document.getElementById('filters-panel');
+    const openButton = document.getElementById('open-filters-btn'); 
+    
+    // The querySelectorAll finds all visualization cards inside the viz-panel
+    const vizContentElements = document.querySelectorAll('.viz-panel .viz-card'); 
+
+    // Stop if the panel doesn't exist or isn't visible
+    if (!filtersPanel || !filtersPanel.classList.contains('visible')) return;
+
+    const clickTarget = event.target;
+    
+    const isInsideFiltersPanel = filtersPanel.contains(clickTarget);
+  
+    // NEW: Check if the click target is inside ANY of the viz-card elements
+    let isInsideVizContent = false;
+    vizContentElements.forEach(card => {
+        if (card.contains(clickTarget)) {
+            isInsideVizContent = true;
+        }
+    });
+    if (
+        !isInsideFiltersPanel &&
+        !isInsideVizContent // <-- This is the key change
+    ) {
+      toggleFilters(); 
+    }
+});

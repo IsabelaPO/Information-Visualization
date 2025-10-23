@@ -272,22 +272,26 @@ select {
 }
 
 .remove-filters-btn-pp {
-  size: 10%;
-  margin-top: 0rem;
-  margin-right: -20px;
-  padding: 0.75rem;
+  /* Set a fixed or maximum width instead of 100% to make it smaller */
+  width: auto; 
+  max-width: 150px; /* Example fixed size, adjust as needed */
+  /* Remove the negative margin-right that was pushing it outside the container */
+  margin-right: 0; 
+  margin-left: 1.5rem; 
+  margin-top: 0.0rem;
+  padding: 0.5rem 1rem; /* Reduced padding for a smaller visual size */
   background-color: var(--border-color);
   color: rgb(0, 0, 0);
   border: 1px solid black;
   border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
+  /* Add an immediate transition for smoother hover effects */
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.2s ease-out; 
 }
 
 .remove-filters-btn-pp:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3); /* Deeper, more noticeable shadow */
-  /* 3. Add a thick, contrasting white border */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Slightly smaller shadow */ 
   border: 1px solid rgb(255, 255, 255);
   background-color: var(--accent-color);
 }
@@ -739,17 +743,17 @@ div.tooltip-donut {
 .open-filters-btn .filter-icon {
   width: 28px;
   height: 28px;
-  pointer-events: none;
+  pointer-events: none; 
 }
 
 /* This rule HIDES the "Filters" text by default */
 .open-filters-btn .tooltip-text {
   visibility: hidden;
   opacity: 0;
-  width: auto;
-  white-space: nowrap;
-  background-color: #333;
-  color: #fff;
+  width: auto; 
+  white-space: nowrap; 
+  background-color: #333; 
+  color: #fff; 
   text-align: center;
   border-radius: 6px;
   padding: 5px 10px;
@@ -803,7 +807,15 @@ div.tooltip-donut {
 #quantity-back-btn {
   position: absolute;
   top: 10px;
-  left: 10px;
+  right: 10px;
+  z-index: 10;
+  display: none; /* Hide by default */
+}
+
+#sankey-back-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   z-index: 10;
   display: none; /* Hide by default */
 }
