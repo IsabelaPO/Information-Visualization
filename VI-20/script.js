@@ -213,7 +213,7 @@ function toggleFilters() {
 
 
 function renderAllVisualizations(data) {
-  renderSankeyChart(data, true);
+  renderSankeyChart(data);
   renderQuantityChart(data);
   renderTreemapChart(data);
 }
@@ -1174,7 +1174,8 @@ function renderQuantityChart(data) {
         const bbox = tooltip.node().getBoundingClientRect();
         tooltip
           .style("left", event.pageX - bbox.width / 2 + "px")
-          .style("top", event.pageY - bbox.height - 10 + "px");
+          .style("top", event.pageY - bbox.height - 10 + "px")
+          .style("text-align", "right");
       })
       .on("mouseout", function () {
         tooltip.transition().duration(50).style("opacity", 0);
@@ -1358,7 +1359,7 @@ const handleClick = function (event, d) {
   applyFilters();
 };
 
-function renderSankeyChart(data, toReload) {
+function renderSankeyChart(data) {
   const container = d3.select("#sankey-chart");
   const bounds = container.node().getBoundingClientRect();
   if (bounds.width < 10 || bounds.height < 10) return;
@@ -1492,6 +1493,7 @@ function renderSankeyChart(data, toReload) {
     tooltip.html(
         `<b>Source</b>: ${d.source.name}<br/><b>Target</b>: ${d.target.name}<br/><b>Quantity</b>: ${d.value}`
       );
+    
 
     // Get tooltip dimensions
     const tooltipNode = tooltip.node();
@@ -1515,7 +1517,8 @@ function renderSankeyChart(data, toReload) {
     }
     if (top < 0) top = 0;
 
-    tooltip.style("left", left + "px").style("top", top + "px");
+    tooltip
+      .style("left", left + "px").style("top", top + "px");
   };
 
   const handleNodeMouseOver = function (event, d) {
