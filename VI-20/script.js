@@ -43,6 +43,7 @@ let continentToCountriesMap = {};
 let currentLocationView = 'Continents'; // Tracks the active filter list view
 let filterHistory = [];
 let quantityFilterHistory = [];
+let allTitles = [];
 //sets platform colors
 const platformColors = {
   Netflix: "#E50914",
@@ -108,6 +109,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       //stores the processed data
       allPlatformData = processedPlatformData;
+
+      allTitles = Array.from(new Set(
+        allPlatformData
+            .map(d => d.title) // Extract the title field
+            .filter(t => isValidString(t) && t !== 'nan') // Use your validation function
+    )).sort();
       
       const allCountriesInData = Array.from(new Set(
         allPlatformData.flatMap(d => d.countries).filter(c => {
@@ -2238,11 +2245,83 @@ document.addEventListener('click', (event) => {
       toggleFilters(); 
     }
 });
-
 function setupTitleSearch() {
-    d3.select("#title-search").on("input", function(event) {
-        // Update the filter state and re-render
-        currentFilters.titleSearch = event.target.value;
-        applyFilters();
+    const searchInput = document.getElementById('title-search');
+    const dropdown = document.getElementById('autocomplete-dropdown');
+
+    if (!searchInput || !dropdown) return; // Exit if elements are not found
+
+    // Listener for typing in the search bar
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        
+        // 1. Update the main filter state (main search functionality)
+        if (typeof currentFilters !== 'undefined') {
+             currentFilters.titleSearch = query;
+             applyFilters(); // Trigger the main dashboard filter update
+        }
+
+        // 2. Autocomplete logic
+        dropdown.innerHTML = ''; // Clear previous results
+        
+        // Ensure dropdown is hidden if query is too short or allTitles is not ready
+        if (query.length < 2 || allTitles.length === 0) { 
+            dropdown.classList.remove('visible');
+            return;
+        }
+
+        const matches = allTitles.filter(title => 
+            // Case-insensitive check if the title includes the query
+            title.toLowerCase().includes(query)
+        ).slice(0, 10); // Show top 10 matches
+
+        if (matches.length > 0) {
+            matches.forEach(title => {
+                const item = document.createElement('div');
+                item.classList.add('autocomplete-item');
+                // Highlight the matching part (optional, but nice)
+                const highlightedTitle = title.replace(new RegExp(query, 'gi'), (match) => 
+                    `<b>${match}</b>`
+                );
+                item.innerHTML = highlightedTitle;
+                
+                // Click handler for a suggestion
+                item.addEventListener('click', function() {
+                    // Fill the input with the selected full title
+                    searchInput.value = title; 
+                    
+                    // Update the filter state with the selected full title and re-apply
+                    if (typeof currentFilters !== 'undefined') {
+                        currentFilters.titleSearch = title.toLowerCase();
+                        applyFilters(); 
+                    }
+                    
+                    // Hide the dropdown
+                    dropdown.classList.remove('visible');
+                    searchInput.blur(); 
+                });
+                dropdown.appendChild(item);
+            });
+            dropdown.classList.add('visible');
+        } else {
+            // Hide if there are no matches
+            dropdown.classList.remove('visible');
+        }
+    });
+
+    // Add event listener to hide the dropdown when clicking outside the search area
+    document.addEventListener('click', (event) => {
+        const searchContainer = document.querySelector('.search-container');
+        if (searchContainer && !searchContainer.contains(event.target)) {
+             dropdown.classList.remove('visible');
+        }
+    });
+    
+    // Also hide dropdown if the user presses ESC
+    searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            dropdown.classList.remove('visible');
+            searchInput.blur();
+        }
     });
 }

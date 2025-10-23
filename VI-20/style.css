@@ -694,7 +694,16 @@ div.tooltip-donut {
   outline: none;
 }
 
-.title-search {
+/* Ensures the dropdown is positioned relative to the search input area */
+.search-container {
+  position: relative;
+  /* Adjust width to be 100% of the filter group, remove fixed width */
+  width: 100%; 
+  /* Remove the right margin that was used in the header */
+  margin-right: 0; 
+}
+
+#title-search {
   width: 100%;
   padding: 0.5rem 0.75rem;
   margin-bottom: 0.75rem;
@@ -706,7 +715,7 @@ div.tooltip-donut {
   transition: border-color 0.2s ease;
 }
 
-.title-search:focus {
+#title-search:focus {
   border-color: var(--base-button-color);
   outline: none;
 }
@@ -835,4 +844,36 @@ div.tooltip-donut {
   right: 10px;
   z-index: 10;
   display: none; /* Hide by default */
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%; /* Position right below the input */
+  left: 0;
+  right: 0;
+  z-index: 100; /* Ensure it's on top of other content */
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-top: none; /* No border at the top for a cleaner look */
+  border-radius: 0 0 0.375rem 0.375rem; /* Only bottom rounded corners */
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  max-height: 200px; /* Limit height and make it scrollable */
+  overflow-y: auto;
+  display: none; /* Hidden by default */
+}
+
+/* Class to show the dropdown */
+.autocomplete-dropdown.visible {
+  display: block;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+.autocomplete-item:hover {
+  background-color: var(--highlight-color);
 }
