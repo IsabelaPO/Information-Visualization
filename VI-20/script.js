@@ -505,7 +505,10 @@ function setupRemoveFiltersButton() {
     quantityFilterHistory = [];
     d3.select("#title-search").property("placeholder", "Search for titles...").property("value", "");
     d3.select("#genre-search").property("placeholder", "Search genre...").property("value", "");
+    d3.select("#genre-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
     d3.select("#country-continent-search").property("placeholder", "Search continents...").property("value", "");
+    d3.select("#country-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
+    d3.select("#continent-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
 
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
@@ -562,7 +565,10 @@ function setupRemoveFiltersButtonPP() {
     quantityFilterHistory = [];
     d3.select("#title-search").property("placeholder", "Search for titles...").property("value", "");
     d3.select("#genre-search").property("placeholder", "Search genre...").property("value", "");
+    d3.select("#genre-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
     d3.select("#country-continent-search").property("placeholder", "Search continents...").property("value", "");
+    d3.select("#country-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
+    d3.select("#continent-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
   });
