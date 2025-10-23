@@ -754,7 +754,7 @@ function createD3RangeSlider(config) {
       let left = clientX;
 
       if (left + tooltipWidth > windowWidth) { 
-        left = clientX - tooltipWidth - offsetX; 
+        left = clientX - tooltipWidth; 
       }
       // Show tooltip and update its position/value
       //const [mouseX, mouseY] = d3.pointer(event, container.node());
@@ -763,7 +763,7 @@ function createD3RangeSlider(config) {
         // .style("left", `${mouseX + 10}px`)
         // .style("top", `${mouseY - 25}px`)
         .style("left", `${left}px`)
-        .style("top", `${clientY}py`)
+        // .style("top", `${clientY}px`)
         .text(`${config.tickFormat(x0)} - ${config.tickFormat(x1)}`);
     })
     .on("end", (event) => {
