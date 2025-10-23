@@ -157,6 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
       //initializes all filters and sliders
       setupPlatformFilter();
       setupContentTypeFilter();
+      setupTitleSearch();
       populateGenreFilter(allPlatformData);
       setupGenreFilter();
       //imdbSlider = setupImdbSlider();
@@ -281,15 +282,17 @@ function setupLocationFilter(data) {
           applyFilters();
       });
 
-    // 3. Setup Toggle Buttons (This part remains unchanged)
+    // 3. Setup Toggle Buttons
     d3.select("#view-countries-btn").on("click", function() {
         d3.select("#country-view-container").style("display", "block");
         d3.select("#continent-view-container").style("display", "none");
         d3.select(this).classed("active", true);
         d3.select("#view-continents-btn").classed("active", false);
         currentLocationView = 'Countries';
-        treemapTopLevelView = 'Countries';
-        treemapDrillDownState = 'Continents'
+        
+        treemapTopLevelView = 'Countries'; 
+        treemapDrillDownState = 'Continents'; 
+        
         d3.select("#country-continent-search")
         .property("placeholder", "Search countries...");
         applyFilters();
@@ -301,14 +304,16 @@ function setupLocationFilter(data) {
         d3.select(this).classed("active", true);
         d3.select("#view-countries-btn").classed("active", false);
         currentLocationView = 'Continents';
-        treemapTopLevelView = 'Continents';
-        treemapDrillDownState = 'Continents'
+        
+        treemapTopLevelView = 'Continents'; // <-- ADD THIS
+        treemapDrillDownState = 'Continents'; // <-- ADD THIS to reset drill-down
+
         d3.select("#country-continent-search")
         .property("placeholder", "Search continents...");
         applyFilters();
     });
 
-    // 4. Setup "Select/Deselect All" Buttons (This part remains unchanged)
+    // 4. Setup "Select/Deselect All" Buttons
     d3.select("#select-all-countries").on("click", function() {
         const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data();
         if (currentFilters.selectedCountries.length === allCountryNames.length) {
@@ -375,18 +380,6 @@ function applyFilters() {
       );
   }
 
-
-  // Always filter by genre — if none are selected, result will be empty
-    filteredPlatformData = filteredPlatformData.filter((d) =>
-      currentFilters.selectedGenres.includes(d.main_genre)
-    );
-
-    // Sync checkbox states regardless
-    d3.selectAll('#genre-filter-list input[type="checkbox"]')
-      .property("checked", function() {
-        const genre = this.parentNode.textContent.trim();
-        return currentFilters.selectedGenres.includes(genre);
-    });
 
 
   if (currentFilters.yearRange) {
@@ -496,13 +489,8 @@ function setupRemoveFiltersButton() {
     if (imdbSlider) imdbSlider.reset();
     if (yearSlider) yearSlider.reset();
 
-
-    //treemapDrillDownState = 'Continents';
-    //treemapTopLevelView = 'Countries'; 
-    d3.select("#sankey-back-btn").style("display", "none");
-    filterHistory = [];
-    d3.select("#quantity-back-btn").style("display", "none");
-    quantityFilterHistory = [];
+    treemapDrillDownState = 'Continents';
+    treemapTopLevelView = 'Countries'; 
 
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
@@ -552,10 +540,7 @@ function setupRemoveFiltersButtonPP() {
 
     //treemapDrillDownState = 'Continents';
     //treemapTopLevelView = 'Countries'; 
-    d3.select("#sankey-back-btn").style("display", "none");
-    filterHistory= [];
-    d3.select("#quantity-back-btn").style("display", "none");
-    quantityFilterHistory = [];
+
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
   });
@@ -1039,10 +1024,11 @@ function setupCountryFilter(data) {
   });
 }
 
+// REPLACE your entire renderQuantityChart function with this one
+
 function renderQuantityChart(data) {
   const container = d3.select("#quantity-chart");
-  // Select the button using D3 for visibility control
-  const backBtn = d3.select("#quantity-back-btn"); 
+  const backBtn = d3.select("#quantity-back-btn"); // <-- 1. GET THE BUTTON
 
   const bounds = container.node().getBoundingClientRect();
   if (bounds.width < 10 || bounds.height < 10) return;
@@ -1067,9 +1053,10 @@ function renderQuantityChart(data) {
   const singleTypeSelected =
     currentFilters.type.length === 1 ? currentFilters.type[0] : null;
 
-  // --- 2. NEW: SHOW/HIDE BUTTON LOGIC (MODIFIED) ---
-  // Show the button ONLY if there is history from a previous click on this chart.
-  backBtn.style("display", quantityFilterHistory.length > 0 ? "block" : "none");
+  // --- 2. NEW: SHOW/HIDE BUTTON LOGIC ---
+  // Show the button if any platform or type filters are active
+  const isFiltered = currentFilters.selectedPlatforms.length > 0 || currentFilters.type.length > 0;
+  backBtn.style("display", isFiltered ? "block" : "none");
 
   const aggData = Array.from(
     d3.group(
@@ -1201,11 +1188,19 @@ function renderQuantityChart(data) {
         const bbox = tooltip.node().getBoundingClientRect();
         tooltip
           .style("left", event.pageX - bbox.width / 2 + "px")
-          .style("top", event.pageY - bbox.height - 10 + "px");
+          .style("top", event.pageY - bbox.height - 10 + "px")
+          .style("text-align", "right");
       })
       .on("mouseout", function () {
         tooltip.transition().duration(50).style("opacity", 0);
+      })
+      // --- THIS IS THE NEWLY ADDED CLICK HANDLER ---
+      .on("click", function(event, d) {
+        currentFilters.selectedPlatforms = [d.platform];
+        // We don't need to set currentFilters.type, as it's already selected
+        applyFilters();
       });
+      // --- END OF NEW CODE ---
   } else {
     // --- B. ANIMATE TO BUTTERFLY CHART ---
     svg
@@ -1309,20 +1304,9 @@ function renderQuantityChart(data) {
       .on("mouseout", function () {
         tooltip.transition().duration(50).style("opacity", 0);
       })
-      // --- CLICK HANDLER MODIFIED FOR HISTORY ---
       .on("click", function(event, d) {
-        // 1. Save the state of the filters that this chart modifies
-        quantityFilterHistory.push({
-            selectedPlatforms: [...currentFilters.selectedPlatforms],
-            type: [...currentFilters.type]
-        });
-
-        // 2. Apply the new filter state
         currentFilters.selectedPlatforms = [d.platform];
         currentFilters.type = ["SHOW"];
-
-        // 3. Update button visibility and re-render
-        updateQuantityBackButton();
         applyFilters();
       });
 
@@ -1364,20 +1348,9 @@ function renderQuantityChart(data) {
       .on("mouseout", function () {
         tooltip.transition().duration(50).style("opacity", 0);
       })
-      // --- CLICK HANDLER MODIFIED FOR HISTORY ---
       .on("click", function(event, d) {
-        // 1. Save the state of the filters that this chart modifies
-        quantityFilterHistory.push({
-            selectedPlatforms: [...currentFilters.selectedPlatforms],
-            type: [...currentFilters.type]
-        });
-        
-        // 2. Apply the new filter state
         currentFilters.selectedPlatforms = [d.platform];
         currentFilters.type = ["MOVIE"];
-
-        // 3. Update button visibility and re-render
-        updateQuantityBackButton();
         applyFilters();
       });
   }
@@ -1758,6 +1731,9 @@ const handleClick = function (event, d) {
     .text("Content Flow: Platform → Genre → Target Audience");
 }
 
+
+// REPLACE your entire renderTreemapChart function with this one
+
 function renderTreemapChart(data) {
     const container = d3.select("#treemap-chart");
 
@@ -1797,7 +1773,7 @@ function renderTreemapChart(data) {
 
     let currentViewData;
 
-    // --- Logic to Determine View ---
+    // --- Logic to Determine View (No Change) ---
     
     if (treemapDrillDownState === 'Continents') {
         // --- 1. We are at the TOP LEVEL (Continents or All Countries) ---
@@ -1861,9 +1837,6 @@ function renderTreemapChart(data) {
         currentViewData = { name: treemapDrillDownState, children };
     }
 
-
-    //const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
-
     function draw(viewData) {
         const root = d3.hierarchy(viewData).sum(d => d.value);
         d3.treemap().size([width, height]).padding(2)(root);
@@ -1883,6 +1856,7 @@ function renderTreemapChart(data) {
         const cellEnter = cell.enter().append("g").attr("class", "cell");
         
         cellEnter.append("rect")
+          .attr("class", "cell-rect") 
           .attr("fill", d => {
               // If top-level continents
               if (treemapDrillDownState === 'Continents' && treemapTopLevelView === 'Continents') {
@@ -1892,41 +1866,47 @@ function renderTreemapChart(data) {
               // Countries view or drilled-down
               const continent = countryToContinent[d.data.name];
               return continentColors[continent?.toUpperCase().replace(/\s+/g, "_")] || "#ccc";
-          })
-          .style("stroke", "#fff");
+          });
 
-        cellEnter.append("text").attr("class", "treemap-label")
-            .selectAll("tspan").data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g)).join("tspan")
-            .attr("x", 4).attr("y", (d, i) => 13 + i * 10).text(d => d)
-            .attr("font-size", "0.7em").attr("fill", "white").style("pointer-events", "none");
+        // --- MODIFICATION: REMOVED tspan logic ---
+        cellEnter.append("text")
+            .attr("class", "treemap-label")
+            .text(d => d.data.name); // <-- Just set the text, no spans
 
         const allCells = cell.merge(cellEnter);
+        
         allCells.transition(t).attr("transform", d => `translate(${d.x0}, ${d.y0})`);
         
-        allCells.select("rect").transition(t)
+        allCells.select(".cell-rect").transition(t) // <-- Select by class
             .attr("width", d => d.x1 - d.x0)
             .attr("height", d => d.y1 - d.y0);
         
+        // --- MODIFICATION: Set x/y to center and use new opacity logic ---
         allCells.select("text").transition(t)
-            .style("opacity", d => (d.x1 - d.x0 > 35 && d.y1 - d.y0 > 20 ? 1 : 0));
+            .attr("x", d => (d.x1 - d.x0) / 2) // <-- Set x to center
+            .attr("y", d => (d.y1 - d.y0) / 2) // <-- Set y to center
+            .text(d => d.data.name) // <-- Ensure text updates
+            .style("opacity", function(d) {
+                // Smarter opacity check
+                const textWidth = this.getComputedTextLength();
+                const rectWidth = d.x1 - d.x0;
+                const rectHeight = d.y1 - d.y0;
+                // Hide if text is wider than rect (minus padding) OR rect is too short
+                return (textWidth > rectWidth - 8 || rectHeight < 15) ? 0 : 1;
+            });
         
-        // --- Click Logic ---
+        // --- Click Logic (No Change) ---
         allCells.on("click", (event, d) => {
-            // Check if we are at the top-level continent view
             if (treemapDrillDownState === 'Continents' && treemapTopLevelView === 'Continents') {
-                // --- Click on a Continent ---
                 const continentName = d.data.name;
-                treemapDrillDownState = continentName; // Set drill-down state
+                treemapDrillDownState = continentName; 
                 const countriesInContinent = continentToCountriesMap[continentName] || [];
                 currentFilters.selectedCountries = [...countriesInContinent];
                 applyFilters(); 
-            
             } else {
-                // --- Click on a Country (from "All Countries" or "Drilled-down" view) ---
                 const countryName = d.data.name;
                 currentFilters.selectedCountries = [countryName];
                 
-                // Also update the filter panel to *show* the country view
                 d3.select("#country-view-container").style("display", "block");
                 d3.select("#continent-view-container").style("display", "none");
                 d3.select("#view-countries-btn").classed("active", true);
@@ -1934,12 +1914,11 @@ function renderTreemapChart(data) {
                 currentLocationView = 'Countries';
                 d3.select("#country-continent-search")
                   .property("placeholder", "Search countries...");
-                  
                 applyFilters();
             }
         });
 
-        allCells.select('rect')
+        allCells.select('.cell-rect') // <-- Select by class
             .on("mouseover", function(event, d) {
                 tooltip.transition().duration(200).style("opacity", 1);
                 tooltip.html(`<div><b>${d.data.name}</b></div><div><b>Titles:</b> ${d.value.toLocaleString()}</div>`);
@@ -1949,15 +1928,14 @@ function renderTreemapChart(data) {
             .on("mouseout", () => tooltip.transition().duration(500).style("opacity", 0));
     }
 
+    // --- No-Data Logic (No Change) ---
     if (!currentViewData.children || currentViewData.children.length === 0) {
         svg.selectAll("g.cell, .chart-title, .no-data-message").remove(); 
         svg.append("text").attr("class", "no-data-message")
             .attr("x", width / 2).attr("y", height / 2)
             .attr("text-anchor", "middle")
-            .text("No country data for this selection.")
-            .style("fill", "var(--muted-text)");
+            .text("No country data for this selection.");
         
-        // --- Logic to show buttons even if there's no data ---
         const countriesInContinent = continentToCountriesMap[treemapDrillDownState] || [];
         const selectedCountries = currentFilters.selectedCountries;
         const isSingleCountryView = 
@@ -1979,7 +1957,6 @@ function renderTreemapChart(data) {
 
     draw(currentViewData);
 }
-
 function removeChartFilters(chartId) {
   
     // --- Logic for Treemap Chart (Assumed to filter by Geographic Location) ---
@@ -2239,7 +2216,6 @@ document.addEventListener('click', (event) => {
     
     const isInsideFiltersPanel = filtersPanel.contains(clickTarget);
   
-    // NEW: Check if the click target is inside ANY of the viz-card elements
     let isInsideVizContent = false;
     vizContentElements.forEach(card => {
         if (card.contains(clickTarget)) {
@@ -2252,8 +2228,7 @@ document.addEventListener('click', (event) => {
     ) {
       toggleFilters(); 
     }
-});
-function setupTitleSearch() {
+});function setupTitleSearch() {
     const searchInput = document.getElementById('title-search');
     const dropdown = document.getElementById('autocomplete-dropdown');
 

@@ -41,6 +41,12 @@
             <button content-type-filter="MOVIE">Movies</button>
           </div>
         </div>
+
+        <div class="filter-group">
+          <label>Search by Title</label>
+          <input type="text" id="title-search" class="title-search" placeholder="Search title..." aria-label="Search title">
+        </div>
+
         <div class="filter-group">
         <label>Title Search</label>
         <div class="search-container">
@@ -92,6 +98,7 @@
         </div>
         <button class="remove-filters-btn">Remove All Filters</button>
       </div>
+      
       <button id="open-filters-btn" class="open-filters-btn" onclick="toggleFilters()">
         <img class="filter-icon" src="filter-icon.svg" alt="Filter Icon">
         <span class="tooltip-text">Filters</span>
@@ -115,7 +122,6 @@
           </div>
           
           <button id="treemap-back-continents-btn" class="back-button">Continents</button> 
-            
           <button id="treemap-back-countries-btn" class="back-button">Countries</button>
         
         </div>
