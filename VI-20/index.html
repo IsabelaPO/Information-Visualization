@@ -42,9 +42,13 @@
           </div>
         </div>
         <div class="filter-group">
-          <label>Titles</label>
-        <input type="text" id="title-search" class="title-search" placeholder="Search title..." aria-label="Search title">
+        <label>Title Search</label>
+        <div class="search-container">
+            <input type="text" id="title-search" placeholder="Search for titles..." aria-label="Search titles" autocomplete="off" />
+            <div id="autocomplete-dropdown" class="autocomplete-dropdown">
+                </div>
         </div>
+    </div>
         <div class="filter-group">
           <label>Genres</label>
           <input type="text" id="genre-search" class="genre-search" placeholder="Search genre..." aria-label="Search genre">
