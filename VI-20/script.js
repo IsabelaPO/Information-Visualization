@@ -77,6 +77,7 @@ const defaultFilters = {
   selectedAudiences: [],
   selectedPlatforms: [],
   selectedCountries: [],
+  titleSearch: "",
 };
 
 //apply the initial to the current filters
@@ -161,6 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setupQuantityChartToggle();
       //draws initial visualizations
       renderAllVisualizations(allPlatformData);
+      setupTitleSearch();
 
       // --- ADD THIS LINE ---
       // This syncs the UI with the initial "all selected" state.
@@ -359,17 +361,13 @@ function applyFilters() {
       d.imdb_score <= currentFilters.imdbRange[1]
   );
 
-  // if (currentFilters.selectedGenres.length > 0) {
-  //   filteredPlatformData = filteredPlatformData.filter((d) =>
-  //     currentFilters.selectedGenres.includes(d.main_genre)
-  //   );
+  if (isValidString(currentFilters.titleSearch)) {
+      const searchTerm = currentFilters.titleSearch.toLowerCase();
+      filteredPlatformData = filteredPlatformData.filter(d => 
+          (d.title && d.title.toLowerCase().includes(searchTerm))
+      );
+  }
 
-  //   d3.selectAll('#genre-filter-list input[type="checkbox"]')
-  //     .property("checked", function() {
-  //       const genre = this.parentNode.textContent.trim();
-  //       return currentFilters.selectedGenres.includes(genre);
-  //     });
-  // }
 
   // Always filter by genre — if none are selected, result will be empty
     filteredPlatformData = filteredPlatformData.filter((d) =>
@@ -2240,3 +2238,11 @@ document.addEventListener('click', (event) => {
       toggleFilters(); 
     }
 });
+
+function setupTitleSearch() {
+    d3.select("#title-search").on("input", function(event) {
+        // Update the filter state and re-render
+        currentFilters.titleSearch = event.target.value;
+        applyFilters();
+    });
+}

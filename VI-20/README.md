@@ -41,3 +41,15 @@ This project has been tested and confirmed to display and function correctly on 
 * ✅ **Google Chrome**
 * ✅ **Safari**
 * ✅ **Firefox**
+
+## Mapping Questions
+
+1. **Between Netflix and Disney+, which one has more family-friendly titles (toddlers, child)?**
+
+2. **What is the geographic distribution of production countries for content on Apple TV+ and Disney+?**
+
+3. **Which platform has more Western movies and TV shows made between 1970 and 1990?**
+
+4. **Between Amazon and Netflix, which one has more highly-rated shows (imdb_score > 7.5)?**
+
+5. **What was the streaming platform in 2023 where it was possible to watch Tarzan?**
