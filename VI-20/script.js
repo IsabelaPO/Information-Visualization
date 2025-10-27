@@ -1,46 +1,158 @@
 const isValidString = (str) =>
-  str && typeof str === "string" && str.trim() !== ""  && str.trim().toLowerCase() !== "nan";
+  str &&
+  typeof str === "string" &&
+  str.trim() !== "" &&
+  str.trim().toLowerCase() !== "nan";
 
 const countryToContinent = {
-    "Afghanistan": "Asia", "Albania": "Europe", "Algeria": "Africa", "Andorra": "Europe", "Angola": "Africa",
-    "Argentina": "South America", "Armenia": "Asia", "Australia": "Oceania", "Austria": "Europe", "Azerbaijan": "Asia",
-    "Bahamas": "North America", "Bahrain": "Asia", "Bangladesh": "Asia", "Barbados": "North America", "Belarus": "Europe",
-    "Belgium": "Europe", "Belize": "North America", "Benin": "Africa", "Bermuda": "North America", "Bhutan": "Asia",
-    "Bolivia": "South America", "Bosnia and Herzegovina": "Europe", "Botswana": "Africa", "Brazil": "South America",
-    "Brunei": "Asia", "Bulgaria": "Europe", "Burkina Faso": "Africa", "Cambodia": "Asia", "Cameroon": "Africa",
-    "Canada": "North America", "Cayman Islands": "North America", "Chile": "South America", "China": "Asia",
-    "Colombia": "South America", "Congo": "Africa", "Costa Rica": "North America", "Croatia": "Europe", "Cuba": "North America",
-    "Cyprus": "Asia", "Czech Republic": "Europe", "Denmark": "Europe", "Dominican Republic": "North America",
-    "Ecuador": "South America", "Egypt": "Africa", "El Salvador": "North America", "Estonia": "Europe", "Ethiopia": "Africa",
-    "Faroe Islands": "Europe", "Finland": "Europe", "France": "Europe", "Georgia": "Asia", "Germany": "Europe",
-    "Ghana": "Africa", "Greece": "Europe", "Guatemala": "North America", "Hong Kong": "Asia", "Hungary": "Europe",
-    "Iceland": "Europe", "India": "Asia", "Indonesia": "Asia", "Iran": "Asia", "Iraq": "Asia", "Ireland": "Europe",
-    "Israel": "Asia", "Italy": "Europe", "Jamaica": "North America", "Japan": "Asia", "Jordan": "Asia",
-    "Kazakhstan": "Asia", "Kenya": "Africa", "Kuwait": "Asia", "Kyrgyzstan": "Asia", "Latvia": "Europe",
-    "Lebanon": "Asia", "Libya": "Africa", "Liechtenstein": "Europe", "Lithuania": "Europe", "Luxembourg": "Europe",
-    "Malawi": "Africa", "Malaysia": "Asia", "Malta": "Europe", "Mauritius": "Africa", "Mexico": "North America",
-    "Moldova": "Europe", "Monaco": "Europe", "Mongolia": "Asia", "Montenegro": "Europe", "Morocco": "Africa",
-    "Namibia": "Africa", "Nepal": "Asia", "Netherlands": "Europe", "New Zealand": "Oceania", "Nicaragua": "North America",
-    "Nigeria": "Africa", "North Macedonia": "Europe", "Norway": "Europe", "Pakistan": "Asia", "Palestine": "Asia",
-    "Panama": "North America", "Paraguay": "South America", "Peru": "South America", "Philippines": "Asia",
-    "Poland": "Europe", "Portugal": "Europe", "Puerto Rico": "North America", "Qatar": "Asia", "Romania": "Europe",
-    "Russia": "Europe", "Saudi Arabia": "Asia", "Senegal": "Africa", "Serbia": "Europe", "Singapore": "Asia",
-    "Slovakia": "Europe", "Slovenia": "Europe", "South Africa": "Africa", "South Korea": "Asia", "Spain": "Europe",
-    "Sri Lanka": "Asia", "Sweden": "Europe", "Switzerland": "Europe", "Syria": "Asia", "Taiwan": "Asia",
-    "Tanzania": "Africa", "Thailand": "Asia", "Trinidad and Tobago": "North America", "Tunisia": "Africa", "Turkey": "Asia",
-    "Uganda": "Africa", "Ukraine": "Europe", "United Arab Emirates": "Asia", "United Kingdom": "Europe",
-    "United States": "North America", "Uruguay": "South America", "Uzbekistan": "Asia", "Venezuela": "South America",
-    "Vietnam": "Asia", "Yugoslavia": "Europe", "Zimbabwe": "Africa"
+  Afghanistan: "Asia",
+  Albania: "Europe",
+  Algeria: "Africa",
+  Andorra: "Europe",
+  Angola: "Africa",
+  Argentina: "South America",
+  Armenia: "Asia",
+  Australia: "Oceania",
+  Austria: "Europe",
+  Azerbaijan: "Asia",
+  Bahamas: "North America",
+  Bahrain: "Asia",
+  Bangladesh: "Asia",
+  Barbados: "North America",
+  Belarus: "Europe",
+  Belgium: "Europe",
+  Belize: "North America",
+  Benin: "Africa",
+  Bermuda: "North America",
+  Bhutan: "Asia",
+  Bolivia: "South America",
+  "Bosnia and Herzegovina": "Europe",
+  Botswana: "Africa",
+  Brazil: "South America",
+  Brunei: "Asia",
+  Bulgaria: "Europe",
+  "Burkina Faso": "Africa",
+  Cambodia: "Asia",
+  Cameroon: "Africa",
+  Canada: "North America",
+  "Cayman Islands": "North America",
+  Chile: "South America",
+  China: "Asia",
+  Colombia: "South America",
+  Congo: "Africa",
+  "Costa Rica": "North America",
+  Croatia: "Europe",
+  Cuba: "North America",
+  Cyprus: "Asia",
+  "Czech Republic": "Europe",
+  Denmark: "Europe",
+  "Dominican Republic": "North America",
+  Ecuador: "South America",
+  Egypt: "Africa",
+  "El Salvador": "North America",
+  Estonia: "Europe",
+  Ethiopia: "Africa",
+  "Faroe Islands": "Europe",
+  Finland: "Europe",
+  France: "Europe",
+  Georgia: "Asia",
+  Germany: "Europe",
+  Ghana: "Africa",
+  Greece: "Europe",
+  Guatemala: "North America",
+  "Hong Kong": "Asia",
+  Hungary: "Europe",
+  Iceland: "Europe",
+  India: "Asia",
+  Indonesia: "Asia",
+  Iran: "Asia",
+  Iraq: "Asia",
+  Ireland: "Europe",
+  Israel: "Asia",
+  Italy: "Europe",
+  Jamaica: "North America",
+  Japan: "Asia",
+  Jordan: "Asia",
+  Kazakhstan: "Asia",
+  Kenya: "Africa",
+  Kuwait: "Asia",
+  Kyrgyzstan: "Asia",
+  Latvia: "Europe",
+  Lebanon: "Asia",
+  Libya: "Africa",
+  Liechtenstein: "Europe",
+  Lithuania: "Europe",
+  Luxembourg: "Europe",
+  Malawi: "Africa",
+  Malaysia: "Asia",
+  Malta: "Europe",
+  Mauritius: "Africa",
+  Mexico: "North America",
+  Moldova: "Europe",
+  Monaco: "Europe",
+  Mongolia: "Asia",
+  Montenegro: "Europe",
+  Morocco: "Africa",
+  Namibia: "Africa",
+  Nepal: "Asia",
+  Netherlands: "Europe",
+  "New Zealand": "Oceania",
+  Nicaragua: "North America",
+  Nigeria: "Africa",
+  "North Macedonia": "Europe",
+  Norway: "Europe",
+  Pakistan: "Asia",
+  Palestine: "Asia",
+  Panama: "North America",
+  Paraguay: "South America",
+  Peru: "South America",
+  Philippines: "Asia",
+  Poland: "Europe",
+  Portugal: "Europe",
+  "Puerto Rico": "North America",
+  Qatar: "Asia",
+  Romania: "Europe",
+  Russia: "Europe",
+  "Saudi Arabia": "Asia",
+  Senegal: "Africa",
+  Serbia: "Europe",
+  Singapore: "Asia",
+  Slovakia: "Europe",
+  Slovenia: "Europe",
+  "South Africa": "Africa",
+  "South Korea": "Asia",
+  Spain: "Europe",
+  "Sri Lanka": "Asia",
+  Sweden: "Europe",
+  Switzerland: "Europe",
+  Syria: "Asia",
+  Taiwan: "Asia",
+  Tanzania: "Africa",
+  Thailand: "Asia",
+  "Trinidad and Tobago": "North America",
+  Tunisia: "Africa",
+  Turkey: "Asia",
+  Uganda: "Africa",
+  Ukraine: "Europe",
+  "United Arab Emirates": "Asia",
+  "United Kingdom": "Europe",
+  "United States": "North America",
+  Uruguay: "South America",
+  Uzbekistan: "Asia",
+  Venezuela: "South America",
+  Vietnam: "Asia",
+  Yugoslavia: "Europe",
+  Zimbabwe: "Africa",
 };
 //stores all platform data
 let allPlatformData = [];
 let tooltip; // Tooltip is defined once globally
 firstRender = true;
 // Add this line near where you define `currentFilters`
-let treemapDrillDownState = 'Continents'; // Tracks drill-down. 'Continents' = top level. 'Asia' etc. = drilled in.
-let treemapTopLevelView = 'Continents';   // Tracks the toggle. 'Continents' vs 'Countries'.
+let treemapDrillDownState = "Continents"; // Tracks drill-down. 'Continents' = top level. 'Asia' etc. = drilled in.
+let treemapTopLevelView = "Continents"; // Tracks the toggle. 'Continents' vs 'Countries'.
 let continentToCountriesMap = {};
-let currentLocationView = 'Continents'; // Tracks the active filter list view
+let currentLocationView = "Continents"; // Tracks the active filter list view
 let filterHistory = [];
 let quantityFilterHistory = [];
 let allTitles = [];
@@ -65,7 +177,7 @@ const continentColors = {
   NORTH_AMERICA: "#ef8a06ff",
   EUROPE: "#e7cc51ff",
   AFRICA: "#e41af7ff",
-  OCEANIA: "#3abad1ff"
+  OCEANIA: "#3abad1ff",
 };
 
 // A constant to hold the default filter state for easy resetting ---
@@ -110,36 +222,41 @@ document.addEventListener("DOMContentLoaded", () => {
       //stores the processed data
       allPlatformData = processedPlatformData;
 
-      allTitles = Array.from(new Set(
-        allPlatformData
-            .map(d => d.title) // Extract the title field
-            .filter(t => isValidString(t) && t !== 'nan') // Use your validation function
-    )).sort();
-      
-      const allCountriesInData = Array.from(new Set(
-        allPlatformData.flatMap(d => d.countries).filter(c => {
-        return (
-          c !== 'XC' && 
-          c !== 'YU' && 
-          c !== 'Republic of' && 
-          c !== 'Islamic Republic of' && 
-          c !== 'Bolivarian Republic of' && 
-          c !== 'Federated States of' && 
-          c !== 'Plurinational State of'
-                );
-              })
-            )
-          );
-      
+      allTitles = Array.from(
+        new Set(
+          allPlatformData
+            .map((d) => d.title) // Extract the title field
+            .filter((t) => isValidString(t) && t !== "nan") // Use your validation function
+        )
+      ).sort();
+
+      const allCountriesInData = Array.from(
+        new Set(
+          allPlatformData
+            .flatMap((d) => d.countries)
+            .filter((c) => {
+              return (
+                c !== "XC" &&
+                c !== "YU" &&
+                c !== "Republic of" &&
+                c !== "Islamic Republic of" &&
+                c !== "Bolivarian Republic of" &&
+                c !== "Federated States of" &&
+                c !== "Plurinational State of"
+              );
+            })
+        )
+      );
+
       currentFilters.selectedCountries = [...allCountriesInData];
 
-      allCountriesInData.forEach(country => {
+      allCountriesInData.forEach((country) => {
         const continent = countryToContinent[country];
         if (continent) {
-            if (!continentToCountriesMap[continent]) {
-                continentToCountriesMap[continent] = [];
-            }
-            continentToCountriesMap[continent].push(country);
+          if (!continentToCountriesMap[continent]) {
+            continentToCountriesMap[continent] = [];
+          }
+          continentToCountriesMap[continent].push(country);
         }
       });
 
@@ -159,7 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
       setupContentTypeFilter();
       populateGenreFilter(allPlatformData);
       setupGenreFilter();
-      //imdbSlider = setupImdbSlider();
       yearSlider = setupYearSlider(allPlatformData);
       setupAudienceFilter();
       setupLocationFilter(allPlatformData);
@@ -167,13 +283,10 @@ document.addEventListener("DOMContentLoaded", () => {
       setupRemoveFiltersButtonPP();
       setupTreemapToggle();
       setupQuantityChartToggle();
-      //draws initial visualizations
       renderAllVisualizations(allPlatformData);
       setupTitleSearch();
 
-      // --- ADD THIS LINE ---
-      // This syncs the UI with the initial "all selected" state.
-      applyFilters(); 
+      applyFilters();
 
       window.addEventListener("resize", () => {
         clearTimeout(window.resizeTimer);
@@ -190,7 +303,6 @@ function toggleFilters() {
   const panel = document.getElementById("filters-panel");
 
   if (!panel.classList.contains("visible")) {
-    // --- OPEN PANEL ---
     panel.style.display = "block";
 
     requestAnimationFrame(() => {
@@ -203,9 +315,7 @@ function toggleFilters() {
       closeButton.onclick = () => toggleFilters();
     }
     imdbSlider = setupImdbSlider();
-
   } else {
-    // --- CLOSE PANEL ---
     panel.classList.add("hidden");
     panel.classList.remove("visible");
 
@@ -221,8 +331,6 @@ function toggleFilters() {
   }
 }
 
-
-
 function renderAllVisualizations(data) {
   renderSankeyChart(data, true);
   renderQuantityChart(data);
@@ -230,104 +338,136 @@ function renderAllVisualizations(data) {
 }
 
 function setupLocationFilter(data) {
-    const allCountries = Array.from(new Set(data.flatMap(d => d.countries).filter(c => c 
-      && c !== "" && c !== 'XC' && c != 'YU' && c !== 'Republic of' && c !== 'Islamic Republic of' 
-      && c !== 'Bolivarian Republic of' && c !== 'Federated States of' && c !== 'Plurinational State of'))).sort();
-    const allContinents = Object.keys(continentToCountriesMap).sort();
+  const allCountries = Array.from(
+    new Set(
+      data
+        .flatMap((d) => d.countries)
+        .filter(
+          (c) =>
+            c &&
+            c !== "" &&
+            c !== "XC" &&
+            c != "YU" &&
+            c !== "Republic of" &&
+            c !== "Islamic Republic of" &&
+            c !== "Bolivarian Republic of" &&
+            c !== "Federated States of" &&
+            c !== "Plurinational State of"
+        )
+    )
+  ).sort();
+  const allContinents = Object.keys(continentToCountriesMap).sort();
 
-    // 1. Populate the Country list with checkboxes
-    d3.select("#country-filter-list")
-      .selectAll("div.list-item-container")
-      .data(allCountries, d => d)
-      .join("div")
-      .attr("class", "list-item-container")
-      .html(d => `<label><input type="checkbox" class="filter-checkbox"> ${d}</label>`)
-      .select("input")
-      .on("change", function(event, d) {
-          if (this.checked) {
-              if (!currentFilters.selectedCountries.includes(d)) {
-                  currentFilters.selectedCountries.push(d);
-              }
-          } else {
-              const index = currentFilters.selectedCountries.indexOf(d);
-              if (index > -1) {
-                  currentFilters.selectedCountries.splice(index, 1);
-              }
-          }
-          applyFilters();
-      });
-
-    // 2. Populate the Continent list with checkboxes
-    d3.select("#continent-filter-list")
-      .selectAll("div.list-item-container")
-      .data(allContinents, d => d)
-      .join("div")
-      .attr("class", "list-item-container")
-      .html(d => `<label><input type="checkbox" class="filter-checkbox"> ${d}</label>`)
-      .select("input")
-      .on("change", function(event, d) {
-          const countriesInContinent = continentToCountriesMap[d] || [];
-          if (this.checked) {
-              // Add all countries from this continent that aren't already selected
-              countriesInContinent.forEach(c => {
-                  if (!currentFilters.selectedCountries.includes(c)) {
-                      currentFilters.selectedCountries.push(c);
-                  }
-              });
-          } else {
-              // Remove all countries from this continent
-              currentFilters.selectedCountries = currentFilters.selectedCountries.filter(c => !countriesInContinent.includes(c));
-          }
-          applyFilters();
-      });
-
-    // 3. Setup Toggle Buttons (This part remains unchanged)
-    d3.select("#view-countries-btn").on("click", function() {
-        d3.select("#country-view-container").style("display", "block");
-        d3.select("#continent-view-container").style("display", "none");
-        d3.select(this).classed("active", true);
-        d3.select("#view-continents-btn").classed("active", false);
-        currentLocationView = 'Countries';
-        treemapTopLevelView = 'Countries';
-        treemapDrillDownState = 'Continents'
-        d3.select("#country-continent-search")
-        .property("placeholder", "Search countries...");
-        applyFilters();
-    });
-
-    d3.select("#view-continents-btn").on("click", function() {
-        d3.select("#continent-view-container").style("display", "block");
-        d3.select("#country-view-container").style("display", "none");
-        d3.select(this).classed("active", true);
-        d3.select("#view-countries-btn").classed("active", false);
-        currentLocationView = 'Continents';
-        treemapTopLevelView = 'Continents';
-        treemapDrillDownState = 'Continents'
-        d3.select("#country-continent-search")
-        .property("placeholder", "Search continents...");
-        applyFilters();
-    });
-
-    // 4. Setup "Select/Deselect All" Buttons (This part remains unchanged)
-    d3.select("#select-all-countries").on("click", function() {
-        const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data();
-        if (currentFilters.selectedCountries.length === allCountryNames.length) {
-            currentFilters.selectedCountries = [];
-        } else {
-            currentFilters.selectedCountries = [...allCountryNames];
+  // 1. Populate the Country list with checkboxes
+  d3.select("#country-filter-list")
+    .selectAll("div.list-item-container")
+    .data(allCountries, (d) => d)
+    .join("div")
+    .attr("class", "list-item-container")
+    .html(
+      (d) =>
+        `<label><input type="checkbox" class="filter-checkbox"> ${d}</label>`
+    )
+    .select("input")
+    .on("change", function (event, d) {
+      if (this.checked) {
+        if (!currentFilters.selectedCountries.includes(d)) {
+          currentFilters.selectedCountries.push(d);
         }
-        applyFilters();
+      } else {
+        const index = currentFilters.selectedCountries.indexOf(d);
+        if (index > -1) {
+          currentFilters.selectedCountries.splice(index, 1);
+        }
+      }
+      applyFilters();
     });
 
-    d3.select("#select-all-continents").on("click", function() {
-        const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data();
-        if (currentFilters.selectedCountries.length === allCountryNames.length) {
-            currentFilters.selectedCountries = [];
-        } else {
-            currentFilters.selectedCountries = [...allCountryNames];
-        }
-        applyFilters();
+  // 2. Populate the Continent list with checkboxes
+  d3.select("#continent-filter-list")
+    .selectAll("div.list-item-container")
+    .data(allContinents, (d) => d)
+    .join("div")
+    .attr("class", "list-item-container")
+    .html(
+      (d) =>
+        `<label><input type="checkbox" class="filter-checkbox"> ${d}</label>`
+    )
+    .select("input")
+    .on("change", function (event, d) {
+      const countriesInContinent = continentToCountriesMap[d] || [];
+      if (this.checked) {
+        // Add all countries from this continent that aren't already selected
+        countriesInContinent.forEach((c) => {
+          if (!currentFilters.selectedCountries.includes(c)) {
+            currentFilters.selectedCountries.push(c);
+          }
+        });
+      } else {
+        // Remove all countries from this continent
+        currentFilters.selectedCountries =
+          currentFilters.selectedCountries.filter(
+            (c) => !countriesInContinent.includes(c)
+          );
+      }
+      applyFilters();
     });
+
+  // 3. Setup Toggle Buttons (This part remains unchanged)
+  d3.select("#view-countries-btn").on("click", function () {
+    d3.select("#country-view-container").style("display", "block");
+    d3.select("#continent-view-container").style("display", "none");
+    d3.select(this).classed("active", true);
+    d3.select("#view-continents-btn").classed("active", false);
+    currentLocationView = "Countries";
+    treemapTopLevelView = "Countries";
+    treemapDrillDownState = "Continents";
+    d3.select("#country-continent-search").property(
+      "placeholder",
+      "Search countries..."
+    );
+    applyFilters();
+  });
+
+  d3.select("#view-continents-btn").on("click", function () {
+    d3.select("#continent-view-container").style("display", "block");
+    d3.select("#country-view-container").style("display", "none");
+    d3.select(this).classed("active", true);
+    d3.select("#view-countries-btn").classed("active", false);
+    currentLocationView = "Continents";
+    treemapTopLevelView = "Continents";
+    treemapDrillDownState = "Continents";
+    d3.select("#country-continent-search").property(
+      "placeholder",
+      "Search continents..."
+    );
+    applyFilters();
+  });
+
+  // 4. Setup "Select/Deselect All" Buttons (This part remains unchanged)
+  d3.select("#select-all-countries").on("click", function () {
+    const allCountryNames = d3
+      .selectAll("#country-filter-list .list-item-container")
+      .data();
+    if (currentFilters.selectedCountries.length === allCountryNames.length) {
+      currentFilters.selectedCountries = [];
+    } else {
+      currentFilters.selectedCountries = [...allCountryNames];
+    }
+    applyFilters();
+  });
+
+  d3.select("#select-all-continents").on("click", function () {
+    const allCountryNames = d3
+      .selectAll("#country-filter-list .list-item-container")
+      .data();
+    if (currentFilters.selectedCountries.length === allCountryNames.length) {
+      currentFilters.selectedCountries = [];
+    } else {
+      currentFilters.selectedCountries = [...allCountryNames];
+    }
+    applyFilters();
+  });
 }
 
 function applyFilters() {
@@ -343,8 +483,10 @@ function applyFilters() {
       .classed("active", (d, i, nodes) =>
         currentFilters.selectedPlatforms.includes(nodes[i].innerText)
       )
-      .classed("inactive", (d, i, nodes) =>
-        !currentFilters.selectedPlatforms.includes(nodes[i].innerText)
+      .classed(
+        "inactive",
+        (d, i, nodes) =>
+          !currentFilters.selectedPlatforms.includes(nodes[i].innerText)
       );
   }
 
@@ -352,13 +494,19 @@ function applyFilters() {
     filteredPlatformData = filteredPlatformData.filter((d) =>
       currentFilters.type.includes(d.type)
     );
-    
+
     d3.selectAll(".content-type-filter button")
       .classed("active", (d, i, nodes) =>
-        currentFilters.type.includes(nodes[i].getAttribute("content-type-filter"))
+        currentFilters.type.includes(
+          nodes[i].getAttribute("content-type-filter")
+        )
       )
-      .classed("inactive", (d, i, nodes) =>
-        !currentFilters.type.includes(nodes[i].getAttribute("content-type-filter"))
+      .classed(
+        "inactive",
+        (d, i, nodes) =>
+          !currentFilters.type.includes(
+            nodes[i].getAttribute("content-type-filter")
+          )
       );
   }
 
@@ -369,25 +517,25 @@ function applyFilters() {
   );
 
   if (isValidString(currentFilters.titleSearch)) {
-      const searchTerm = currentFilters.titleSearch.toLowerCase();
-      filteredPlatformData = filteredPlatformData.filter(d => 
-          (d.title && d.title.toLowerCase().includes(searchTerm))
-      );
+    const searchTerm = currentFilters.titleSearch.toLowerCase();
+    filteredPlatformData = filteredPlatformData.filter(
+      (d) => d.title && d.title.toLowerCase().includes(searchTerm)
+    );
   }
 
-
   // Always filter by genre — if none are selected, result will be empty
-    filteredPlatformData = filteredPlatformData.filter((d) =>
-      currentFilters.selectedGenres.includes(d.main_genre)
-    );
+  filteredPlatformData = filteredPlatformData.filter((d) =>
+    currentFilters.selectedGenres.includes(d.main_genre)
+  );
 
-    // Sync checkbox states regardless
-    d3.selectAll('#genre-filter-list input[type="checkbox"]')
-      .property("checked", function() {
-        const genre = this.parentNode.textContent.trim();
-        return currentFilters.selectedGenres.includes(genre);
-    });
-
+  // Sync checkbox states regardless
+  d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
+    "checked",
+    function () {
+      const genre = this.parentNode.textContent.trim();
+      return currentFilters.selectedGenres.includes(genre);
+    }
+  );
 
   if (currentFilters.yearRange) {
     filteredPlatformData = filteredPlatformData.filter(
@@ -404,10 +552,16 @@ function applyFilters() {
 
     d3.selectAll(".audience-buttons button")
       .classed("active", (d, i, nodes) =>
-        currentFilters.selectedAudiences.includes(nodes[i].getAttribute("audience-buttons"))
+        currentFilters.selectedAudiences.includes(
+          nodes[i].getAttribute("audience-buttons")
+        )
       )
-      .classed("inactive", (d, i, nodes) =>
-        !currentFilters.selectedAudiences.includes(nodes[i].getAttribute("audience-buttons"))
+      .classed(
+        "inactive",
+        (d, i, nodes) =>
+          !currentFilters.selectedAudiences.includes(
+            nodes[i].getAttribute("audience-buttons")
+          )
       );
   }
 
@@ -419,36 +573,51 @@ function applyFilters() {
     );
   }
 
-  const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data();
-  
+  const allCountryNames = d3
+    .selectAll("#country-filter-list .list-item-container")
+    .data();
+
   // Sync country checkboxes
-  d3.select("#country-filter-list").selectAll("input.filter-checkbox")
-    .property("checked", d => currentFilters.selectedCountries.includes(d));
-  
+  d3.select("#country-filter-list")
+    .selectAll("input.filter-checkbox")
+    .property("checked", (d) => currentFilters.selectedCountries.includes(d));
+
   // Sync country "Select All" button text
   d3.select("#select-all-countries").text(
-      currentFilters.selectedCountries.length === allCountryNames.length ? "Deselect All" : "Select All"
+    currentFilters.selectedCountries.length === allCountryNames.length
+      ? "Deselect All"
+      : "Select All"
   );
 
   // Sync continent checkboxes
-  d3.select("#continent-filter-list").selectAll("input.filter-checkbox")
-    .property("checked", d => {
-        const countriesInContinent = continentToCountriesMap[d] || [];
-        // A continent is "checked" if all its countries are selected
-        return countriesInContinent.length > 0 && countriesInContinent.every(c => currentFilters.selectedCountries.includes(c));
+  d3.select("#continent-filter-list")
+    .selectAll("input.filter-checkbox")
+    .property("checked", (d) => {
+      const countriesInContinent = continentToCountriesMap[d] || [];
+      // A continent is "checked" if all its countries are selected
+      return (
+        countriesInContinent.length > 0 &&
+        countriesInContinent.every((c) =>
+          currentFilters.selectedCountries.includes(c)
+        )
+      );
     })
-    .property("indeterminate", d => { 
-        const countriesInContinent = continentToCountriesMap[d] || [];
-        const selectedCount = countriesInContinent.filter(c => currentFilters.selectedCountries.includes(c)).length;
-        
-        // A continent is "indeterminate" (visually selected/dashed) if 
-        // some (selectedCount > 0) but not all (selectedCount < total) are selected.
-        return selectedCount > 0 && selectedCount < countriesInContinent.length;
+    .property("indeterminate", (d) => {
+      const countriesInContinent = continentToCountriesMap[d] || [];
+      const selectedCount = countriesInContinent.filter((c) =>
+        currentFilters.selectedCountries.includes(c)
+      ).length;
+
+      // A continent is "indeterminate" (visually selected/dashed) if
+      // some (selectedCount > 0) but not all (selectedCount < total) are selected.
+      return selectedCount > 0 && selectedCount < countriesInContinent.length;
     });
 
   // Sync continent "Select All" button text
   d3.select("#select-all-continents").text(
-      currentFilters.selectedCountries.length === allCountryNames.length ? "Deselect All" : "Select All"
+    currentFilters.selectedCountries.length === allCountryNames.length
+      ? "Deselect All"
+      : "Select All"
   );
 
   renderAllVisualizations(filteredPlatformData);
@@ -460,25 +629,29 @@ function setupRemoveFiltersButton() {
     currentFilters = { ...defaultFilters };
 
     // Re-select all countries, which is the default state
-    treemapDrillDownState = 'Continents';
-    treemapTopLevelView = 'Continents';
-    currentLocationView = 'Continents'; 
-    d3.select("#country-continent-search")
-        .property("placeholder", "Search continents...");
-    const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
+    treemapDrillDownState = "Continents";
+    treemapTopLevelView = "Continents";
+    currentLocationView = "Continents";
+    d3.select("#country-continent-search").property(
+      "placeholder",
+      "Search continents..."
+    );
+    const allCountryNames = d3
+      .selectAll("#country-filter-list .list-item-container")
+      .data()
+      .map((d) => d);
     currentFilters.selectedCountries = [...allCountryNames];
     d3.select("#continent-view-container").style("display", "block");
     d3.select("#country-view-container").style("display", "none");
     d3.select("#view-continents-btn").classed("active", true);
     d3.select("#view-countries-btn").classed("active", false);
 
-    
     const allGenres = [];
     d3.selectAll('#genre-filter-list input[type="checkbox"]').each(function () {
       allGenres.push(d3.select(this.parentNode).text().trim());
     });
-    currentFilters.selectedGenres = allGenres;    
-    
+    currentFilters.selectedGenres = allGenres;
+
     // 2. Reset the other UI controls
     d3.selectAll(
       ".content-type-filter button, .platform-buttons button, .audience-buttons button"
@@ -496,19 +669,28 @@ function setupRemoveFiltersButton() {
     if (imdbSlider) imdbSlider.reset();
     if (yearSlider) yearSlider.reset();
 
-
-    //treemapDrillDownState = 'Continents';
-    //treemapTopLevelView = 'Countries'; 
     d3.select("#sankey-back-btn").style("display", "none");
     filterHistory = [];
     d3.select("#quantity-back-btn").style("display", "none");
     quantityFilterHistory = [];
-    d3.select("#title-search").property("placeholder", "Search for titles...").property("value", "");
-    d3.select("#genre-search").property("placeholder", "Search genre...").property("value", "");
-    d3.select("#genre-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
-    d3.select("#country-continent-search").property("placeholder", "Search continents...").property("value", "");
-    d3.select("#country-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
-    d3.select("#continent-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
+    d3.select("#title-search")
+      .property("placeholder", "Search for titles...")
+      .property("value", "");
+    d3.select("#genre-search")
+      .property("placeholder", "Search genre...")
+      .property("value", "");
+    d3.select("#genre-filter-list")
+      .selectAll(".filter-hidden")
+      .classed("filter-hidden", false);
+    d3.select("#country-continent-search")
+      .property("placeholder", "Search continents...")
+      .property("value", "");
+    d3.select("#country-filter-list")
+      .selectAll(".filter-hidden")
+      .classed("filter-hidden", false);
+    d3.select("#continent-filter-list")
+      .selectAll(".filter-hidden")
+      .classed("filter-hidden", false);
 
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
@@ -521,25 +703,29 @@ function setupRemoveFiltersButtonPP() {
     currentFilters = { ...defaultFilters };
 
     // Re-select all countries, which is the default state
-    treemapDrillDownState = 'Continents';
-    treemapTopLevelView = 'Continents';
-    currentLocationView = 'Continents';
-    d3.select("#country-continent-search")
-        .property("placeholder", "Search continents...");
-    const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
+    treemapDrillDownState = "Continents";
+    treemapTopLevelView = "Continents";
+    currentLocationView = "Continents";
+    d3.select("#country-continent-search").property(
+      "placeholder",
+      "Search continents..."
+    );
+    const allCountryNames = d3
+      .selectAll("#country-filter-list .list-item-container")
+      .data()
+      .map((d) => d);
     currentFilters.selectedCountries = [...allCountryNames];
     d3.select("#continent-view-container").style("display", "block");
     d3.select("#country-view-container").style("display", "none");
     d3.select("#view-continents-btn").classed("active", true);
     d3.select("#view-countries-btn").classed("active", false);
 
-    
     const allGenres = [];
     d3.selectAll('#genre-filter-list input[type="checkbox"]').each(function () {
       allGenres.push(d3.select(this.parentNode).text().trim());
     });
-    currentFilters.selectedGenres = allGenres;    
-    
+    currentFilters.selectedGenres = allGenres;
+
     // 2. Reset the other UI controls
     d3.selectAll(
       ".content-type-filter button, .platform-buttons button, .audience-buttons button"
@@ -557,18 +743,28 @@ function setupRemoveFiltersButtonPP() {
     if (imdbSlider) imdbSlider.reset();
     if (yearSlider) yearSlider.reset();
 
-    //treemapDrillDownState = 'Continents';
-    //treemapTopLevelView = 'Countries'; 
     d3.select("#sankey-back-btn").style("display", "none");
-    filterHistory= [];
+    filterHistory = [];
     d3.select("#quantity-back-btn").style("display", "none");
     quantityFilterHistory = [];
-    d3.select("#title-search").property("placeholder", "Search for titles...").property("value", "");
-    d3.select("#genre-search").property("placeholder", "Search genre...").property("value", "");
-    d3.select("#genre-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
-    d3.select("#country-continent-search").property("placeholder", "Search continents...").property("value", "");
-    d3.select("#country-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
-    d3.select("#continent-filter-list").selectAll(".filter-hidden").classed("filter-hidden", false);
+    d3.select("#title-search")
+      .property("placeholder", "Search for titles...")
+      .property("value", "");
+    d3.select("#genre-search")
+      .property("placeholder", "Search genre...")
+      .property("value", "");
+    d3.select("#genre-filter-list")
+      .selectAll(".filter-hidden")
+      .classed("filter-hidden", false);
+    d3.select("#country-continent-search")
+      .property("placeholder", "Search continents...")
+      .property("value", "");
+    d3.select("#country-filter-list")
+      .selectAll(".filter-hidden")
+      .classed("filter-hidden", false);
+    d3.select("#continent-filter-list")
+      .selectAll(".filter-hidden")
+      .classed("filter-hidden", false);
     // 3. Apply filters, which will now handle the visual update
     applyFilters();
   });
@@ -746,24 +942,28 @@ function createD3RangeSlider(config) {
       const [x0, x1] = event.selection.map(xScale.invert);
 
       const src = event.sourceEvent;
-      const clientX = src ? (src.touches ? src.touches[0].clientX : src.clientX) : 0;
-      const clientY = src ? (src.touches ? src.touches[0].clientY : src.clientY) : 0;
+      const clientX = src
+        ? src.touches
+          ? src.touches[0].clientX
+          : src.clientX
+        : 0;
+      const clientY = src
+        ? src.touches
+          ? src.touches[0].clientY
+          : src.clientY
+        : 0;
       const tooltipNode = tooltip.node();
       const tooltipWidth = tooltipNode.offsetWidth;
       const windowWidth = window.innerWidth;
       let left = clientX;
 
-      if (left + tooltipWidth > windowWidth) { 
-        left = clientX - tooltipWidth; 
+      if (left + tooltipWidth > windowWidth) {
+        left = clientX - tooltipWidth;
       }
-      // Show tooltip and update its position/value
-      //const [mouseX, mouseY] = d3.pointer(event, container.node());
+
       tooltip
         .style("opacity", 1)
-        // .style("left", `${mouseX + 10}px`)
-        // .style("top", `${mouseY - 25}px`)
         .style("left", `${left}px`)
-        // .style("top", `${clientY}px`)
         .text(`${config.tickFormat(x0)} - ${config.tickFormat(x1)}`);
     })
     .on("end", (event) => {
@@ -779,7 +979,6 @@ function createD3RangeSlider(config) {
 
   const initialRange = config.initialRange || config.domain;
   gBrush.call(brush.move, initialRange.map(xScale));
-  //gBrush.call(brush.move, config.domain.map(xScale));
 
   // Update the min/max labels outside the slider with formatted values
   d3.select(config.minLabelId).text(config.tickFormat(config.domain[0]));
@@ -805,9 +1004,9 @@ function createD3RangeSlider(config) {
       d3.select(config.minLabelId)
         .transition()
         .duration(transitionDuration)
-        .tween("text", function() {
+        .tween("text", function () {
           const i = d3.interpolateRound(+this.textContent, minYear);
-          return function(t) {
+          return function (t) {
             this.textContent = i(t);
           };
         });
@@ -816,9 +1015,9 @@ function createD3RangeSlider(config) {
       d3.select(config.maxLabelId)
         .transition()
         .duration(transitionDuration)
-        .tween("text", function() {
+        .tween("text", function () {
           const i = d3.interpolateRound(+this.textContent, maxYear);
-          return function(t) {
+          return function (t) {
             this.textContent = i(t);
           };
         });
@@ -835,7 +1034,7 @@ function setupYearSlider(data) {
     maxLabelId: "#year-max-value",
     domain: yearExtent,
     tickFormat: d3.format("d"),
-    //initialRange: currentFilters.yearRange || [1.0, 10.0],
+
     onBrushEnd: (range) => {
       const roundedRange = [Math.round(range[0]), Math.round(range[1])];
       if (
@@ -887,14 +1086,20 @@ function setupGenreFilter() {
   // Existing logic for individual checkbox change
   d3.selectAll('#genre-filter-list input[type="checkbox"]').on("change", () => {
     const selected = [];
-    d3.selectAll('#genre-filter-list input[type="checkbox"]:checked').each(function () {
-      selected.push(d3.select(this.parentNode).text().trim());
-    });
+    d3.selectAll('#genre-filter-list input[type="checkbox"]:checked').each(
+      function () {
+        selected.push(d3.select(this.parentNode).text().trim());
+      }
+    );
     currentFilters.selectedGenres = selected;
 
     // Update button text dynamically based on selection
-    const allSelected = d3.selectAll('#genre-filter-list input[type="checkbox"]:not(:checked)').empty();
-    d3.select("#select-all-genres").text(allSelected ? "Deselect All" : "Select All");
+    const allSelected = d3
+      .selectAll('#genre-filter-list input[type="checkbox"]:not(:checked)')
+      .empty();
+    d3.select("#select-all-genres").text(
+      allSelected ? "Deselect All" : "Select All"
+    );
 
     applyFilters();
   });
@@ -902,28 +1107,36 @@ function setupGenreFilter() {
   // --- TOGGLE LOGIC FOR "SELECT ALL / DESELECT ALL" BUTTON ---
   d3.select("#select-all-genres").on("click", function () {
     const button = d3.select(this);
-    const allSelected = d3.selectAll('#genre-filter-list input[type="checkbox"]:not(:checked)').empty();
+    const allSelected = d3
+      .selectAll('#genre-filter-list input[type="checkbox"]:not(:checked)')
+      .empty();
 
     if (allSelected) {
       // All are currently checked → uncheck all
-      d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", false);
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
+        "checked",
+        false
+      );
       currentFilters.selectedGenres = [];
       button.text("Select All");
     } else {
       // Not all are checked → select all
-      d3.selectAll('#genre-filter-list input[type="checkbox"]').property("checked", true);
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
+        "checked",
+        true
+      );
       const allGenres = [];
-      d3.selectAll('#genre-filter-list input[type="checkbox"]').each(function () {
-        allGenres.push(d3.select(this.parentNode).text().trim());
-      });
+      d3.selectAll('#genre-filter-list input[type="checkbox"]').each(
+        function () {
+          allGenres.push(d3.select(this.parentNode).text().trim());
+        }
+      );
       currentFilters.selectedGenres = allGenres;
       button.text("Deselect All");
     }
     applyFilters();
   });
-  //applyFilters();
 }
-
 
 function populateGenreFilter(data) {
   const genres = new Set(
@@ -931,7 +1144,7 @@ function populateGenreFilter(data) {
       isValidString(d.genres) ? d.genres.split(",").map((g) => g.trim()) : []
     )
   );
-  
+
   currentFilters.selectedGenres = [...genres];
 
   d3.select("#genre-filter-list")
@@ -1030,12 +1243,16 @@ function setupCountryFilter(data) {
   d3.select("#select-all-countries").on("click", function () {
     const button = d3.select(this);
     const allCountryItems = d3.selectAll(".country-list-item");
-    
+
     // Get all country names from the data bound to the list items
     const allCountryNames = allCountryItems.data();
 
     // Check if every country is already in the current filter
-    const areAllSelected = allCountryNames.length > 0 && allCountryNames.every(c => currentFilters.selectedCountries.includes(c));
+    const areAllSelected =
+      allCountryNames.length > 0 &&
+      allCountryNames.every((c) =>
+        currentFilters.selectedCountries.includes(c)
+      );
 
     if (areAllSelected) {
       // If everything is selected, clear the selection
@@ -1046,7 +1263,7 @@ function setupCountryFilter(data) {
       currentFilters.selectedCountries = [...allCountryNames];
       button.text("Deselect All");
     }
-    
+
     // Trigger a re-render to update the visuals
     applyFilters();
   });
@@ -1055,7 +1272,7 @@ function setupCountryFilter(data) {
 function renderQuantityChart(data) {
   const container = d3.select("#quantity-chart");
   // Select the button using D3 for visibility control
-  const backBtn = d3.select("#quantity-back-btn"); 
+  const backBtn = d3.select("#quantity-back-btn");
 
   const bounds = container.node().getBoundingClientRect();
   if (bounds.width < 10 || bounds.height < 10) return;
@@ -1066,15 +1283,19 @@ function renderQuantityChart(data) {
 
   const t = d3.transition().duration(750);
 
-  const svg = container.selectAll("svg").data([null]).join(
-    enter => enter
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`),
-    update => update.select("g")
-  );
+  const svg = container
+    .selectAll("svg")
+    .data([null])
+    .join(
+      (enter) =>
+        enter
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`),
+      (update) => update.select("g")
+    );
 
   // Check if a single content type is selected
   const singleTypeSelected =
@@ -1274,7 +1495,7 @@ function renderQuantityChart(data) {
       .attr("y2", height)
       .attr("stroke", "#B0B0B0")
       .attr("stroke-width", 1)
-      .style("opacity", 0) // Start transparent
+      .style("opacity", 0)
       .transition(t)
       .style("opacity", 1)
       .attr("x1", xScale(0))
@@ -1323,11 +1544,11 @@ function renderQuantityChart(data) {
         tooltip.transition().duration(50).style("opacity", 0);
       })
       // --- CLICK HANDLER MODIFIED FOR HISTORY ---
-      .on("click", function(event, d) {
+      .on("click", function (event, d) {
         // 1. Save the state of the filters that this chart modifies
         quantityFilterHistory.push({
-            selectedPlatforms: [...currentFilters.selectedPlatforms],
-            type: [...currentFilters.type]
+          selectedPlatforms: [...currentFilters.selectedPlatforms],
+          type: [...currentFilters.type],
         });
 
         // 2. Apply the new filter state
@@ -1368,7 +1589,9 @@ function renderQuantityChart(data) {
       )
       .on("mouseover", function (event, d) {
         tooltip.transition().duration(50).style("opacity", 1);
-        tooltip.html(`<div><b>${d.platform}</b></div><div><b>Movies</b>: ${d.movies}</div>`);
+        tooltip.html(
+          `<div><b>${d.platform}</b></div><div><b>Movies</b>: ${d.movies}</div>`
+        );
         const bbox = tooltip.node().getBoundingClientRect();
         tooltip
           .style("left", event.pageX - bbox.width / 2 + "px")
@@ -1378,13 +1601,13 @@ function renderQuantityChart(data) {
         tooltip.transition().duration(50).style("opacity", 0);
       })
       // --- CLICK HANDLER MODIFIED FOR HISTORY ---
-      .on("click", function(event, d) {
+      .on("click", function (event, d) {
         // 1. Save the state of the filters that this chart modifies
         quantityFilterHistory.push({
-            selectedPlatforms: [...currentFilters.selectedPlatforms],
-            type: [...currentFilters.type]
+          selectedPlatforms: [...currentFilters.selectedPlatforms],
+          type: [...currentFilters.type],
         });
-        
+
         // 2. Apply the new filter state
         currentFilters.selectedPlatforms = [d.platform];
         currentFilters.type = ["MOVIE"];
@@ -1399,29 +1622,44 @@ function renderQuantityChart(data) {
 const handleClick = function (event, d) {
   const name = d.name;
 
-
   // Check if the name exists in the genre list
-  if (d3.selectAll('#genre-filter-list input').nodes().some((n) => n.parentNode.textContent.trim() === name)) {
+  if (
+    d3
+      .selectAll("#genre-filter-list input")
+      .nodes()
+      .some((n) => n.parentNode.textContent.trim() === name)
+  ) {
     currentFilters.selectedGenres = [name];
   }
   // Check if the name exists in platform buttons
-  else if (d3.selectAll('.platform-buttons button').nodes().some((n) => n.getAttribute('data-platform') === name)) {
+  else if (
+    d3
+      .selectAll(".platform-buttons button")
+      .nodes()
+      .some((n) => n.getAttribute("data-platform") === name)
+  ) {
     currentFilters.selectedPlatforms = [name];
-    
   }
   // Check if the name exists in audience buttons
-  else if (d3.selectAll('.audience-buttons button').nodes().some((n) => n.getAttribute('audience-buttons') === name)) {
+  else if (
+    d3
+      .selectAll(".audience-buttons button")
+      .nodes()
+      .some((n) => n.getAttribute("audience-buttons") === name)
+  ) {
     currentFilters.selectedAudiences = [name];
-    
   }
-  // Check if it’s a country (optional)
-  else if (d3.selectAll('.country-list-item').nodes().some((n) => n.textContent.trim() === name)) {
+  // Check if it’s a country
+  else if (
+    d3
+      .selectAll(".country-list-item")
+      .nodes()
+      .some((n) => n.textContent.trim() === name)
+  ) {
     currentFilters.selectedCountries = [name];
   }
 
-  // Re-apply filters and re-render
   applyFilters();
-
 };
 
 function renderSankeyChart(data, toReload) {
@@ -1525,40 +1763,55 @@ function renderSankeyChart(data, toReload) {
     d3.select(this).transition().duration(50).attr("opacity", 0.65);
     tooltip.transition().duration(50).style("opacity", 0);
   };
+  // Corrected handleClick to ensure proper filter history and application flow
 
-  // External (Global) Setup:
-// let filterHistory = [];
-// let currentFilters = { selectedPlatforms: [], selectedGenres: [], selectedAudiences: [], selectedCountries: [] };
-
-// Corrected handleClick to ensure proper filter history and application flow
-
-const handleClick = function (event, d) {
+  const handleClick = function (event, d) {
     const name = d.name;
-    
+
     // Save the current state of filters BEFORE any changes are made.
-    const oldFiltersState = { ...currentFilters }; 
+    const oldFiltersState = { ...currentFilters };
     let filterApplied = false;
 
     // --- 1. SET THE NEW FILTER DIRECTLY ON THE GLOBAL currentFilters ---
 
     // Check if the name exists in the genre list
-    if (d3.selectAll('#genre-filter-list input').nodes().some((n) => n.parentNode.textContent.trim() === name)) {
+    if (
+      d3
+        .selectAll("#genre-filter-list input")
+        .nodes()
+        .some((n) => n.parentNode.textContent.trim() === name)
+    ) {
       currentFilters.selectedGenres = [name]; // Apply change directly
       d3.select("#select-all-genres").text("Select All");
       filterApplied = true;
     }
     // Check if the name exists in platform buttons
-    else if (d3.selectAll('.platform-buttons button').nodes().some((n) => n.getAttribute('data-platform') === name)) {
+    else if (
+      d3
+        .selectAll(".platform-buttons button")
+        .nodes()
+        .some((n) => n.getAttribute("data-platform") === name)
+    ) {
       currentFilters.selectedPlatforms = [name]; // Apply change directly
       filterApplied = true;
     }
     // Check if the name exists in audience buttons
-    else if (d3.selectAll('.audience-buttons button').nodes().some((n) => n.getAttribute('audience-buttons') === name)) {
+    else if (
+      d3
+        .selectAll(".audience-buttons button")
+        .nodes()
+        .some((n) => n.getAttribute("audience-buttons") === name)
+    ) {
       currentFilters.selectedAudiences = [name];
       filterApplied = true;
     }
     // Check if it’s a country (optional)
-    else if (d3.selectAll('.country-list-item').nodes().some((n) => n.textContent.trim() === name)) {
+    else if (
+      d3
+        .selectAll(".country-list-item")
+        .nodes()
+        .some((n) => n.textContent.trim() === name)
+    ) {
       currentFilters.selectedCountries = [name]; // Apply change directly
       filterApplied = true;
     }
@@ -1566,7 +1819,7 @@ const handleClick = function (event, d) {
     // --- 2. PUSH HISTORY AND RENDER ONLY IF A FILTER WAS APPLIED ---
     if (filterApplied) {
       filterHistory.push(oldFiltersState);
-      
+
       updateSankeyBackButton();
 
       // Re-apply filters and re-render (this triggers the transition)
@@ -1575,13 +1828,12 @@ const handleClick = function (event, d) {
     // If no filter was applied, do nothing (no history push, no re-render)
   };
 
-
   const handleLinkMouseOver = function (event, d) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
     tooltip.transition().duration(50).style("opacity", 1);
     tooltip.html(
-        `<b>Source</b>: ${d.source.name}<br/><b>Target</b>: ${d.target.name}<br/><b>Quantity</b>: ${d.value}`
-      );
+      `<b>Source</b>: ${d.source.name}<br/><b>Target</b>: ${d.target.name}<br/><b>Quantity</b>: ${d.value}`
+    );
 
     // Get tooltip dimensions
     const tooltipNode = tooltip.node();
@@ -1607,16 +1859,6 @@ const handleClick = function (event, d) {
 
     tooltip.style("left", left + "px").style("top", top + "px");
   };
-
-
-  // const handleNodeMouseOver = function (event, d) {
-  //   d3.select(this).transition().duration(50).attr("opacity", 1);
-  //   tooltip.transition().duration(50).style("opacity", 1);
-  //   tooltip
-  //     .html(`<b>Total quantity</b>: ${d.value}`)
-  //     .style("left", event.pageX + 15 + "px")
-  //     .style("top", event.pageY - 28 + "px");
-  // };
 
   const handleNodeMouseOver = function (event, d) {
     d3.select(this).transition().duration(50).attr("opacity", 1);
@@ -1776,577 +2018,637 @@ const handleClick = function (event, d) {
 }
 
 function renderTreemapChart(data) {
-    const container = d3.select("#treemap-chart");
+  const container = d3.select("#treemap-chart");
 
-    const bounds = container.node().getBoundingClientRect();
-    if (bounds.width < 10 || bounds.height < 10) return;
+  const bounds = container.node().getBoundingClientRect();
+  if (bounds.width < 10 || bounds.height < 10) return;
 
-    const margin = { top: 40, right: 10, bottom: 10, left: 10 };
-    const width = bounds.width - margin.left - margin.right;
-    const height = bounds.height - margin.top - margin.bottom;
-    
-    const svg = container.selectAll("svg").data([null]).join(
-      enter => enter
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`),
-      update => update.select("g")
+  const margin = { top: 40, right: 10, bottom: 10, left: 10 };
+  const width = bounds.width - margin.left - margin.right;
+  const height = bounds.height - margin.top - margin.bottom;
+
+  const svg = container
+    .selectAll("svg")
+    .data([null])
+    .join(
+      (enter) =>
+        enter
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`),
+      (update) => update.select("g")
     );
-    
-    // --- Get UI Buttons ---
-    const continentsBtn = d3.select("#treemap-view-continents");
-    const countriesBtn = d3.select("#treemap-view-countries");
-    const toggleContainer = d3.select("#treemap-toggle");
-    const backToContinentsBtn = d3.select("#treemap-back-continents-btn");
-    const backToCountriesBtn = d3.select("#treemap-back-countries-btn");
 
-    // --- Process Data ---
-    const countryCounts = new Map();
-    data.forEach(d => {
-        d.countries.forEach(country => {
-            if (country && countryToContinent[country] && currentFilters.selectedCountries.includes(country)) {
-                countryCounts.set(country, (countryCounts.get(country) || 0) + 1);
-            }
-        });
+  // --- Get UI Buttons ---
+  const continentsBtn = d3.select("#treemap-view-continents");
+  const countriesBtn = d3.select("#treemap-view-countries");
+  const toggleContainer = d3.select("#treemap-toggle");
+  const backToContinentsBtn = d3.select("#treemap-back-continents-btn");
+  const backToCountriesBtn = d3.select("#treemap-back-countries-btn");
+
+  // --- Process Data ---
+  const countryCounts = new Map();
+  data.forEach((d) => {
+    d.countries.forEach((country) => {
+      if (
+        country &&
+        countryToContinent[country] &&
+        currentFilters.selectedCountries.includes(country)
+      ) {
+        countryCounts.set(country, (countryCounts.get(country) || 0) + 1);
+      }
+    });
+  });
+
+  let currentViewData;
+
+  // --- Logic to Determine View ---
+
+  if (treemapDrillDownState === "Continents") {
+    // --- 1. We are at the TOP LEVEL (Continents or All Countries) ---
+
+    // Show/Hide Buttons
+    toggleContainer.style("display", "flex");
+    backToContinentsBtn.style("display", "none");
+    backToCountriesBtn.style("display", "none");
+
+    if (treemapTopLevelView === "Continents") {
+      // --- 1a. Show CONTINENTS view ---
+      const continentChildren = Array.from(
+        d3.group(
+          Array.from(countryCounts.keys()),
+          (d) => countryToContinent[d]
+        ),
+        ([continent, countries]) => ({
+          name: continent,
+          value: d3.sum(countries, (c) => countryCounts.get(c)),
+        })
+      ).filter((d) => d.name);
+
+      currentViewData = { name: "Continents", children: continentChildren };
+      continentsBtn.classed("active", true);
+      countriesBtn.classed("active", false);
+    } else {
+      // --- 1b. Show ALL COUNTRIES view ---
+      const children = Array.from(countryCounts.entries()).map(
+        ([name, value]) => ({ name, value })
+      );
+      currentViewData = { name: "All Countries", children };
+      continentsBtn.classed("active", false);
+      countriesBtn.classed("active", true);
+    }
+  } else {
+    // --- 2. We are DRILLED-DOWN (e.g., in 'Europe') ---
+
+    // We are either viewing all countries in the continent (Level 2)
+    // or a single filtered country (Level 3).
+
+    const countriesInContinent =
+      continentToCountriesMap[treemapDrillDownState] || [];
+    const selectedCountries = currentFilters.selectedCountries;
+
+    // Check if a *single country* from this continent is selected
+    const isSingleCountryView =
+      selectedCountries.length === 1 &&
+      countriesInContinent.includes(selectedCountries[0]);
+
+    // Show/Hide Buttons
+    toggleContainer.style("display", "none");
+    if (isSingleCountryView) {
+      // --- Level 3: Show "← Countries" button ---
+      backToContinentsBtn.style("display", "none");
+      backToCountriesBtn.style("display", "block");
+    } else {
+      // --- Level 2: Show "← Continents" button ---
+      backToContinentsBtn.style("display", "block");
+      backToCountriesBtn.style("display", "none");
+    }
+
+    // Set data for the treemap (will be all countries in continent, or just the one)
+    const children = Array.from(countryCounts)
+      .filter(
+        ([country]) => countryToContinent[country] === treemapDrillDownState
+      )
+      .map(([name, value]) => ({ name, value }));
+
+    currentViewData = { name: treemapDrillDownState, children };
+  }
+
+  function draw(viewData) {
+    const root = d3.hierarchy(viewData).sum((d) => d.value);
+    d3.treemap().size([width, height]).padding(2)(root);
+
+    svg
+      .selectAll(".chart-title")
+      .data([viewData.name])
+      .join("text")
+      .attr("class", "chart-title")
+      .attr("x", width / 2)
+      .attr("y", -15)
+      .attr("text-anchor", "middle")
+      .style("font-size", "1rem")
+      .style("font-weight", "600")
+      .style("fill", "#334155")
+      .text(`Content Quantity by ${viewData.name}`);
+
+    const t = svg.transition().duration(750);
+    const cell = svg
+      .selectAll("g.cell")
+      .data(root.leaves(), (d) => d.data.name);
+
+    cell.exit().selectAll("rect, text").transition(t).style("opacity", 0);
+    cell.exit().transition(t).remove();
+
+    const cellEnter = cell.enter().append("g").attr("class", "cell");
+
+    cellEnter
+      .append("rect")
+      .attr("fill", (d) => {
+        // If top-level continents
+        if (
+          treemapDrillDownState === "Continents" &&
+          treemapTopLevelView === "Continents"
+        ) {
+          return (
+            continentColors[d.data.name.toUpperCase().replace(/\s+/g, "_")] ||
+            "#ccc"
+          );
+        }
+        // Countries view or drilled-down
+        const continent = countryToContinent[d.data.name];
+        return (
+          continentColors[continent?.toUpperCase().replace(/\s+/g, "_")] ||
+          "#ccc"
+        );
+      })
+      .style("stroke", "#fff");
+
+    cellEnter
+      .append("text")
+      .attr("class", "treemap-label")
+      .selectAll("tspan")
+      .data((d) => d.data.name.split(/(?=[A-Z][^A-Z])/g))
+      .join("tspan")
+      .attr("x", 4)
+      .attr("y", (d, i) => 13 + i * 10)
+      .text((d) => d)
+      .attr("font-size", "0.7em")
+      .attr("fill", "white")
+      .style("pointer-events", "none");
+
+    const allCells = cell.merge(cellEnter);
+    allCells
+      .transition(t)
+      .attr("transform", (d) => `translate(${d.x0}, ${d.y0})`);
+
+    allCells
+      .select("rect")
+      .transition(t)
+      .attr("width", (d) => d.x1 - d.x0)
+      .attr("height", (d) => d.y1 - d.y0);
+
+    allCells
+      .select("text")
+      .transition(t)
+      .style("opacity", (d) => (d.x1 - d.x0 > 35 && d.y1 - d.y0 > 20 ? 1 : 0));
+
+    // --- Click Logic ---
+    allCells.on("click", (event, d) => {
+      // Check if we are at the top-level continent view
+      if (
+        treemapDrillDownState === "Continents" &&
+        treemapTopLevelView === "Continents"
+      ) {
+        // --- Click on a Continent ---
+        const continentName = d.data.name;
+        treemapDrillDownState = continentName; // Set drill-down state
+        const countriesInContinent =
+          continentToCountriesMap[continentName] || [];
+        currentFilters.selectedCountries = [...countriesInContinent];
+        applyFilters();
+      } else {
+        // --- Click on a Country (from "All Countries" or "Drilled-down" view) ---
+        const countryName = d.data.name;
+        currentFilters.selectedCountries = [countryName];
+
+        // Also update the filter panel to *show* the country view
+        d3.select("#country-view-container").style("display", "block");
+        d3.select("#continent-view-container").style("display", "none");
+        d3.select("#view-countries-btn").classed("active", true);
+        d3.select("#view-continents-btn").classed("active", false);
+        currentLocationView = "Countries";
+        d3.select("#country-continent-search").property(
+          "placeholder",
+          "Search countries..."
+        );
+
+        applyFilters();
+      }
     });
 
-    let currentViewData;
+    allCells
+      .select("rect")
+      .on("mouseover", function (event, d) {
+        tooltip.transition().duration(200).style("opacity", 1);
+        tooltip.html(
+          `<div><b>${
+            d.data.name
+          }</b></div><div><b>Titles:</b> ${d.value.toLocaleString()}</div>`
+        );
+        const bbox = tooltip.node().getBoundingClientRect();
+        tooltip
+          .style("left", `${event.pageX - bbox.width / 2}px`)
+          .style("top", `${event.pageY - bbox.height - 10}px`);
+      })
+      .on("mouseout", () =>
+        tooltip.transition().duration(500).style("opacity", 0)
+      );
+  }
 
-    // --- Logic to Determine View ---
-    
-    if (treemapDrillDownState === 'Continents') {
-        // --- 1. We are at the TOP LEVEL (Continents or All Countries) ---
-        
-        // Show/Hide Buttons
-        toggleContainer.style("display", "flex");
-        backToContinentsBtn.style("display", "none");
-        backToCountriesBtn.style("display", "none");
-        
-        if (treemapTopLevelView === 'Continents') {
-            // --- 1a. Show CONTINENTS view ---
-            const continentChildren = Array.from(d3.group(
-                Array.from(countryCounts.keys()), d => countryToContinent[d]
-            ), ([continent, countries]) => ({
-                name: continent,
-                value: d3.sum(countries, c => countryCounts.get(c))
-            })).filter(d => d.name);
-            
-            currentViewData = { name: "Continents", children: continentChildren };
-            continentsBtn.classed("active", true);
-            countriesBtn.classed("active", false);
+  if (!currentViewData.children || currentViewData.children.length === 0) {
+    svg.selectAll("g.cell, .chart-title, .no-data-message").remove();
+    svg
+      .append("text")
+      .attr("class", "no-data-message")
+      .attr("x", width / 2)
+      .attr("y", height / 2)
+      .attr("text-anchor", "middle")
+      .text("No country data for this selection.")
+      .style("fill", "var(--muted-text)");
 
-        } else {
-            // --- 1b. Show ALL COUNTRIES view ---
-            const children = Array.from(countryCounts.entries()).map(([name, value]) => ({ name, value }));
-            currentViewData = { name: "All Countries", children };
-            continentsBtn.classed("active", false);
-            countriesBtn.classed("active", true);
-        }
+    // --- Logic to show buttons even if there's no data ---
+    const countriesInContinent =
+      continentToCountriesMap[treemapDrillDownState] || [];
+    const selectedCountries = currentFilters.selectedCountries;
+    const isSingleCountryView =
+      selectedCountries.length === 1 &&
+      countriesInContinent.includes(selectedCountries[0]);
+
+    toggleContainer.style(
+      "display",
+      treemapDrillDownState === "Continents" ? "flex" : "none"
+    );
+    if (treemapDrillDownState !== "Continents") {
+      backToContinentsBtn.style(
+        "display",
+        isSingleCountryView ? "none" : "block"
+      );
+      backToCountriesBtn.style(
+        "display",
+        isSingleCountryView ? "block" : "none"
+      );
     } else {
-        // --- 2. We are DRILLED-DOWN (e.g., in 'Europe') ---
-        
-        // We are either viewing all countries in the continent (Level 2)
-        // or a single filtered country (Level 3).
-        
-        const countriesInContinent = continentToCountriesMap[treemapDrillDownState] || [];
-        const selectedCountries = currentFilters.selectedCountries;
-        
-        // Check if a *single country* from this continent is selected
-        const isSingleCountryView = 
-            selectedCountries.length === 1 && 
-            countriesInContinent.includes(selectedCountries[0]);
-
-        // Show/Hide Buttons
-        toggleContainer.style("display", "none");
-        if (isSingleCountryView) {
-            // --- Level 3: Show "← Countries" button ---
-            backToContinentsBtn.style("display", "none");
-            backToCountriesBtn.style("display", "block");
-        } else {
-            // --- Level 2: Show "← Continents" button ---
-            backToContinentsBtn.style("display", "block");
-            backToCountriesBtn.style("display", "none");
-        }
-        
-        // Set data for the treemap (will be all countries in continent, or just the one)
-        const children = Array.from(countryCounts)
-            .filter(([country]) => countryToContinent[country] === treemapDrillDownState)
-            .map(([name, value]) => ({ name, value }));
-        
-        currentViewData = { name: treemapDrillDownState, children };
+      backToContinentsBtn.style("display", "none");
+      backToCountriesBtn.style("display", "none");
+      continentsBtn.classed("active", treemapTopLevelView === "Continents");
+      countriesBtn.classed("active", treemapTopLevelView === "Countries");
     }
+    return;
+  }
 
-
-    //const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
-
-    function draw(viewData) {
-        const root = d3.hierarchy(viewData).sum(d => d.value);
-        d3.treemap().size([width, height]).padding(2)(root);
-        
-        svg.selectAll(".chart-title").data([viewData.name]).join("text")
-            .attr("class", "chart-title")
-            .attr("x", width / 2).attr("y", -15).attr("text-anchor", "middle")
-            .style("font-size", "1rem").style("font-weight", "600").style("fill", "#334155")
-            .text(`Content Quantity by ${viewData.name}`);
-        
-        const t = svg.transition().duration(750);
-        const cell = svg.selectAll("g.cell").data(root.leaves(), d => d.data.name);
-
-        cell.exit().selectAll("rect, text").transition(t).style("opacity", 0);
-        cell.exit().transition(t).remove();
-        
-        const cellEnter = cell.enter().append("g").attr("class", "cell");
-        
-        cellEnter.append("rect")
-          .attr("fill", d => {
-              // If top-level continents
-              if (treemapDrillDownState === 'Continents' && treemapTopLevelView === 'Continents') {
-                  return continentColors[d.data.name.toUpperCase().replace(/\s+/g, "_")] || "#ccc";
-
-              } 
-              // Countries view or drilled-down
-              const continent = countryToContinent[d.data.name];
-              return continentColors[continent?.toUpperCase().replace(/\s+/g, "_")] || "#ccc";
-          })
-          .style("stroke", "#fff");
-
-        cellEnter.append("text").attr("class", "treemap-label")
-            .selectAll("tspan").data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g)).join("tspan")
-            .attr("x", 4).attr("y", (d, i) => 13 + i * 10).text(d => d)
-            .attr("font-size", "0.7em").attr("fill", "white").style("pointer-events", "none");
-
-        const allCells = cell.merge(cellEnter);
-        allCells.transition(t).attr("transform", d => `translate(${d.x0}, ${d.y0})`);
-        
-        allCells.select("rect").transition(t)
-            .attr("width", d => d.x1 - d.x0)
-            .attr("height", d => d.y1 - d.y0);
-        
-        allCells.select("text").transition(t)
-            .style("opacity", d => (d.x1 - d.x0 > 35 && d.y1 - d.y0 > 20 ? 1 : 0));
-        
-        // --- Click Logic ---
-        allCells.on("click", (event, d) => {
-            // Check if we are at the top-level continent view
-            if (treemapDrillDownState === 'Continents' && treemapTopLevelView === 'Continents') {
-                // --- Click on a Continent ---
-                const continentName = d.data.name;
-                treemapDrillDownState = continentName; // Set drill-down state
-                const countriesInContinent = continentToCountriesMap[continentName] || [];
-                currentFilters.selectedCountries = [...countriesInContinent];
-                applyFilters(); 
-            
-            } else {
-                // --- Click on a Country (from "All Countries" or "Drilled-down" view) ---
-                const countryName = d.data.name;
-                currentFilters.selectedCountries = [countryName];
-                
-                // Also update the filter panel to *show* the country view
-                d3.select("#country-view-container").style("display", "block");
-                d3.select("#continent-view-container").style("display", "none");
-                d3.select("#view-countries-btn").classed("active", true);
-                d3.select("#view-continents-btn").classed("active", false);
-                currentLocationView = 'Countries';
-                d3.select("#country-continent-search")
-                  .property("placeholder", "Search countries...");
-                  
-                applyFilters();
-            }
-        });
-
-        allCells.select('rect')
-            .on("mouseover", function(event, d) {
-                tooltip.transition().duration(200).style("opacity", 1);
-                tooltip.html(`<div><b>${d.data.name}</b></div><div><b>Titles:</b> ${d.value.toLocaleString()}</div>`);
-                const bbox = tooltip.node().getBoundingClientRect();
-                tooltip.style("left", `${event.pageX - bbox.width / 2}px`).style("top", `${event.pageY - bbox.height - 10}px`);
-            })
-            .on("mouseout", () => tooltip.transition().duration(500).style("opacity", 0));
-    }
-
-    if (!currentViewData.children || currentViewData.children.length === 0) {
-        svg.selectAll("g.cell, .chart-title, .no-data-message").remove(); 
-        svg.append("text").attr("class", "no-data-message")
-            .attr("x", width / 2).attr("y", height / 2)
-            .attr("text-anchor", "middle")
-            .text("No country data for this selection.")
-            .style("fill", "var(--muted-text)");
-        
-        // --- Logic to show buttons even if there's no data ---
-        const countriesInContinent = continentToCountriesMap[treemapDrillDownState] || [];
-        const selectedCountries = currentFilters.selectedCountries;
-        const isSingleCountryView = 
-            selectedCountries.length === 1 && 
-            countriesInContinent.includes(selectedCountries[0]);
-
-        toggleContainer.style("display", treemapDrillDownState === 'Continents' ? "flex" : "none");
-        if (treemapDrillDownState !== 'Continents') {
-             backToContinentsBtn.style("display", isSingleCountryView ? "none" : "block");
-             backToCountriesBtn.style("display", isSingleCountryView ? "block" : "none");
-        } else {
-             backToContinentsBtn.style("display", "none");
-             backToCountriesBtn.style("display", "none");
-             continentsBtn.classed("active", treemapTopLevelView === 'Continents');
-             countriesBtn.classed("active", treemapTopLevelView === 'Countries');
-        }
-        return;
-    }
-
-    draw(currentViewData);
+  draw(currentViewData);
 }
 
 function removeChartFilters(chartId) {
-  
-    // --- Logic for Treemap Chart (Assumed to filter by Geographic Location) ---
-    // The treemap is typically tied to the 'Continent/Country' filter.
-    if (chartId === 'treemap-chart') {
-      treemapCurrentView = 'Continents';
-      currentLocationView = 'Continents';
-      d3.select("#country-continent-search")
-        .property("placeholder", "Search continents..."); 
-      const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
-      currentFilters.selectedCountries = [...allCountryNames];
-      d3.select("#continent-view-container").style("display", "block");
-      d3.select("#country-view-container").style("display", "none");
-      d3.select("#view-continents-btn").classed("active", true);
-      d3.select("#view-countries-btn").classed("active", false);
-      d3.selectAll(".country-list-item").style("display", "block");
-      applyFilters();
-    }
+  if (chartId === "treemap-chart") {
+    treemapCurrentView = "Continents";
+    currentLocationView = "Continents";
+    d3.select("#country-continent-search").property(
+      "placeholder",
+      "Search continents..."
+    );
+    const allCountryNames = d3
+      .selectAll("#country-filter-list .list-item-container")
+      .data()
+      .map((d) => d);
+    currentFilters.selectedCountries = [...allCountryNames];
+    d3.select("#continent-view-container").style("display", "block");
+    d3.select("#country-view-container").style("display", "none");
+    d3.select("#view-continents-btn").classed("active", true);
+    d3.select("#view-countries-btn").classed("active", false);
+    d3.selectAll(".country-list-item").style("display", "block");
+    applyFilters();
+  }
 
-    
-    if (chartId === 'quantity-chart') {
-      currentFilters.selectedPlatforms = [];
-      currentFilters.type = [];
-      d3.selectAll(
-      ".content-type-filter button, .platform-buttons button"
-      )
+  if (chartId === "quantity-chart") {
+    currentFilters.selectedPlatforms = [];
+    currentFilters.type = [];
+    d3.selectAll(".content-type-filter button, .platform-buttons button")
       .classed("active", false)
       .classed("inactive", false);
-      applyFilters();
-    }
+    applyFilters();
+  }
 
-    if (chartId === 'sankey-chart') {
-      currentFilters.selectedGenres = [];
-      currentFilters.selectedAudiences = [];
-      currentFilters.selectedPlatforms = [];
-      d3.selectAll(
+  if (chartId === "sankey-chart") {
+    currentFilters.selectedGenres = [];
+    currentFilters.selectedAudiences = [];
+    currentFilters.selectedPlatforms = [];
+    d3.selectAll(
       ".content-type-filter button, .platform-buttons button, .audience-buttons button"
-      )
-        .classed("active", false)
-        .classed("inactive", false);
-      // d3.selectAll('#genre-filter-list input[type="checkbox"]').property(
-      //   "checked",
-      //   true
-      // );
-      const allGenres = [];
-      d3.selectAll('#genre-filter-list input[type="checkbox"]').each(function () {
-        allGenres.push(d3.select(this.parentNode).text().trim());
-      });
-      currentFilters.selectedGenres = allGenres;
-      applyFilters();
-    }
-    if (chartId === 'timeline-filter'){
-      yearSlider.reset();
-      applyFilters();
-    }
-    
+    )
+      .classed("active", false)
+      .classed("inactive", false);
+    const allGenres = [];
+    d3.selectAll('#genre-filter-list input[type="checkbox"]').each(function () {
+      allGenres.push(d3.select(this.parentNode).text().trim());
+    });
+    currentFilters.selectedGenres = allGenres;
+    applyFilters();
+  }
+  if (chartId === "timeline-filter") {
+    yearSlider.reset();
+    applyFilters();
+  }
 }
 
 function handleCountryContinentSearch() {
-    // Get the search term and convert it to lower case for case-insensitive matching
-    const searchTerm = d3.select("#country-continent-search").property("value").toLowerCase();
-    
-    // --- 1. Filter Country View ---
-    d3.select("#country-filter-list").selectAll(".list-item-container")
-        .each(function(d) {
-            // 'd' is the bound country name for country view
-            const countryName = d.toLowerCase();
-            const matches = countryName.includes(searchTerm);
-            
-            // Apply the 'filter-hidden' class if it doesn't match
-            d3.select(this)
-                .classed("filter-hidden", !matches);
-        });
+  // Get the search term and convert it to lower case for case-insensitive matching
+  const searchTerm = d3
+    .select("#country-continent-search")
+    .property("value")
+    .toLowerCase();
 
-    // --- 2. Filter Continent View ---
-    d3.select("#continent-filter-list").selectAll(".list-item-container")
-        .each(function(d) {
-            // 'd' is the bound continent name for continent view
-            const continentName = d.toLowerCase();
-            const matches = continentName.includes(searchTerm);
-            
-            // Apply the 'filter-hidden' class if it doesn't match
-            d3.select(this)
-                .classed("filter-hidden", !matches);
-        });
+  // --- 1. Filter Country View ---
+  d3.select("#country-filter-list")
+    .selectAll(".list-item-container")
+    .each(function (d) {
+      const countryName = d.toLowerCase();
+      const matches = countryName.includes(searchTerm);
+
+      // Apply the 'filter-hidden' class if it doesn't match
+      d3.select(this).classed("filter-hidden", !matches);
+    });
+
+  // --- 2. Filter Continent View ---
+  d3.select("#continent-filter-list")
+    .selectAll(".list-item-container")
+    .each(function (d) {
+      const continentName = d.toLowerCase();
+      const matches = continentName.includes(searchTerm);
+
+      // Apply the 'filter-hidden' class if it doesn't match
+      d3.select(this).classed("filter-hidden", !matches);
+    });
 }
 
 function handleGenreSearch() {
-    const searchTerm = d3.select("#genre-search").property("value").toLowerCase();
-    d3.select("#genre-filter-list").selectAll("#genre-filter-list > *")
-        .each(function() {
-          
-            const container = d3.select(this);
-            const listItemText = container.text().trim();
-        
-            const cleanText = listItemText
-                               .replace(/[\u2713\u2714✓]/g, '') // Remove checkmark symbols
-                               .replace(/\[\s*\]/g, '')     // Remove blank brackets
-                               .replace(/[\s\t\n]+/g, ' ')  // Collapse multiple spaces
-                               .trim();
+  const searchTerm = d3.select("#genre-search").property("value").toLowerCase();
+  d3.select("#genre-filter-list")
+    .selectAll("#genre-filter-list > *")
+    .each(function () {
+      const container = d3.select(this);
+      const listItemText = container.text().trim();
 
-            const matches = cleanText.toLowerCase().includes(searchTerm);
-            
-            container.classed("filter-hidden", !matches);
-        });
+      const cleanText = listItemText
+        .replace(/[\u2713\u2714✓]/g, "") // Remove checkmark symbols
+        .replace(/\[\s*\]/g, "") // Remove blank brackets
+        .replace(/[\s\t\n]+/g, " ") // Collapse multiple spaces
+        .trim();
+
+      const matches = cleanText.toLowerCase().includes(searchTerm);
+
+      container.classed("filter-hidden", !matches);
+    });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-
-    d3.select("#country-continent-search").on("input", handleCountryContinentSearch);
-    d3.select("#genre-search").on("input", handleGenreSearch);
+document.addEventListener("DOMContentLoaded", () => {
+  d3.select("#country-continent-search").on(
+    "input",
+    handleCountryContinentSearch
+  );
+  d3.select("#genre-search").on("input", handleGenreSearch);
 });
 
-
 function setupTreemapToggle() {
-    // --- Set up clicks for the Top-Level Toggle ---
-    d3.select("#treemap-view-continents").on("click", () => {
-        treemapTopLevelView = 'Continents';
-        treemapDrillDownState = 'Continents'; // Reset drill-down
-        applyFilters(); // Re-render
-    });
+  d3.select("#treemap-view-continents").on("click", () => {
+    treemapTopLevelView = "Continents";
+    treemapDrillDownState = "Continents"; // Reset drill-down
+    applyFilters(); // Re-render
+  });
 
-    d3.select("#treemap-view-countries").on("click", () => {
-        treemapTopLevelView = 'Countries';
-        treemapDrillDownState = 'Continents'; // Reset drill-down
-        applyFilters(); // Re-render
-    });
-    
-    // --- Set up click for the "← Continents" button (Level 2) ---
-    d3.select("#treemap-back-continents-btn").on("click", () => {
-        treemapDrillDownState = 'Continents'; // Go back to top level
-        
-        // When going back, reset filters to show ALL countries
-        const allCountryNames = d3.selectAll("#country-filter-list .list-item-container").data().map(d => d);
-        currentFilters.selectedCountries = [...allCountryNames];
-        
-        applyFilters(); // Re-render
-    });
+  d3.select("#treemap-view-countries").on("click", () => {
+    treemapTopLevelView = "Countries";
+    treemapDrillDownState = "Continents"; // Reset drill-down
+    applyFilters(); // Re-render
+  });
 
-    // --- Set up click for the "← Countries" button (Level 3) ---
-    d3.select("#treemap-back-countries-btn").on("click", () => {
-        // This button goes from a single country view (e.g., "France")
-        // back to the continent view (e.g., "Europe").
-        
-        // We just need to re-select all countries for the continent we are in.
-        const countriesInContinent = continentToCountriesMap[treemapDrillDownState] || [];
-        
-        if (countriesInContinent.length > 0) {
-            currentFilters.selectedCountries = [...countriesInContinent];
-        }
-        
-        applyFilters(); // Re-render
-    });
+  d3.select("#treemap-back-continents-btn").on("click", () => {
+    treemapDrillDownState = "Continents"; // Go back to top level
+
+    // When going back, reset filters to show ALL countries
+    const allCountryNames = d3
+      .selectAll("#country-filter-list .list-item-container")
+      .data()
+      .map((d) => d);
+    currentFilters.selectedCountries = [...allCountryNames];
+
+    applyFilters();
+  });
+
+  d3.select("#treemap-back-countries-btn").on("click", () => {
+    const countriesInContinent =
+      continentToCountriesMap[treemapDrillDownState] || [];
+
+    if (countriesInContinent.length > 0) {
+      currentFilters.selectedCountries = [...countriesInContinent];
+    }
+
+    applyFilters();
+  });
 }
 function setupQuantityChartToggle() {
-    d3.select("#quantity-back-btn").on("click", () => {
-        removeChartFilters('quantity-chart');
-    });
+  d3.select("#quantity-back-btn").on("click", () => {
+    removeChartFilters("quantity-chart");
+  });
 }
 
 function updateSankeyBackButton() {
-    const backButton = document.getElementById('sankey-back-btn');
-    if (backButton) {
-        // Show the button if there is history, hide it otherwise
-        backButton.style.display = filterHistory.length > 0 ? 'block' : 'none';
-    }
+  const backButton = document.getElementById("sankey-back-btn");
+  if (backButton) {
+    backButton.style.display = filterHistory.length > 0 ? "block" : "none";
+  }
 }
 
 function updateFilterPanelUI(filters) {
-    // A. Update Platform Buttons
-    d3.selectAll('.platform-buttons button').each(function() {
-        const platform = d3.select(this).attr('data-platform');
-        const isActive = filters.selectedPlatforms.includes(platform);
-        d3.select(this).classed('active', isActive).classed("inactive", false);
-    });
+  d3.selectAll(".platform-buttons button").each(function () {
+    const platform = d3.select(this).attr("data-platform");
+    const isActive = filters.selectedPlatforms.includes(platform);
+    d3.select(this).classed("active", isActive).classed("inactive", false);
+  });
 
-    // B. Update Audience Buttons (Assuming data-audience attribute)
-    d3.selectAll('.audience-buttons button').each(function() {
-        const audience = d3.select(this).attr('data-audience');
-        const isActive = filters.selectedAudiences.includes(audience);
-        d3.select(this).classed('active', isActive).classed("inactive", false);;
-    });
+  d3.selectAll(".audience-buttons button").each(function () {
+    const audience = d3.select(this).attr("data-audience");
+    const isActive = filters.selectedAudiences.includes(audience);
+    d3.select(this).classed("active", isActive).classed("inactive", false);
+  });
 }
 
 function goBackToPreviousSankeyView() {
-    if (filterHistory.length > 0) {
-        // 1. Pop the last saved filter state
-        const previousFilters = filterHistory.pop(); 
+  if (filterHistory.length > 0) {
+    const previousFilters = filterHistory.pop();
 
-        // 2. Replace the current filters with the previous state (assuming currentFilters is a global mutable object)
-        Object.assign(currentFilters, previousFilters); 
+    Object.assign(currentFilters, previousFilters);
 
-        updateFilterPanelUI(previousFilters);
-        
-        // 3. Update the button's visibility/state
-        updateSankeyBackButton(); 
+    updateFilterPanelUI(previousFilters);
 
-        // 4. Re-render the chart and other components with the old filter state
-        // NOTE: This assumes applyFilters() is a global function that re-renders all visualizations.
-        applyFilters(); 
-    }
+    updateSankeyBackButton();
+
+    applyFilters();
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const backButton = document.getElementById('sankey-back-btn');
-    if (backButton) {
-        backButton.addEventListener('click', goBackToPreviousSankeyView);
-    }
-    // Initialize the button visibility (it should be hidden initially)
-    updateSankeyBackButton();
+document.addEventListener("DOMContentLoaded", () => {
+  const backButton = document.getElementById("sankey-back-btn");
+  if (backButton) {
+    backButton.addEventListener("click", goBackToPreviousSankeyView);
+  }
+
+  updateSankeyBackButton();
 });
 
 /** Updates the visibility of the Quantity Chart undo button based on history. */
 function updateQuantityBackButton() {
-    const backButton = document.getElementById('quantity-back-btn'); 
-    if (backButton) {
-        backButton.style.display = quantityFilterHistory.length > 0 ? 'block' : 'none';
-    }
+  const backButton = document.getElementById("quantity-back-btn");
+  if (backButton) {
+    backButton.style.display =
+      quantityFilterHistory.length > 0 ? "block" : "none";
+  }
 }
 
 /** Handles the click event for the Quantity Chart's "Undo Filter" button. */
 function goBackToPreviousQuantityView() {
-    if (quantityFilterHistory.length > 0) {
-        // Pop the last saved filter state (which contains selectedPlatforms and type)
-        const previousFilters = quantityFilterHistory.pop(); 
-        
-        // Restore ONLY the filters that the Quantity Chart sets
-        currentFilters.selectedPlatforms = previousFilters.selectedPlatforms;
-        currentFilters.type = previousFilters.type;
-        
-        updateQuantityBackButton(); 
-        applyFilters(); 
-    }
+  if (quantityFilterHistory.length > 0) {
+    // Pop the last saved filter state (which contains selectedPlatforms and type)
+    const previousFilters = quantityFilterHistory.pop();
+
+    // Restore ONLY the filters that the Quantity Chart sets
+    currentFilters.selectedPlatforms = previousFilters.selectedPlatforms;
+    currentFilters.type = previousFilters.type;
+
+    updateQuantityBackButton();
+    applyFilters();
+  }
 }
 
 // Add event listener setup (ensure this runs when the DOM is ready)
-document.addEventListener('DOMContentLoaded', () => {
-    const backButton = document.getElementById('quantity-back-btn');
-    if (backButton) {
-        backButton.addEventListener('click', goBackToPreviousQuantityView);
-    }
-    // Initialize the button state
-    updateQuantityBackButton();
+document.addEventListener("DOMContentLoaded", () => {
+  const backButton = document.getElementById("quantity-back-btn");
+  if (backButton) {
+    backButton.addEventListener("click", goBackToPreviousQuantityView);
+  }
+  // Initialize the button state
+  updateQuantityBackButton();
 });
 
-document.addEventListener('click', (event) => {
-    const filtersPanel = document.getElementById('filters-panel');
-    const openButton = document.getElementById('open-filters-btn'); 
-    
-    // The querySelectorAll finds all visualization cards inside the viz-panel
-    const vizContentElements = document.querySelectorAll('.viz-panel .viz-card'); 
+document.addEventListener("click", (event) => {
+  const filtersPanel = document.getElementById("filters-panel");
+  const openButton = document.getElementById("open-filters-btn");
 
-    // Stop if the panel doesn't exist or isn't visible
-    if (!filtersPanel || !filtersPanel.classList.contains('visible')) return;
+  // The querySelectorAll finds all visualization cards inside the viz-panel
+  const vizContentElements = document.querySelectorAll(".viz-panel .viz-card");
 
-    const clickTarget = event.target;
-    
-    const isInsideFiltersPanel = filtersPanel.contains(clickTarget);
-  
-    // NEW: Check if the click target is inside ANY of the viz-card elements
-    let isInsideVizContent = false;
-    vizContentElements.forEach(card => {
-        if (card.contains(clickTarget)) {
-            isInsideVizContent = true;
-        }
-    });
-    if (
-        !isInsideFiltersPanel &&
-        !isInsideVizContent // <-- This is the key change
-    ) {
-      toggleFilters(); 
+  // Stop if the panel doesn't exist or isn't visible
+  if (!filtersPanel || !filtersPanel.classList.contains("visible")) return;
+
+  const clickTarget = event.target;
+
+  const isInsideFiltersPanel = filtersPanel.contains(clickTarget);
+
+  let isInsideVizContent = false;
+  vizContentElements.forEach((card) => {
+    if (card.contains(clickTarget)) {
+      isInsideVizContent = true;
     }
+  });
+  if (
+    !isInsideFiltersPanel &&
+    !isInsideVizContent
+  ) {
+    toggleFilters();
+  }
 });
 function setupTitleSearch() {
-    const searchInput = document.getElementById('title-search');
-    const dropdown = document.getElementById('autocomplete-dropdown');
+  const searchInput = document.getElementById("title-search");
+  const dropdown = document.getElementById("autocomplete-dropdown");
 
-    if (!searchInput || !dropdown) return; // Exit if elements are not found
+  if (!searchInput || !dropdown) return; // Exit if elements are not found
 
-    // Listener for typing in the search bar
-    searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase().trim();
-        
-        // 1. Update the main filter state (main search functionality)
-        if (typeof currentFilters !== 'undefined') {
-             currentFilters.titleSearch = query;
-             applyFilters(); // Trigger the main dashboard filter update
-        }
+  // Listener for typing in the search bar
+  searchInput.addEventListener("input", function () {
+    const query = this.value.toLowerCase().trim();
 
-        // 2. Autocomplete logic
-        dropdown.innerHTML = ''; // Clear previous results
-        
-        // Ensure dropdown is hidden if query is too short or allTitles is not ready
-        if (query.length < 2 || allTitles.length === 0) { 
-            dropdown.classList.remove('visible');
-            return;
-        }
+    // 1. Update the main filter state (main search functionality)
+    if (typeof currentFilters !== "undefined") {
+      currentFilters.titleSearch = query;
+      applyFilters(); // Trigger the main dashboard filter update
+    }
 
-        const matches = allTitles.filter(title => 
-            // Case-insensitive check if the title includes the query
-            title.toLowerCase().includes(query)
-        ).slice(0, 10); // Show top 10 matches
+    // 2. Autocomplete logic
+    dropdown.innerHTML = ""; // Clear previous results
 
-        if (matches.length > 0) {
-            matches.forEach(title => {
-                const item = document.createElement('div');
-                item.classList.add('autocomplete-item');
-                // Highlight the matching part (optional, but nice)
-                const highlightedTitle = title.replace(new RegExp(query, 'gi'), (match) => 
-                    `<b>${match}</b>`
-                );
-                item.innerHTML = highlightedTitle;
-                
-                // Click handler for a suggestion
-                item.addEventListener('click', function() {
-                    // Fill the input with the selected full title
-                    searchInput.value = title; 
-                    
-                    // Update the filter state with the selected full title and re-apply
-                    if (typeof currentFilters !== 'undefined') {
-                        currentFilters.titleSearch = title.toLowerCase();
-                        applyFilters(); 
-                    }
-                    
-                    // Hide the dropdown
-                    dropdown.classList.remove('visible');
-                    searchInput.blur(); 
-                });
-                dropdown.appendChild(item);
-            });
-            dropdown.classList.add('visible');
-        } else {
-            // Hide if there are no matches
-            dropdown.classList.remove('visible');
-        }
-    });
+    // Ensure dropdown is hidden if query is too short or allTitles is not ready
+    if (query.length < 2 || allTitles.length === 0) {
+      dropdown.classList.remove("visible");
+      return;
+    }
 
-    // Add event listener to hide the dropdown when clicking outside the search area
-    document.addEventListener('click', (event) => {
-        const searchContainer = document.querySelector('.search-container');
-        if (searchContainer && !searchContainer.contains(event.target)) {
-             dropdown.classList.remove('visible');
-        }
-    });
-    
-    // Also hide dropdown if the user presses ESC
-    searchInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            dropdown.classList.remove('visible');
-            searchInput.blur();
-        }
-    });
+    const matches = allTitles
+      .filter((title) =>
+        // Case-insensitive check if the title includes the query
+        title.toLowerCase().includes(query)
+      )
+      .slice(0, 10); // Show top 10 matches
+
+    if (matches.length > 0) {
+      matches.forEach((title) => {
+        const item = document.createElement("div");
+        item.classList.add("autocomplete-item");
+        // Highlight the matching part (optional, but nice)
+        const highlightedTitle = title.replace(
+          new RegExp(query, "gi"),
+          (match) => `<b>${match}</b>`
+        );
+        item.innerHTML = highlightedTitle;
+
+        // Click handler for a suggestion
+        item.addEventListener("click", function () {
+          // Fill the input with the selected full title
+          searchInput.value = title;
+
+          // Update the filter state with the selected full title and re-apply
+          if (typeof currentFilters !== "undefined") {
+            currentFilters.titleSearch = title.toLowerCase();
+            applyFilters();
+          }
+
+          // Hide the dropdown
+          dropdown.classList.remove("visible");
+          searchInput.blur();
+        });
+        dropdown.appendChild(item);
+      });
+      dropdown.classList.add("visible");
+    } else {
+      // Hide if there are no matches
+      dropdown.classList.remove("visible");
+    }
+  });
+
+  // Add event listener to hide the dropdown when clicking outside the search area
+  document.addEventListener("click", (event) => {
+    const searchContainer = document.querySelector(".search-container");
+    if (searchContainer && !searchContainer.contains(event.target)) {
+      dropdown.classList.remove("visible");
+    }
+  });
+
+  // Also hide dropdown if the user presses ESC
+  searchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      dropdown.classList.remove("visible");
+      searchInput.blur();
+    }
+  });
 }
